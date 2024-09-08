@@ -1,0 +1,7 @@
+cub3D
+*.a
+*.bak.c
+*.dSYM
+*.o
+*.out
+t.txt
