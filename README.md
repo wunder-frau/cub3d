@@ -19,6 +19,25 @@ Welcome to the **Cub3D** project. This project is inspired by the famous first-p
 - **Player Movement**: Move the player through the map with keyboard controls.
 - **Basic Wall Textures**: Render textured walls based on map design.
 
+## MLX42 Installation Instructions 🛠️
+
+   - Clone the MLX42 repository:
+     ```bash
+     git clone https://github.com/codam-coding-college/MLX42.git
+     ```
+   - Navigate to the `MLX42` directory:
+     ```bash
+     cd MLX42
+     ```
+   - Create a build directory and compile MLX42:
+     ```bash
+     mkdir build
+     cd build
+     cmake ..
+     make
+     ```
+   - Ensure the `MLX42` library is correctly installed in your system path or adjust the `MLX42_PATH` in your `Makefile` accordingly.
+ 
 ## Usage 🕹️
 
 1. Clone the repository and compile the project:
