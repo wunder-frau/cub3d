@@ -87,3 +87,7 @@ Cub3D Implementation Plan (Without Bonuses)
 - Check for memory leaks and ensure smooth performance.
 
 ===========================================
+
+links
+
+https://github.com/Saxsori/ray-cast?tab=readme-ov-file
