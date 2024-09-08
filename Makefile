@@ -14,6 +14,8 @@ RESET = \033[0m
 all: $(NAME)
 
 $(NAME): $(SRC)
+	@echo "$(BLUE)🔄 Building MLX42...$(RESET)"
+	cd $(MLX42_PATH) && mkdir -p build && cd build && cmake .. && make
 	@echo "$(BLUE)🚀 Compiling $(SRC)$(RESET)"
 	$(CC) $(CFLAGS) $(SRC) $(LDFLAGS) -o $(NAME)
 
@@ -23,6 +25,7 @@ clean:
 
 fclean: clean
 	@echo "$(RED)🚮 Removing executable: $(NAME)$(RESET)"
+	@rm -rf $(MLX42_PATH)/build
 	@rm -f $(NAME)
 
 re: fclean all
