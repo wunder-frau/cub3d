@@ -5,3 +5,4 @@ cub3D
 *.o
 *.out
 t.txt
+libft/
