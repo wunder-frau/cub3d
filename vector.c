@@ -1,5 +1,4 @@
-#include "vector.h"
-#include <stdio.h>
+#include "cub3d.h"
 
 void *ft_realloc(void *ptr, size_t current_size, size_t new_size)
 {
