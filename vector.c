@@ -25,7 +25,6 @@ void *ft_realloc(void *ptr, size_t current_size, size_t new_size)
 	return (new_ptr);
 }
 
-
 t_vector *vector_new(size_t size)
 {
 	t_vector *new_vector;
@@ -73,4 +72,45 @@ void free_vector(t_vector *vector)
 	}
 	free(vector->symbols);
 	free(vector);
+}
+
+static void	rearrange_vector(t_vector *vector, size_t index, char **new_symbols)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	while (i < index)
+	{
+		new_symbols[i] = vector->symbols[i];
+		i++;
+	}
+	j = i + 1;
+	while (j < vector->capacity)
+	{
+		new_symbols[i] = vector->symbols[j];
+		i++;
+		j++;
+	}
+	free(vector->symbols);
+	vector->symbols = new_symbols;
+	vector->capacity = vector->capacity - 1;
+	vector->symbols[vector->capacity] = NULL;
+	vector->length = vector->length - 1;
+}
+
+char	*extract_array(t_vector *vector, size_t array_index)
+{
+	char	**new_symbols;
+	char	*extracted_array;
+
+	if (array_index >= vector->capacity)
+		return (NULL);
+	new_symbols = (char **)malloc(sizeof(char *) * (vector->length - 1));
+	if (new_symbols == NULL)
+		return (NULL);
+	extracted_array = vector->symbols[array_index];
+	printf("extracted:%s\n", extracted_array);
+	rearrange_vector(vector, array_index, new_symbols);
+	return (extracted_array);
 }

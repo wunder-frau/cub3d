@@ -7,7 +7,7 @@ static int	safe_open(const char *file)
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
 	{
-		ft_putstr_fd("Error\n opening the file\n", 2);
+		ft_putstr_fd("Error opening the file\n", 2);
 		close(fd);
 		exit(1);
 	}
@@ -22,7 +22,7 @@ t_vector	*read_map(char **argv)
 
 	map_fd = safe_open(argv[1]);
 	if (map_fd < 0)
-		ft_putstr_fd("failed to open map", 2);
+		ft_putstr_fd("Failed to open map", 2);
 	map = vector_new(1);
 	if (map == NULL)
 	{
@@ -49,9 +49,21 @@ t_vector	*read_map(char **argv)
 int	main(int argc, char **argv)
 {
 	t_vector	*map;
+	t_assets	*assets;
 
 	if (argc != 2)
-		ft_putstr_fd("Incorrect number of arguments", 2);
+		ft_putstr_fd("Incorrect number of arguments\n", 2);
 	map = read_map(argv);
+	assets = initialize_assets(map);
+
+	printf("North Texture: %s\n", assets->textures.path_NO);
+	printf("South Texture: %s\n", assets->textures.path_SO);
+	printf("East Texture: %s\n", assets->textures.path_EA);
+	printf("West Texture: %s\n", assets->textures.path_WE);
+	//printf("Floor Color: %d,%d,%d\n", assets->colors.floor_rgb[0], assets->colors.floor_rgb[1], assets->colors.floor_rgb[2]);
+	//printf("Ceiling Color: %d,%d,%d\n", assets->colors.ceiling_rgb[0], assets->colors.ceiling_rgb[1], assets->colors.ceiling_rgb[2]);
+
+	
 	free_vector(map);
+	return (0);
 }
