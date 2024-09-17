@@ -17,8 +17,8 @@ typedef struct s_textures
 
 typedef struct s_colors
 {
-	int	floor_rgb[3];
-	int	ceiling_rgb[3];
+	int	rgb_floor[3];
+	int	rgb_ceiling[3];
 }	t_colors;
 
 typedef struct s_assets
@@ -30,5 +30,11 @@ typedef struct s_assets
 
 t_vector	*read_map(char **argv);
 t_assets	*initialize_assets(t_vector *map);
+
+/* error_handling.c */
+void	print_error_map(char *msg, t_vector *map, t_assets *assets);
+
+/* free.c */
+void	free_assets_struct(t_assets *assets);
 
 #endif

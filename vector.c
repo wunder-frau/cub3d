@@ -44,18 +44,18 @@ t_vector *vector_new(size_t size)
 	return (new_vector);
 }
 
-int vector_add_back(t_vector *current, char *new_symbols)
+int vector_add_back(t_vector *current, char *updated_symbols)
 {
 	if (current->capacity == current->length)
 	{
 		size_t new_size = current->length * 2;
-		char **new_symbols = (char **)ft_realloc(current->symbols, current->length * sizeof(char *), new_size * sizeof(char *));
-		if (new_symbols == NULL)
+		char **updated_symbols = (char **)ft_realloc(current->symbols, current->length * sizeof(char *), new_size * sizeof(char *));
+		if (updated_symbols == NULL)
 			return (1);
-		current->symbols = new_symbols;
+		current->symbols = updated_symbols;
 		current->length = new_size;
 	}
-	current->symbols[current->capacity] = new_symbols;
+	current->symbols[current->capacity] = updated_symbols;
 	current->capacity++;
 	current->symbols[current->capacity] = NULL;
 	return (0);
@@ -74,7 +74,7 @@ void free_vector(t_vector *vector)
 	free(vector);
 }
 
-static void	rearrange_vector(t_vector *vector, size_t index, char **new_symbols)
+static void	adjust_vector_capacity(t_vector *vector, size_t index, char **updated_symbols)
 {
 	size_t	i;
 	size_t	j;
@@ -82,35 +82,35 @@ static void	rearrange_vector(t_vector *vector, size_t index, char **new_symbols)
 	i = 0;
 	while (i < index)
 	{
-		new_symbols[i] = vector->symbols[i];
+		updated_symbols[i] = vector->symbols[i];
 		i++;
 	}
 	j = i + 1;
 	while (j < vector->capacity)
 	{
-		new_symbols[i] = vector->symbols[j];
+		updated_symbols[i] = vector->symbols[j];
 		i++;
 		j++;
 	}
 	free(vector->symbols);
-	vector->symbols = new_symbols;
-	vector->capacity = vector->capacity - 1;
+	vector->symbols = updated_symbols;
+	vector->length--;
+	vector->capacity--;
 	vector->symbols[vector->capacity] = NULL;
-	vector->length = vector->length - 1;
 }
 
-char	*extract_array(t_vector *vector, size_t array_index)
+char	*get_element_from_vector(t_vector *vector, size_t index)
 {
-	char	**new_symbols;
-	char	*extracted_array;
+	char	**updated_symbols;
+	char	*extracted_symbols;
 
-	if (array_index >= vector->capacity)
+	if (index >= vector->capacity)
 		return (NULL);
-	new_symbols = (char **)malloc(sizeof(char *) * (vector->length - 1));
-	if (new_symbols == NULL)
+	updated_symbols = (char **)malloc(sizeof(char *) * (vector->length - 1));
+	if (updated_symbols == NULL)
 		return (NULL);
-	extracted_array = vector->symbols[array_index];
-	printf("extracted:%s\n", extracted_array);
-	rearrange_vector(vector, array_index, new_symbols);
-	return (extracted_array);
+	extracted_symbols = vector->symbols[index];
+	printf("extracted:%s\n", extracted_symbols);
+	adjust_vector_capacity(vector, index, updated_symbols);
+	return (extracted_symbols);
 }

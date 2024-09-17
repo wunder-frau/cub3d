@@ -6,3 +6,4 @@ cub3D
 *.out
 t.txt
 libft/
+stash.c

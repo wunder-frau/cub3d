@@ -1,5 +1,5 @@
 NAME = cub3D
-SRC = main.c vector.c parser_config.c
+SRC = main.c vector.c parser_config.c error_handling.c free.c
 OBJ = $(SRC:.c=.o)
 CC = gcc
 MLX42_PATH = MLX42
