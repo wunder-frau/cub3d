@@ -12,8 +12,8 @@ typedef struct s_vector
 
 /* vector.c */
 t_vector	*vector_new(size_t size);
-int			vector_add_back(t_vector *current, char *new_symbols);
-void		free_vector(t_vector *vector);
-char		*get_element_from_vector(t_vector *vector, size_t array_index);
+int				vector_add_back(t_vector *current, char *new_symbols);
+void			free_vector(t_vector *vector);
+char			*get_element_from_vector(t_vector *vector, size_t array_index);
 
 #endif

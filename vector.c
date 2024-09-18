@@ -44,20 +44,27 @@ t_vector *vector_new(size_t size)
 	return (new_vector);
 }
 
-int vector_add_back(t_vector *current, char *updated_symbols)
+int vector_add_back(t_vector *current, char *new_symbol)
 {
+	char		**temp_symbols;
+	size_t	new_size;
+
 	if (current->capacity == current->length)
 	{
-		size_t new_size = current->length * 2;
-		char **updated_symbols = (char **)ft_realloc(current->symbols, current->length * sizeof(char *), new_size * sizeof(char *));
-		if (updated_symbols == NULL)
+		if (current->length == 0)
+			new_size = 1;
+		else
+			new_size = current->length * 2;
+		temp_symbols = (char **)ft_realloc(current->symbols, current->length * sizeof(char *), new_size * sizeof(char *));
+		if (temp_symbols == NULL)
 			return (1);
-		current->symbols = updated_symbols;
+		current->symbols = temp_symbols;
 		current->length = new_size;
 	}
-	current->symbols[current->capacity] = updated_symbols;
+	current->symbols[current->capacity] = new_symbol;
 	current->capacity++;
-	current->symbols[current->capacity] = NULL;
+	if (current->capacity < current->length)
+		current->symbols[current->capacity] = NULL;
 	return (0);
 }
 

@@ -5,7 +5,7 @@ CC = gcc
 MLX42_PATH = MLX42
 LIBFT_PATH = libft
 LIBFT = $(LIBFT_PATH)/libft.a
-CFLAGS = -Wall -Wextra -Werror -I $(MLX42_PATH)/include -I $(LIBFT_PATH)
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address -I $(MLX42_PATH)/include -I $(LIBFT_PATH)
 LDFLAGS = -L $(MLX42_PATH)/build -lmlx42 -lglfw -ldl -L $(LIBFT_PATH) -lft
 
 # Color definitions for terminal output
