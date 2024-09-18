@@ -60,8 +60,9 @@ int	main(int argc, char **argv)
 	printf("South Texture: %s\n", assets->textures.path_SO);
 	printf("East Texture: %s\n", assets->textures.path_EA);
 	printf("West Texture: %s\n", assets->textures.path_WE);
-	//printf("Floor Color: %d,%d,%d\n", assets->colors.floor_rgb[0], assets->colors.floor_rgb[1], assets->colors.floor_rgb[2]);
-	//printf("Ceiling Color: %d,%d,%d\n", assets->colors.ceiling_rgb[0], assets->colors.ceiling_rgb[1], assets->colors.ceiling_rgb[2]);
+	printf("Floor Color: %d, %d, %d\n", assets->colors.rgb_F[0], assets->colors.rgb_F[1], assets->colors.rgb_F[2]);
+	printf("Ceiling Color: %d, %d, %d\n", assets->colors.rgb_C[0], assets->colors.rgb_C[1], assets->colors.rgb_C[2]);
+
 
 	
 	free_vector(map);
