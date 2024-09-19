@@ -44,7 +44,7 @@ static int	remove_empty_line(t_vector *map)
 	{
 		if (is_empty_string(map->symbols[i]))
 		{
-			empty_line = get_element_from_vector(map, i);
+			empty_line = vector_get_at(map, i);
 			if (empty_line == NULL)
 			{
 				log_error_message("Malloc failure");

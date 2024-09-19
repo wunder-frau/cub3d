@@ -29,7 +29,7 @@ static char	*extract_path(const char *id, t_vector *map, t_assets *assets)
 	{
 		if (ft_strncmp(id, map->symbols[i], 3) == 0)
 		{
-			map_line = get_element_from_vector(map, i);
+			map_line = vector_get_at(map, i);
 			printf("map_line:%s", map_line);
 			if (!map_line)
 				error_exit_cleanup("Failed to allocate map line", map, assets);
@@ -83,7 +83,7 @@ static char	*get_rgb(const char *id, t_vector *map, t_assets *assets)
 	{
 		if (ft_strncmp(id, map->symbols[i], 2) == 0)
 		{
-			rgb = get_element_from_vector(map, i);
+			rgb = vector_get_at(map, i);
 			if (!rgb)
 				error_exit_cleanup("Failed to retrieve RGB line", map, assets);
 			rgb_trimmed = trim_and_extract(rgb, 2);

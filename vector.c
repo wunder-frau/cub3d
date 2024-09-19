@@ -2,9 +2,11 @@
 
 void *ft_realloc(void *ptr, size_t current_size, size_t new_size)
 {
-	void		*new_ptr;
+	char		*old_ptr;
+	char		*new_ptr;
 	size_t	i;
 
+	old_ptr = (char *)ptr;
 	if (!new_size)
 	{
 		free(ptr);
@@ -18,33 +20,33 @@ void *ft_realloc(void *ptr, size_t current_size, size_t new_size)
 	i = 0;
 	while (i < current_size)
 	{
-		((char *)new_ptr)[i] = ((char *)ptr)[i];
+		new_ptr[i] = old_ptr[i];
 		i++;
 	}
 	free(ptr);
 	return (new_ptr);
 }
 
-t_vector *vector_new(size_t size)
+t_vector *vector_create(size_t initial_capacity)
 {
 	t_vector *new_vector;
 
 	new_vector = (t_vector *)malloc(sizeof(t_vector));
 	if (new_vector == NULL)
 		return (NULL);
-	new_vector->symbols = (char **)malloc((size + 1) * sizeof(char *));
+	new_vector->symbols = (char **)malloc((initial_capacity + 1) * sizeof(char *));
 	if (new_vector->symbols == NULL)
 	{
 		free(new_vector);
 		return (NULL);
 	}
-	new_vector->length = size;
+	new_vector->length = initial_capacity;
 	new_vector->capacity = 0;
 	new_vector->symbols[0] = NULL;
 	return (new_vector);
 }
 
-int vector_add_back(t_vector *current, char *new_symbol)
+int vector_push_back(t_vector *current, char *new_symbol)
 {
 	char		**temp_symbols;
 	size_t	new_size;
@@ -81,7 +83,7 @@ void free_vector(t_vector *vector)
 	free(vector);
 }
 
-static void	adjust_vector_capacity(t_vector *vector, size_t index, char **updated_symbols)
+static void	vector_erase_at(t_vector *vector, size_t index, char **remaining_symbs)
 {
 	size_t	i;
 	size_t	j;
@@ -89,35 +91,35 @@ static void	adjust_vector_capacity(t_vector *vector, size_t index, char **update
 	i = 0;
 	while (i < index)
 	{
-		updated_symbols[i] = vector->symbols[i];
+		remaining_symbs[i] = vector->symbols[i];
 		i++;
 	}
 	j = i + 1;
 	while (j < vector->capacity)
 	{
-		updated_symbols[i] = vector->symbols[j];
+		remaining_symbs[i] = vector->symbols[j];
 		i++;
 		j++;
 	}
 	free(vector->symbols);
-	vector->symbols = updated_symbols;
+	vector->symbols = remaining_symbs;
 	vector->length--;
 	vector->capacity--;
 	vector->symbols[vector->capacity] = NULL;
 }
 
-char	*get_element_from_vector(t_vector *vector, size_t index)
+char	*vector_get_at(t_vector *vector, size_t index)
 {
-	char	**updated_symbols;
-	char	*extracted_symbols;
+	char	**remaining_symbs;
+	char	*removed_symb;
 
 	if (index >= vector->capacity)
 		return (NULL);
-	updated_symbols = (char **)malloc(sizeof(char *) * (vector->length - 1));
-	if (updated_symbols == NULL)
+	remaining_symbs = (char **)malloc(sizeof(char *) * (vector->length - 1));
+	if (remaining_symbs == NULL)
 		return (NULL);
-	extracted_symbols = vector->symbols[index];
-	printf("extracted:%s\n", extracted_symbols);
-	adjust_vector_capacity(vector, index, updated_symbols);
-	return (extracted_symbols);
+	removed_symb = vector->symbols[index];
+	printf("extracted:%s\n", removed_symb);
+	vector_erase_at(vector, index, remaining_symbs);
+	return (removed_symb);
 }

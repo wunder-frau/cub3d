@@ -23,7 +23,7 @@ t_vector	*read_map(char **argv)
 	map_fd = safe_open(argv[1]);
 	if (map_fd < 0)
 		ft_putstr_fd("Failed to open map", 2);
-	map = vector_new(1);
+	map = vector_create(1);
 	if (map == NULL)
 	{
 		close(map_fd);
@@ -34,7 +34,7 @@ t_vector	*read_map(char **argv)
 		map_line = get_next_line(map_fd);
 		if (map_line == NULL)
 			break ;
-		if (vector_add_back(map, map_line) == 1)
+		if (vector_push_back(map, map_line) == 1)
 		{
 			free_vector(map);
 			close(map_fd);
