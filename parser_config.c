@@ -32,19 +32,19 @@ static char	*extract_path(const char *id, t_vector *map, t_assets *assets)
 			map_line = get_element_from_vector(map, i);
 			printf("map_line:%s", map_line);
 			if (!map_line)
-				print_error_map("Failed to allocate map line", map, assets);
+				error_exit_cleanup("Failed to allocate map line", map, assets);
 			path = trim_and_extract(map_line, 3);
 			if (!path)
-				print_error_map("Failed to allocate texture path", map, assets);
+				error_exit_cleanup("Failed to allocate texture path", map, assets);
 			return (path);
 		}
 		i++;
 	}
-	print_error_map("Missing texture information", map, assets);
+	error_exit_cleanup("Missing texture information", map, assets);
 	return (NULL);
 }
 
-static bool	copy_rgb_values(char *rgb_trimmed, t_assets *assets, const char *id)
+static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
 {
 	char **rgb_arr;
 	int r, g, b;
@@ -69,10 +69,10 @@ static bool	copy_rgb_values(char *rgb_trimmed, t_assets *assets, const char *id)
 		assets->colors.rgb_C[2] = b;
 	}
 	free(rgb_arr);
-	return true;
+	return (true);
 }
 
-static char *get_rgb(const char *id, t_vector *map, t_assets *assets)
+static char	*get_rgb(const char *id, t_vector *map, t_assets *assets)
 {
 	size_t i;
 	char *rgb;
@@ -85,19 +85,17 @@ static char *get_rgb(const char *id, t_vector *map, t_assets *assets)
 		{
 			rgb = get_element_from_vector(map, i);
 			if (!rgb)
-				print_error_map("Failed to retrieve RGB line", map, assets);
-			
+				error_exit_cleanup("Failed to retrieve RGB line", map, assets);
 			rgb_trimmed = trim_and_extract(rgb, 2);
 			if (!rgb_trimmed)
-				print_error_map("Failed to extract RGB line", map, assets);
-
-			if (!copy_rgb_values(rgb_trimmed, assets, id))
-				print_error_map("Failed to copy RGB values", map, assets);
+				error_exit_cleanup("Failed to extract RGB line", map, assets);
+			if (!store_rgb(rgb_trimmed, assets, id))
+				error_exit_cleanup("Failed to copy RGB values", map, assets);
 			return rgb_trimmed;
 		}
 		i++;
 	}
-	print_error_map("Missing RGB information", map, assets);
+	error_exit_cleanup("Missing RGB information", map, assets);
 	return NULL;
 }
 
@@ -116,7 +114,6 @@ static void	load_asset_rgb(t_vector *map, t_assets *assets)
 {
 	get_rgb("C ", map, assets);
 	get_rgb("F ", map, assets);
-
 }
 /**
  * Allocates and initializes the assets structure.
@@ -127,12 +124,18 @@ t_assets	*initialize_assets(t_vector *map)
 
 	assets = (t_assets *)malloc(sizeof(t_assets));
 	if (!assets)
-			print_error_map("Failed to allocate assets", map, NULL);
+			error_exit_cleanup("Failed to allocate assets", map, NULL);
 	assets->textures.path_NO = NULL;
 	assets->textures.path_SO = NULL;
 	assets->textures.path_EA = NULL;
 	assets->textures.path_WE = NULL;
 	load_asset_config(map, assets);
 	load_asset_rgb(map, assets);
+	if (!process_map(map))
+		error_exit_cleanup("Invalid map configuration", map, NULL);
+	// for (size_t i = 0; i < map->capacity; i++)
+	// {
+	// 	printf("here it starts:\n %s\n", map->symbols[i]); // Assuming map->text contains the map lines
+	// }
 	return (assets);
 }

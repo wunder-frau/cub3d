@@ -32,9 +32,13 @@ t_vector	*read_map(char **argv);
 t_assets	*initialize_assets(t_vector *map);
 
 /* error_handling.c */
-void	print_error_map(char *msg, t_vector *map, t_assets *assets);
+void	log_error_message(char *msg);
+void	error_exit_cleanup(char *msg, t_vector *map, t_assets *assets);
 
 /* free.c */
 void	free_assets_struct(t_assets *assets);
+
+/* validation.c */
+bool process_map(t_vector *map);
 
 #endif

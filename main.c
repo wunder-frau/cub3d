@@ -34,7 +34,6 @@ t_vector	*read_map(char **argv)
 		map_line = get_next_line(map_fd);
 		if (map_line == NULL)
 			break ;
-		printf("Map line: %s\n", map_line);
 		if (vector_add_back(map, map_line) == 1)
 		{
 			free_vector(map);
@@ -45,6 +44,7 @@ t_vector	*read_map(char **argv)
 	close(map_fd);
 	return (map);
 }
+
 
 int	main(int argc, char **argv)
 {
