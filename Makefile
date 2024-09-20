@@ -38,24 +38,20 @@ SUBMODULE_EMOJI = 🧩
 
 all: $(NAME)
 
-$(NAME): $(OBJ_PATH) $(OBJS) $(LIBFT)
+$(LIBFT):
+	@$(MAKE) -C $(LIBFT_PATH)
+	@echo "$(BUILD_EMOJI) $(GREEN)libft built!$(RESET)"
+
+$(NAME):  $(LIBFT) $(OBJ_PATH) $(OBJS)
 	@echo "$(BUILD_EMOJI) $(BLUE)Building MLX42...$(RESET)"
 	cd $(MLX42_PATH) && mkdir -p build && cd build && cmake .. && make
+	@echo "$(BUILD_EMOJI) $(GREEN)MLX42 built!$(RESET)"
 	@echo "$(BUILD_EMOJI) $(BLUE)Compiling $(NAME)...$(RESET)"
 	@$(CC) $(OBJS) $(LDFLAGS) -o $(NAME)
 	@echo "$(SUCCESS_EMOJI) $(GREEN)$(NAME) built successfully!$(RESET)"
 
-$(LIBFT):
-	@$(MAKE) -C $(LIBFT_PATH)
-	@echo "$(BUILD_EMOJI) $(BLUE)libft built!$(RESET)"
-
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
-	@mkdir -p $(dir $@)  # Ensure the directory exists
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@echo "$(BUILD_EMOJI) $(BLUE)Compiled: $(RESET)$<"
-
-$(OBJ_PATH)vector/%.o: $(VEC_PATH)%.c
-	@mkdir -p $(dir $@)  # Ensure the directory exists
+	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "$(BUILD_EMOJI) $(BLUE)Compiled: $(RESET)$<"
 
