@@ -13,7 +13,7 @@ void	error_exit_cleanup(char *msg, t_vector *map, t_assets *assets)
 	if (assets)
 		free_assets_struct(assets);
 	if (map)
-		free_vector(map);
+		vector_free(map);
 	if (msg)
 		log_error_message(msg);
 	exit(1);

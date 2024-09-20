@@ -3,7 +3,7 @@
 
 # include "libft/libft.h"
 # include "MLX42/include/MLX42/MLX42.h"
-# include "vector.h"
+# include "../src/vector/vector.h"
 # include "fcntl.h"
 # include <stdio.h>
 

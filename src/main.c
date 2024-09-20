@@ -1,4 +1,4 @@
-#include "cub3d.h"
+#include "../cub3d.h"
 
 static int	safe_open(const char *file)
 {
@@ -36,7 +36,7 @@ t_vector	*read_map(char **argv)
 			break ;
 		if (vector_push_back(map, map_line) == 1)
 		{
-			free_vector(map);
+			vector_free(map);
 			close(map_fd);
 			ft_putstr_fd("Malloc failure", 2);
 		}
@@ -65,6 +65,6 @@ int	main(int argc, char **argv)
 
 
 	
-	free_vector(map);
+	vector_free(map);
 	return (0);
 }
