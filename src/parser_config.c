@@ -132,7 +132,11 @@ t_assets	*initialize_assets(t_vector *map)
 	load_asset_config(map, assets);
 	load_asset_rgb(map, assets);
 	if (!process_map(map))
-		error_exit_cleanup("Invalid map configuration", map, NULL);
+	{
+		free_assets_struct(assets);
+		vector_free(map);
+		exit(1);
+	}
 	// for (size_t i = 0; i < map->capacity; i++)
 	// {
 	// 	printf("here it starts:\n %s\n", map->symbols[i]); // Assuming map->text contains the map lines
