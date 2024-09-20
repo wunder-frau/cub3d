@@ -3,10 +3,42 @@
 
 # include "libft/libft.h"
 # include "MLX42/include/MLX42/MLX42.h"
-# include "vector.h"
+# include "../src/vector/vector.h"
 # include "fcntl.h"
 # include <stdio.h>
 
+typedef struct s_textures
+{
+	char	*path_NO;
+	char	*path_SO;
+	char	*path_EA;
+	char	*path_WE;
+}	t_textures;
+
+typedef struct s_colors
+{
+	int	rgb_F[3];
+	int	rgb_C[3];
+}	t_colors;
+
+typedef struct s_assets
+{
+	t_textures	textures;
+	t_colors		colors;
+	char				view_direction;
+}	t_assets;
+
 t_vector	*read_map(char **argv);
+t_assets	*initialize_assets(t_vector *map);
+
+/* error_handling.c */
+void	log_error_message(char *msg);
+void	error_exit_cleanup(char *msg, t_vector *map, t_assets *assets);
+
+/* free.c */
+void	free_assets_struct(t_assets *assets);
+
+/* validation.c */
+bool process_map(t_vector *map);
 
 #endif
