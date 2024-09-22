@@ -11,7 +11,7 @@ OBJ_PATH = build/
 SRC_PATH = src/
 VEC_PATH = vector/
 
-SRC_FILES = main.c parser_config.c error_handling.c free.c process_map.c
+SRC_FILES = main.c parser_config.c error_handling.c free.c process_map.c map_validation.c
 VEC_FILES = ft_realloc.c vector_create.c vector_free.c vector_methods.c vector_push_back.c
 
 CUB3D_SRC = $(addprefix $(SRC_PATH), $(SRC_FILES)) \

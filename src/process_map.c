@@ -62,6 +62,7 @@ static int	remove_empty_line(t_vector *map)
 bool	process_map(t_vector *map)
 {
 	remove_empty_line(map);
+	validate_map(map);
 	print_vector(map);
 	return (true);
 }
