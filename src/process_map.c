@@ -16,24 +16,24 @@ static bool	is_empty_string(const char *line)
 	return (true);
 }
 
-static void print_vector(t_vector *vector)
-{
-	size_t i;
+// static void print_vector_test(t_vector *vector)
+// {
+// 	size_t i;
 
-	printf("Vector contains %zu lines:\n", vector->capacity);
-	for (i = 0; i < vector->capacity; i++)
-	{
-		if (vector->symbols[i] != NULL)
-		{
-			if (is_empty_string(vector->symbols[i]))
-				printf("Line %zu: (Empty)\n", i);
-			else
-				printf("Line %zu: %s", i, vector->symbols[i]);
-		}
-		else
-			printf("Line %zu: (NULL)\n", i);
-	}
-}
+// 	printf("Vector contains %zu lines:\n", vector->capacity);
+// 	for (i = 0; i < vector->capacity; i++)
+// 	{
+// 		if (vector->symbols[i] != NULL)
+// 		{
+// 			if (is_empty_string(vector->symbols[i]))
+// 				printf("Line %zu: (Empty)\n", i);
+// 			else
+// 				printf("Line %zu: %s", i, vector->symbols[i]);
+// 		}
+// 		else
+// 			printf("Line %zu: (NULL)\n", i);
+// 	}
+// }
 static int	remove_empty_line(t_vector *map)
 {
 	size_t	i;
@@ -63,6 +63,6 @@ bool	process_map(t_vector *map)
 {
 	remove_empty_line(map);
 	validate_map(map);
-	print_vector(map);
+	vector_print(map);
 	return (true);
 }

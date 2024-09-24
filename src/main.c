@@ -63,8 +63,22 @@ int	main(int argc, char **argv)
 	printf("Floor Color: %d, %d, %d\n", assets->colors.rgb_F[0], assets->colors.rgb_F[1], assets->colors.rgb_F[2]);
 	printf("Ceiling Color: %d, %d, %d\n", assets->colors.rgb_C[0], assets->colors.rgb_C[1], assets->colors.rgb_C[2]);
 
+	printf("Original Vector:\n");
+	vector_print(map);
 
-	
+	t_vector *copied_vector = vector_copy(map);
+	if (!copied_vector)
+	{
+		fprintf(stderr, "Failed to copy vector\n");
+		vector_free(map);
+		return EXIT_FAILURE;
+	}
+
+	printf("\nCopied Vector:\n");
+	vector_print(copied_vector);
+
+
 	vector_free(map);
+	vector_free(copied_vector);
 	return (0);
 }
