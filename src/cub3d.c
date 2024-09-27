@@ -62,11 +62,16 @@ typedef struct s_keys
 
 t_keys keys = {false, false, false, false};
 
+int ft_char_to_int(char c)
+{
+    return(c - '0');
+}
+
 void castRays(t_game *game)
 {
     int map_height = game->mapGrid->capacity;
     int map_width = ft_strlen(game->mapGrid->symbols[0]);
-
+    char symbol;
     float fovRad = FOV * M_PI / 180.0f;
     float angleIncrement = fovRad / NUM_RAYS;
 
@@ -157,7 +162,8 @@ void castRays(t_game *game)
             // printf("struct___:%d\n", game->mapGrid->symbols[mapY][mapX] - '0');
             // printf("int_array__:%d\n", mapGrid[mapY][mapX]);
             // Check if ray has hit a wall
-            if (game->mapGrid->symbols[mapY][mapX] - '0' > 0)
+            symbol = game->mapGrid->symbols[mapY][mapX];
+            if (ft_char_to_int(symbol) > 0)
             {
                 hit = 1;
                 // Calculate distance to the point of impact
@@ -252,7 +258,7 @@ void castRays(t_game *game)
 void drawMap(t_game *game)
 {
     // for (int y = 0; y < MAP_HEIGHT; y++)
-    for (int y = 0; y < game->mapGrid->capacity + 1; y++)
+    for (int y = 0; y < game->mapGrid->capacity; y++)
     {
         // for (int x = 0; x < MAP_WIDTH; x++)
         for (int x = 0; x < ft_strlen(game->mapGrid->symbols[0]); x++)
@@ -404,14 +410,14 @@ bool can_move_to(float x, float y, t_game *game)
     {
         return false;
     }
-
     // Check all corners of the player's bounding box
-    if (game->mapGrid->symbols[mapY1][mapX1] - '0' > 0 || game->mapGrid->symbols[mapY1][mapX2] - '0' > 0 ||
-        game->mapGrid->symbols[mapY2][mapX1] - '0' > 0 || game->mapGrid->symbols[mapY2][mapX2] - '0' > 0)
+    if (ft_char_to_int(game->mapGrid->symbols[mapY1][mapX1]) > 0 ||
+        ft_char_to_int(game->mapGrid->symbols[mapY1][mapX2]) > 0 ||
+        ft_char_to_int(game->mapGrid->symbols[mapY2][mapX1]) > 0 ||
+        ft_char_to_int(game->mapGrid->symbols[mapY2][mapX2]) > 0)
     {
         return false;
     }
-
     return true;
 }
 
@@ -419,7 +425,8 @@ void drawMinimap(t_game *game)
 {
     int scale = 8; // Adjust the scale to make the minimap 2x bigger (from 4 to 8)
     int map_height = game->mapGrid->capacity;
-    int map_width = ft_strlen(game->mapGrid->symbols[0]);
+    int map_width = ft_strlen(game->mapGrid->symbols[0]) - 1;
+    		printf("strlen: %d\n", map_width);
     // Draw the map grid
     // for (int y = 0; y < MAP_HEIGHT; y++)
     for (int y = 0; y < map_height; y++)
@@ -427,7 +434,7 @@ void drawMinimap(t_game *game)
         for (int x = 0; x < map_width; x++)
         {
             //uint32_t color = (game->mapGrid->symbols[y][x] - '0' == 1) ? 0x888888FF : 0x222222FF;
-           uint32_t color = ((game->mapGrid->symbols[y][x]) - '0' == 1) ? 0xFF007FFF :  0xC8A2C8FF;
+           uint32_t color = (ft_char_to_int(game->mapGrid->symbols[y][x]) == 1) ? 0xFF007FFF :  0xC8A2C8FF;
 
             int tileX = x * scale;
             int tileY = y * scale;
