@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h> // For trigonometric functions
+#include "vector/vector.h"
+#include "../cub3d.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -18,48 +20,35 @@
 
 #define TILE_SIZE 32 // Size of each tile in pixels
 
-typedef struct s_player {
-    float x;
-    float y;
-    float angle;
-} t_player;
-
-typedef struct s_game {
-    mlx_t *mlx;
-    mlx_image_t *image;
-    t_player player;
-} t_game;
-
-
 #define MAP_WIDTH 24
 #define MAP_HEIGHT 24
 
-int mapGrid[MAP_HEIGHT][MAP_WIDTH] = {
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1},
-    {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1},
-    {1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1},
-    {1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,0,1,0,1,1,1,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,0,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-    {1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-};
+// int mapGrid[MAP_HEIGHT][MAP_WIDTH] = {
+//     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+//     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+//     {1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1},
+//     {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1},
+//     {1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1},
+//     {1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,0,1,0,1,1,1,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,0,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
+//     {1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1},
+//     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+// };
 
 typedef struct s_keys
 {
@@ -75,6 +64,9 @@ t_keys keys = {false, false, false, false};
 
 void castRays(t_game *game)
 {
+    int map_height = game->mapGrid->capacity;
+    int map_width = ft_strlen(game->mapGrid->symbols[0]);
+
     float fovRad = FOV * M_PI / 180.0f;
     float angleIncrement = fovRad / NUM_RAYS;
 
@@ -154,16 +146,18 @@ void castRays(t_game *game)
             }
 
             // Check if ray has gone out of bounds
-            if (mapX < 0 || mapX >= MAP_WIDTH || mapY < 0 || mapY >= MAP_HEIGHT)
+            if (mapX < 0 || mapX >= map_width || mapY < 0 || mapY >= map_height)
             {
                 // Ray is out of bounds
                 perpWallDist = MAX_VIEW_DISTANCE;
                 hit = 2; // No wall hit within view distance
                 break;
             }
-
+            // printf("struct___:%d\n", (int)(game->mapGrid->symbols[2][4]));
+            // printf("struct___:%d\n", game->mapGrid->symbols[mapY][mapX] - '0');
+            // printf("int_array__:%d\n", mapGrid[mapY][mapX]);
             // Check if ray has hit a wall
-            if (mapGrid[mapY][mapX] > 0)
+            if (game->mapGrid->symbols[mapY][mapX] - '0' > 0)
             {
                 hit = 1;
                 // Calculate distance to the point of impact
@@ -257,11 +251,13 @@ void castRays(t_game *game)
 
 void drawMap(t_game *game)
 {
-    for (int y = 0; y < MAP_HEIGHT; y++)
+    // for (int y = 0; y < MAP_HEIGHT; y++)
+    for (int y = 0; y < game->mapGrid->capacity + 1; y++)
     {
-        for (int x = 0; x < MAP_WIDTH; x++)
+        // for (int x = 0; x < MAP_WIDTH; x++)
+        for (int x = 0; x < ft_strlen(game->mapGrid->symbols[0]); x++)
         {
-            uint32_t color = (mapGrid[y][x] == 1) ? 0xFFFFFFFF : 0x000000FF; // White for walls, black for empty space
+            uint32_t color = (game->mapGrid->symbols[y][x] - '0' == 1) ? 0xFFFFFFFF : 0x000000FF; // White for walls, black for empty space
             int tileX = x * TILE_SIZE;
             int tileY = y * TILE_SIZE;
 
@@ -345,6 +341,8 @@ void key_press(mlx_key_data_t keydata, void *param)
         if (keydata.key == MLX_KEY_RIGHT)
             keys.right = false;
     }
+
+    printf("W: %d, A: %d, S: %d, D: %d, Left: %d, Right: %d\n", keys.w, keys.a, keys.s, keys.d, keys.left, keys.right);
 }
 
 
@@ -391,8 +389,10 @@ void clear_image(mlx_image_t *image, uint32_t color)
     }
 }
 
-bool can_move_to(float x, float y)
+bool can_move_to(float x, float y, t_game *game)
 {
+    int map_height = game->mapGrid->capacity;
+    int map_width = ft_strlen(game->mapGrid->symbols[0]);
     float radius = 2.0f; // Adjust the radius as needed
     int mapX1 = (int)((x - radius) / TILE_SIZE);
     int mapY1 = (int)((y - radius) / TILE_SIZE);
@@ -400,14 +400,14 @@ bool can_move_to(float x, float y)
     int mapY2 = (int)((y + radius) / TILE_SIZE);
 
     // Check for out-of-bounds
-    if (mapX1 < 0 || mapX2 >= MAP_WIDTH || mapY1 < 0 || mapY2 >= MAP_HEIGHT)
+    if (mapX1 < 0 || mapX2 >= map_width || mapY1 < 0 || mapY2 >= map_height)
     {
         return false;
     }
 
     // Check all corners of the player's bounding box
-    if (mapGrid[mapY1][mapX1] > 0 || mapGrid[mapY1][mapX2] > 0 ||
-        mapGrid[mapY2][mapX1] > 0 || mapGrid[mapY2][mapX2] > 0)
+    if (game->mapGrid->symbols[mapY1][mapX1] - '0' > 0 || game->mapGrid->symbols[mapY1][mapX2] - '0' > 0 ||
+        game->mapGrid->symbols[mapY2][mapX1] - '0' > 0 || game->mapGrid->symbols[mapY2][mapX2] - '0' > 0)
     {
         return false;
     }
@@ -418,13 +418,16 @@ bool can_move_to(float x, float y)
 void drawMinimap(t_game *game)
 {
     int scale = 8; // Adjust the scale to make the minimap 2x bigger (from 4 to 8)
-
+    int map_height = game->mapGrid->capacity;
+    int map_width = ft_strlen(game->mapGrid->symbols[0]);
     // Draw the map grid
-    for (int y = 0; y < MAP_HEIGHT; y++)
+    // for (int y = 0; y < MAP_HEIGHT; y++)
+    for (int y = 0; y < map_height; y++)
     {
-        for (int x = 0; x < MAP_WIDTH; x++)
+        for (int x = 0; x < map_width; x++)
         {
-            uint32_t color = (mapGrid[y][x] == 1) ? 0x888888FF : 0x222222FF;
+            //uint32_t color = (game->mapGrid->symbols[y][x] - '0' == 1) ? 0x888888FF : 0x222222FF;
+           uint32_t color = ((game->mapGrid->symbols[y][x]) - '0' == 1) ? 0xFF007FFF :  0xC8A2C8FF;
 
             int tileX = x * scale;
             int tileY = y * scale;
@@ -513,14 +516,14 @@ void drawMinimap(t_game *game)
             int mapY = (int)(rayY / TILE_SIZE);
 
             // Check if ray is out of bounds
-            if (mapX < 0 || mapX >= MAP_WIDTH || mapY < 0 || mapY >= MAP_HEIGHT)
+            if (mapX < 0 || mapX >= map_height || mapY < 0 || mapY >= map_width)
             {
                 hit = 1;
                 break;
             }
 
             // Check if the ray has hit a wall
-            if (mapGrid[mapY][mapX] > 0)
+            if ((game->mapGrid->symbols[mapY][mapX]) - '0' > 0)
             {
                 hit = 1;
                 break;
@@ -609,8 +612,8 @@ void update(void *param)
     float newY = game->player.y + moveY;
 
     // Wall sliding collision detection with collision buffer
-    bool canMoveX = can_move_to(newX, game->player.y);
-    bool canMoveY = can_move_to(game->player.x, newY);
+    bool canMoveX = can_move_to(newX, game->player.y, game);
+    bool canMoveY = can_move_to(game->player.x, newY, game);
 
     // Update positions based on collision detection
     if (canMoveX)
@@ -631,8 +634,8 @@ void update(void *param)
 }
 
 
-
-int main(void)
+int raycast_engine(t_vector *map, t_assets *assets)
+//int raycast_engine(void)
 {
     t_game game;
 
@@ -666,7 +669,9 @@ int main(void)
     game.player.x = TILE_SIZE * 1.5f; // Center of the tile
     game.player.y = TILE_SIZE * 1.5f;
     game.player.angle = 0.0f; // Angle in radians
-
+    game.mapGrid = map;
+    printf("game__raycastengine%c\n", map->symbols[4][2]); 
+    printf("game__raycastengine:%c\n", game.mapGrid->symbols[4][2]);
     // Register the update function
     mlx_loop_hook(game.mlx, &update, &game);
 

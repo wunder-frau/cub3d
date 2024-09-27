@@ -4,14 +4,14 @@ MLX42_PATH = MLX42
 LIBFT_PATH = libft
 LIBFT = $(LIBFT_PATH)/libft.a
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address -I $(MLX42_PATH)/include -I $(LIBFT_PATH)
+CFLAGS = -g -fsanitize=address -I $(MLX42_PATH)/include -I $(LIBFT_PATH)
 LDFLAGS = -L $(MLX42_PATH)/build -lmlx42 -lglfw -ldl -L $(LIBFT_PATH) -lft -fsanitize=address
 
 OBJ_PATH = build/
 SRC_PATH = src/
 VEC_PATH = vector/
 
-SRC_FILES = main.c parser_config.c error_handling.c free.c process_map.c map_validation.c
+SRC_FILES = main.c parser_config.c error_handling.c free.c process_map.c map_validation.c cub3d.c
 VEC_FILES = ft_realloc.c vector_create.c vector_free.c vector_methods.c vector_push_back.c vector_copy.c vector_print.c
 
 CUB3D_SRC = $(addprefix $(SRC_PATH), $(SRC_FILES)) \
