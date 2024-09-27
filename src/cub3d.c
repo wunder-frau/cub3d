@@ -433,8 +433,8 @@ void drawMinimap(t_game *game)
     {
         for (int x = 0; x < map_width; x++)
         {
-            //uint32_t color = (game->mapGrid->symbols[y][x] - '0' == 1) ? 0x888888FF : 0x222222FF;
-           uint32_t color = (ft_char_to_int(game->mapGrid->symbols[y][x]) == 1) ? 0xFF007FFF :  0xC8A2C8FF;
+            uint32_t color = (ft_char_to_int(game->mapGrid->symbols[y][x]) == 1) ? 0x888888FF : 0x222222FF;
+           //uint32_t color = (ft_char_to_int(game->mapGrid->symbols[y][x]) == 1) ? 0xFF007FFF :  0xC8A2C8FF;
 
             int tileX = x * scale;
             int tileY = y * scale;
