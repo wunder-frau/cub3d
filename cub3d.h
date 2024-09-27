@@ -28,6 +28,19 @@ typedef struct s_assets
 	char				view_direction;
 }	t_assets;
 
+typedef struct s_player {
+    float x;
+    float y;
+    float angle;
+} t_player;
+
+typedef struct s_game {
+    mlx_t *mlx;
+    mlx_image_t *image;
+    t_player player;
+    t_vector *mapGrid;
+} t_game;
+
 t_vector	*read_map(char **argv);
 t_assets	*initialize_assets(t_vector *map);
 
@@ -43,4 +56,6 @@ bool process_map(t_vector *map);
 
 bool	validate_map(t_vector *map);
 
+int raycast_engine(t_vector *map, t_assets *assets);
+//int raycast_engine(void);
 #endif
