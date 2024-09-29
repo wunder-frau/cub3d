@@ -116,7 +116,13 @@ int main(int argc, char **argv) {
 		//printf("game__:%c\n", game.mapGrid->symbols[4][2]);
     // Initialize the game structure (including mlx, image, player)
     //init_game(&game, assets); // Assume init_game takes assets as an argument to setup the game
-
+		printf("hell__________________\n");
+		
+		if (find_player_pos(map)) {
+        printf("Player found at}}}}}}}}}}}}}}}}}}}}}\n");
+    } else {
+        printf("Player not found.\n");
+    }
     // Start the raycasting engine or main game loop
     raycast_engine(map, assets); // Pass the game structure to the raycasting engine
 		//raycast_engine();

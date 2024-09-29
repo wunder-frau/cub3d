@@ -57,5 +57,7 @@ bool process_map(t_vector *map);
 bool	validate_map(t_vector *map);
 
 int raycast_engine(t_vector *map, t_assets *assets);
-//int raycast_engine(void);
+
+int find_player_pos(t_vector *map) ;
+
 #endif

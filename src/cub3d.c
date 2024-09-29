@@ -426,7 +426,7 @@ void drawMinimap(t_game *game)
     int scale = 8; // Adjust the scale to make the minimap 2x bigger (from 4 to 8)
     int map_height = game->mapGrid->capacity;
     int map_width = ft_strlen(game->mapGrid->symbols[0]) - 1;
-    		printf("strlen: %d\n", map_width);
+    		//printf("strlen: %d\n", map_width);
     // Draw the map grid
     // for (int y = 0; y < MAP_HEIGHT; y++)
     for (int y = 0; y < map_height; y++)
