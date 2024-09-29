@@ -14,11 +14,3 @@ void	vector_print(t_vector *vector)
 		i++;
 	}
 }
-
-// int	vector_line_count(t_vector *vector)
-// {
-// 	size_t i = 0;
-// 	while (i < vector->capacity)
-// 		i++;
-// 	return (i);
-// }
