@@ -86,6 +86,7 @@ t_vector	*read_map(char **argv)
 int main(int argc, char **argv) {
     t_vector *map;
     t_assets *assets;
+		t_player player;
    // t_game game; // Create an instance of your game structure
 
   	if (argc != 2)
@@ -117,9 +118,17 @@ int main(int argc, char **argv) {
     // Initialize the game structure (including mlx, image, player)
     //init_game(&game, assets); // Assume init_game takes assets as an argument to setup the game
 		printf("hell__________________\n");
-		find_player_pos(map);
+		player = find_player_pos(map);
+
+    // Check if the player was found (check for error values)
+    if (player.x == -1 && player.y == -1) {
+        // Handle player not found case
+        fprintf(stderr, "Player not found in the map.\n");
+        vector_free(map);
+        return EXIT_FAILURE;
+    }
     // Start the raycasting engine or main game loop
-    raycast_engine(map, assets); // Pass the game structure to the raycasting engine
+    raycast_engine(map, player, assets); // Pass the game structure to the raycasting engine
 		//raycast_engine();
     // Free the allocated resources
     vector_free(map); // Free the map

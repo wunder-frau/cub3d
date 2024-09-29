@@ -605,7 +605,6 @@ void update(void *param)
         moveX += cos(game->player.angle + M_PI / 2) * moveSpeed;
         moveY += sin(game->player.angle + M_PI / 2) * moveSpeed;
     }
-
     // Normalize movement vector
     float magnitude = sqrt(moveX * moveX + moveY * moveY);
     if (magnitude > 0)
@@ -641,7 +640,7 @@ void update(void *param)
 }
 
 
-int raycast_engine(t_vector *map, t_assets *assets)
+int raycast_engine(t_vector *map, t_player player, t_assets *assets)
 //int raycast_engine(void)
 {
     t_game game;
@@ -673,9 +672,10 @@ int raycast_engine(t_vector *map, t_assets *assets)
     }
 
     // Initialize player position and angle
-    game.player.x = TILE_SIZE * 1.5f; // Center of the tile
-    game.player.y = TILE_SIZE * 1.5f;
-    game.player.angle = 0.0f; // Angle in radians
+    game.player.x = player.x; // Center of the tile
+    game.player.y = player.y;
+    game.player.angle = player.angle; // Angle in radians
+     printf("Player found at: x = %.2f, y = %.2f, angle = %.2f degrees\n", player.x, player.y, player.angle);
     game.mapGrid = map;
     printf("game__raycastengine%c\n", map->symbols[4][2]); 
     printf("game__raycastengine:%c\n", game.mapGrid->symbols[4][2]);

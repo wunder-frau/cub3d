@@ -7,6 +7,8 @@
 # include "fcntl.h"
 # include <stdio.h>
 
+#define TILE_SIZE 32 // Size of each tile in pixels
+
 typedef struct s_textures
 {
 	char	*path_NO;
@@ -56,8 +58,9 @@ bool process_map(t_vector *map);
 
 bool	validate_map(t_vector *map);
 
-int raycast_engine(t_vector *map, t_assets *assets);
+int raycast_engine(t_vector *map, t_player player, t_assets *assets);
 
-int find_player_pos(t_vector *map) ;
+// int find_player_pos(t_vector *map, t_player *player);
+t_player find_player_pos(t_vector *map);
 
 #endif
