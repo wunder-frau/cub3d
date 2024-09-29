@@ -23,7 +23,7 @@ int find_player_pos(t_vector *map)
 		if (col < ft_strlen(map->symbols[row]))
 		{
 			// Check for player position
-			if (map->symbols[row][col] == 'N')
+			if (ft_strchr("NSEWnsew", map->symbols[row][col]))
 			{
 				player->x = (float)col;
 				player->y = (float)row;
@@ -31,6 +31,7 @@ int find_player_pos(t_vector *map)
 				printf("Player found at: x = %.2f, y = %.2f\n", player->x, player->y);
 				return 1;
 			}
+			 error_exit_cleanup("Player not found.\n", map, NULL);
 		}
 		else
 		{
@@ -42,5 +43,3 @@ int find_player_pos(t_vector *map)
 	}
 	return 0;
 }
-
-
