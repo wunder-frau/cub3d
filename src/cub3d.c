@@ -68,26 +68,11 @@ int ft_char_to_int(char c)
 }
 
 // Function to convert RGB to uint32_t
-// uint32_t rgb_to_uint32(int r, int g, int b)
-// {
-//     // Ensure values are clamped between 0 and 255
-//     if (r < 0) r = 0; if (r > 255) r = 255;
-//     if (g < 0) g = 0; if (g > 255) g = 255;
-//     if (b < 0) b = 0; if (b > 255) b = 255;
-    
-// 		//printf("Clamped RGB values: R=%d, G=%d, B=%d\n", r, g, b);
-
-//     uint32_t color = (255 << 24) | (r << 16) | (g << 8) | b; // AARRGGBB
-    
-//     // Print the resulting uint32_t color value in hexadecimal
-//    //printf("Combined uint32_t color: 0x%08X\n", color);
-    
-//     return color;
-// }
-
-uint32_t rgb_to_uint32(int r, int g, int b)
+uint32_t	rgb_to_uint32(int rgb[3])
 {
-    return (255 << 24) | (b << 16) | (g << 8) | r; // BGRA
+	//printf("Clamped RGB values: R=%d, G=%d, B=%d\n", r, g, b);
+	//printf("Combined uint32_t color: 0x%08X\n", color);
+	return (rgb[0] << 24 | rgb[1] << 16 | rgb[2] << 8 | 255);
 }
 
 void castRays(t_game *game)
@@ -261,9 +246,11 @@ void castRays(t_game *game)
             if (y < drawStart)
             {
                 // Ceiling
-               mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->rgb.rgb_C[0], game->rgb.rgb_C[1], game->rgb.rgb_C[2]));
-              // mlx_put_pixel(game->image, ray, y, 0x333FF33);
-            }
+              // mlx_put_pixel(game->image, ray, y, 0xFFFFA500);
+           mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->rgb.rgb_C));
+              //printf("Clamped RGB values: R=%d, G=%d, B=%d\n", game->rgb.rgb_C[0], game->rgb.rgb_C[1], game->rgb.rgb_C[2]);
+          //printf("Combined uint32_t color: 0x%08X\n", color);
+           }
             else if (y >= drawStart && y <= drawEnd)
             {
                 // Wall or background
@@ -272,7 +259,7 @@ void castRays(t_game *game)
             else
             {
                 // Floor
-                mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->rgb.rgb_F[0], game->rgb.rgb_F[1], game->rgb.rgb_F[2]));
+               mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->rgb.rgb_F));
             }
         }
     }
