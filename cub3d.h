@@ -19,8 +19,8 @@ typedef struct s_textures
 
 typedef struct s_colors
 {
-	int	rgb_F[3];
 	int	rgb_C[3];
+	int	rgb_F[3];
 }	t_colors;
 
 typedef struct s_assets
@@ -41,6 +41,7 @@ typedef struct s_game {
     mlx_image_t *image;
     t_player player;
     t_vector *mapGrid;
+		t_colors rgb;
 } t_game;
 
 t_vector	*read_map(char **argv);
