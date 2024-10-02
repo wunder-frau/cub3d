@@ -67,6 +67,14 @@ int ft_char_to_int(char c)
     return(c - '0');
 }
 
+// Function to convert RGB to uint32_t
+uint32_t	rgb_to_uint32(int rgb[3])
+{
+	//printf("Clamped RGB values: R=%d, G=%d, B=%d\n", r, g, b);
+	//printf("Combined uint32_t color: 0x%08X\n", color);
+	return (rgb[0] << 24 | rgb[1] << 16 | rgb[2] << 8 | 255);
+}
+
 void castRays(t_game *game)
 {
     int map_height = game->mapGrid->capacity;
@@ -238,8 +246,11 @@ void castRays(t_game *game)
             if (y < drawStart)
             {
                 // Ceiling
-                mlx_put_pixel(game->image, ray, y, 0x333333FF);
-            }
+              // mlx_put_pixel(game->image, ray, y, 0xFFFFA500);
+           mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->assets.colors.rgb_C));
+              //printf("Clamped RGB values: R=%d, G=%d, B=%d\n", game->rgb.rgb_C[0], game->rgb.rgb_C[1], game->rgb.rgb_C[2]);
+          //printf("Combined uint32_t color: 0x%08X\n", color);
+           }
             else if (y >= drawStart && y <= drawEnd)
             {
                 // Wall or background
@@ -248,7 +259,7 @@ void castRays(t_game *game)
             else
             {
                 // Floor
-                mlx_put_pixel(game->image, ray, y, 0x777777FF);
+               mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->assets.colors.rgb_F));
             }
         }
     }
@@ -675,7 +686,16 @@ int raycast_engine(t_vector *map, t_player player, t_assets *assets)
     game.player.x = player.x; // Center of the tile
     game.player.y = player.y;
     game.player.angle = player.angle; // Angle in radians
-     printf("Player found at: x = %.2f, y = %.2f, angle = %.2f degrees\n", player.x, player.y, player.angle);
+
+		// for (int i = 0; i < 3; i++) {
+		// 		game.rgb.rgb_C[i] = assets->colors.rgb_C[i];
+		// }
+        
+        ft_memcpy(game.assets.colors.rgb_C, assets->colors.rgb_C, sizeof(assets->colors.rgb_C));
+		// ft_memcpy(game.rgb.rgb_C, assets->colors.rgb_C, sizeof(assets->colors.rgb_C));
+		ft_memcpy(game.assets.colors.rgb_F, assets->colors.rgb_F, sizeof(assets->colors.rgb_F));
+    //printf("Clamped RGB values: R=%d, G=%d, B=%d\n", game.rgb.rgb_C[0], game.rgb.rgb_C[1], game.rgb.rgb_C[2]);
+		printf("Player found at: x = %.2f, y = %.2f, angle = %.2f degrees\n", player.x, player.y, player.angle);
     game.mapGrid = map;
     printf("game__raycastengine%c\n", map->symbols[4][2]); 
     printf("game__raycastengine:%c\n", game.mapGrid->symbols[4][2]);

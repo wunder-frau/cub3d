@@ -15,12 +15,16 @@ typedef struct s_textures
 	char	*path_SO;
 	char	*path_EA;
 	char	*path_WE;
+	mlx_texture_t	*NO;
+	mlx_texture_t	*SO;
+	mlx_texture_t	*EA;
+	mlx_texture_t	*WE;
 }	t_textures;
 
 typedef struct s_colors
 {
-	int	rgb_F[3];
 	int	rgb_C[3];
+	int	rgb_F[3];
 }	t_colors;
 
 typedef struct s_assets
@@ -41,6 +45,7 @@ typedef struct s_game {
     mlx_image_t *image;
     t_player player;
     t_vector *mapGrid;
+		t_assets assets;
 } t_game;
 
 t_vector	*read_map(char **argv);
