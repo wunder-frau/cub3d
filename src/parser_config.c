@@ -129,6 +129,10 @@ t_assets	*initialize_assets(t_vector *map)
 	assets->textures.path_SO = NULL;
 	assets->textures.path_EA = NULL;
 	assets->textures.path_WE = NULL;
+	assets->textures.NO = NULL;
+	assets->textures.SO = NULL;
+	assets->textures.EA = NULL;
+	assets->textures.WE = NULL;
 	load_asset_config(map, assets);
 	load_asset_rgb(map, assets);
 	if (!process_map(map))
