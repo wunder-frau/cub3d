@@ -1,4 +1,3 @@
-
 #include "../cub3d.h"
 
 static float assign_player_angle(char symbol)

@@ -247,7 +247,7 @@ void castRays(t_game *game)
             {
                 // Ceiling
               // mlx_put_pixel(game->image, ray, y, 0xFFFFA500);
-           mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->rgb.rgb_C));
+           mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->assets.colors.rgb_C));
               //printf("Clamped RGB values: R=%d, G=%d, B=%d\n", game->rgb.rgb_C[0], game->rgb.rgb_C[1], game->rgb.rgb_C[2]);
           //printf("Combined uint32_t color: 0x%08X\n", color);
            }
@@ -259,7 +259,7 @@ void castRays(t_game *game)
             else
             {
                 // Floor
-               mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->rgb.rgb_F));
+               mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->assets.colors.rgb_F));
             }
         }
     }
@@ -690,9 +690,10 @@ int raycast_engine(t_vector *map, t_player player, t_assets *assets)
 		// for (int i = 0; i < 3; i++) {
 		// 		game.rgb.rgb_C[i] = assets->colors.rgb_C[i];
 		// }
-
-		ft_memcpy(game.rgb.rgb_C, assets->colors.rgb_C, sizeof(assets->colors.rgb_C));
-		ft_memcpy(game.rgb.rgb_F, assets->colors.rgb_F, sizeof(assets->colors.rgb_F));
+        
+        ft_memcpy(game.assets.colors.rgb_C, assets->colors.rgb_C, sizeof(assets->colors.rgb_C));
+		// ft_memcpy(game.rgb.rgb_C, assets->colors.rgb_C, sizeof(assets->colors.rgb_C));
+		ft_memcpy(game.assets.colors.rgb_F, assets->colors.rgb_F, sizeof(assets->colors.rgb_F));
     //printf("Clamped RGB values: R=%d, G=%d, B=%d\n", game.rgb.rgb_C[0], game.rgb.rgb_C[1], game.rgb.rgb_C[2]);
 		printf("Player found at: x = %.2f, y = %.2f, angle = %.2f degrees\n", player.x, player.y, player.angle);
     game.mapGrid = map;
