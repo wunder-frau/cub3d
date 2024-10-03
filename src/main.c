@@ -63,25 +63,25 @@ int main(int argc, char **argv)
 	}
 
 	// Print out the asset information for verification
-	printf("North Texture: %s\n", assets->textures.path_NO);
-	printf("South Texture: %s\n", assets->textures.path_SO);
-	printf("East Texture: %s\n", assets->textures.path_EA);
-	printf("West Texture: %s\n", assets->textures.path_WE);
-	printf("Floor Color: %d, %d, %d\n", assets->colors.rgb_F[0], assets->colors.rgb_F[1], assets->colors.rgb_F[2]);
-	printf("Ceiling Color: %d, %d, %d\n", assets->colors.rgb_C[0], assets->colors.rgb_C[1], assets->colors.rgb_C[2]);
+	printf("N Texture: %s\n", assets->textures.path_NO);
+	printf("S Texture: %s\n", assets->textures.path_SO);
+	printf("E Texture: %s\n", assets->textures.path_EA);
+	printf("W Texture: %s\n", assets->textures.path_WE);
+	printf("F Color: %d, %d, %d\n", assets->colors.rgb_F[0], assets->colors.rgb_F[1], assets->colors.rgb_F[2]);
+	printf("C Color: %d, %d, %d\n", assets->colors.rgb_C[0], assets->colors.rgb_C[1], assets->colors.rgb_C[2]);
 
-	// printf("Original Vector   llllllllll:\n");
-	// vector_print(map);
+	//printf("Original Vector llllllllll:\n");
+	//vector_print(map);
 
-	// Pass the map to the game structure
+	//Pass the map to the game structure
 	//game.mapGrid = map; // Assign the read map to the game structure
 	//vector_print(game.mapGrid);
 	//printf("now_what_:%c\n", map->symbols[4][2]); 
 	//printf("game__:%c\n", game.mapGrid->symbols[4][2]);
-	// Initialize the game structure (including mlx, image, player)
+	//Initialize the game structure (including mlx, image, player)
 	//init_game(&game, assets); // Assume init_game takes assets as an argument to setup the game
+	
 	player = find_player_pos(map);
-
 	if (player.x == -1 && player.y == -1)
 	{
 		fprintf(stderr, "Player not found in the map.\n");
@@ -90,6 +90,6 @@ int main(int argc, char **argv)
 	}
 	raycast_engine(map, player, assets);
 	vector_free(map);
-	//free_assets(assets);
+	free_assets_struct(assets);
 	return EXIT_SUCCESS;
 }

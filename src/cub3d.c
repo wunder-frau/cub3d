@@ -11,7 +11,7 @@
 
 #define WIDTH 1200
 #define HEIGHT 800
-#define MAX_DEPTH 64 // Increase from 16 to 64
+#define MAX_DEPTH 16 // Increase from 16 to 64
 #define MAX_RENDER_DISTANCE 1000.0f // Adjust as needed
 #define MAX_VIEW_DISTANCE 600.0f 
 
@@ -19,36 +19,6 @@
 #define NUM_RAYS WIDTH // One ray per screen column
 
 #define TILE_SIZE 32 // Size of each tile in pixels
-
-#define MAP_WIDTH 24
-#define MAP_HEIGHT 24
-
-// int mapGrid[MAP_HEIGHT][MAP_WIDTH] = {
-//     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-//     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-//     {1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1},
-//     {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1},
-//     {1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1},
-//     {1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,0,1,0,1,1,1,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,0,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1},
-//     {1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1},
-//     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-// };
 
 typedef struct s_keys
 {
@@ -74,194 +44,263 @@ uint32_t	rgb_to_uint32(int rgb[3])
 	//printf("Combined uint32_t color: 0x%08X\n", color);
 	return (rgb[0] << 24 | rgb[1] << 16 | rgb[2] << 8 | 255);
 }
-
-void castRays(t_game *game)
+uint32_t applyFogEffect(uint32_t color, float perpWallDist, float maxViewDistance)
 {
-    int map_height = game->mapGrid->capacity;
-    int map_width = ft_strlen(game->mapGrid->symbols[0]);
-    char symbol;
-    float fovRad = FOV * M_PI / 180.0f;
-    float angleIncrement = fovRad / NUM_RAYS;
+    float fogFactor = perpWallDist / maxViewDistance;
+    if (fogFactor > 1.0f)
+        fogFactor = 1.0f;
 
+    // Extract RGB components from color and apply fog
+    uint8_t r = ((color >> 24) & 0xFF) * (1.0f - fogFactor);
+    uint8_t g = ((color >> 16) & 0xFF) * (1.0f - fogFactor);
+    uint8_t b = ((color >> 8) & 0xFF) * (1.0f - fogFactor);
+    uint8_t a = color & 0xFF; // Alpha stays unchanged
+
+    // Return the color with fog applied
+    return (r << 24) | (g << 16) | (b << 8) | a;
+}
+
+void initRay(t_game *game, int ray, float fovRad, float *rayAngle, float *rayDirX, float *rayDirY)
+{
+    float angleIncrement = fovRad / NUM_RAYS;
     float startAngle = game->player.angle - (fovRad / 2.0f);
+
+    // Normalize start angle within the range of 0 to 2 * PI
     if (startAngle < 0)
         startAngle += 2 * M_PI;
     if (startAngle > 2 * M_PI)
         startAngle -= 2 * M_PI;
 
+    *rayAngle = startAngle + ray * angleIncrement;
+
+    // Normalize the ray angle between 0 and 2 * PI
+    if (*rayAngle < 0)
+        *rayAngle += 2 * M_PI;
+    if (*rayAngle > 2 * M_PI)
+        *rayAngle -= 2 * M_PI;
+
+    *rayDirX = cos(*rayAngle);
+    *rayDirY = sin(*rayAngle);
+}
+
+int performDDA(t_game *game, float rayDirX, float rayDirY, int *mapX, int *mapY, int *side, float *perpWallDist)
+{
+    float deltaDistX = (rayDirX == 0) ? 1e30f : fabs(TILE_SIZE / rayDirX);
+    float deltaDistY = (rayDirY == 0) ? 1e30f : fabs(TILE_SIZE / rayDirY);
+
+    float sideDistX, sideDistY;
+    int stepX, stepY;
+
+    // Determine the step direction and initial side distances
+    if (rayDirX < 0)
+    {
+        stepX = -1;
+        sideDistX = (game->player.x - (*mapX) * TILE_SIZE) / fabs(rayDirX);
+    }
+    else
+    {
+        stepX = 1;
+        sideDistX = (((*mapX) + 1) * TILE_SIZE - game->player.x) / fabs(rayDirX);
+    }
+
+    if (rayDirY < 0)
+    {
+        stepY = -1;
+        sideDistY = (game->player.y - (*mapY) * TILE_SIZE) / fabs(rayDirY);
+    }
+    else
+    {
+        stepY = 1;
+        sideDistY = (((*mapY) + 1) * TILE_SIZE - game->player.y) / fabs(rayDirY);
+    }
+
+    int hit = 0;
+    while (hit == 0)
+    {
+        // Jump to next map square
+        if (sideDistX < sideDistY)
+        {
+            sideDistX += deltaDistX;
+            *mapX += stepX;
+            *side = 0;
+        }
+        else
+        {
+            sideDistY += deltaDistY;
+            *mapY += stepY;
+            *side = 1;
+        }
+
+        // Check if ray hits a wall
+        char symbol = game->mapGrid->symbols[*mapY][*mapX];
+        if (ft_char_to_int(symbol) > 0)
+        {
+            hit = 1;
+            if (*side == 0)
+                *perpWallDist = (sideDistX - deltaDistX);
+            else
+                *perpWallDist = (sideDistY - deltaDistY);
+        }
+        // Check if out of bounds
+        if (*perpWallDist > MAX_VIEW_DISTANCE)
+        {
+            hit = 2;
+            *perpWallDist = MAX_VIEW_DISTANCE;
+            break;
+        }
+    }
+    return hit;
+}
+
+void correctAndComputeWall(float *perpWallDist, float rayAngle, t_game *game, int *lineHeight)
+{
+    // Correct for the fish-eye effect
+    float angleDiff = rayAngle - game->player.angle;
+    if (angleDiff < -M_PI)
+        angleDiff += 2 * M_PI;
+    if (angleDiff > M_PI)
+        angleDiff -= 2 * M_PI;
+    *perpWallDist *= cos(angleDiff);
+
+    // Calculate height of the line to draw
+    //*lineHeight = (int)(HEIGHT * TILE_SIZE / (*perpWallDist));
+    *lineHeight = (int)(HEIGHT  * TILE_SIZE/ (*perpWallDist));
+    if (*lineHeight > HEIGHT)
+        *lineHeight = HEIGHT;
+    if (*lineHeight < 1)
+        *lineHeight = 1; // Prevent lineHeight from being zero or negative
+}
+
+void drawCeilingAndFloor(t_game *game, int ray, int drawStart, int drawEnd)
+{
+    // Calculate ceiling and floor colors
+    uint32_t ceilingColor = rgb_to_uint32(game->assets.colors.rgb_C); // Ceiling color
+    uint32_t floorColor = rgb_to_uint32(game->assets.colors.rgb_F); // Floor color
+
+    // Draw ceiling and floor
+    for (int y = 0; y < HEIGHT; y++)
+    {
+        if (y < drawStart)
+        {
+            // Ceiling rendering
+            mlx_put_pixel(game->image, ray, y, ceilingColor);
+        }
+        else if (y >= drawStart && y < drawEnd)
+        {
+            // Wall rendering is handled in the main casting function
+        }
+        else
+        {
+            // Floor rendering
+            mlx_put_pixel(game->image, ray, y, floorColor);
+        }
+    }
+}
+
+// Function to retrieve a color from a 2D array using x and y coordinates
+uint32_t retrieve_color_at_coordinates(int x, int y, uint32_t *arr, int tex_width)
+{
+    // Calculate the index based on the y coordinate
+    int index = y * tex_width + x;
+
+    // Check if the calculated index is within the bounds of the array
+    if (x < 0 || x >= tex_width || y < 0) {
+        fprintf(stderr, "Error: Coordinates (%d, %d) are out of bounds.\n", x, y);
+        return 0; // Return a default color (e.g., transparent or black)
+    }
+    // Retrieve the color from the array
+    return arr[index];
+}
+
+void castRays(t_game *game)
+{
+    int map_height = game->mapGrid->capacity;
+    int map_width = ft_strlen(game->mapGrid->symbols[0]);
+    float fovRad = FOV * M_PI / 180.0f;
+
+    // Clear the image first (if necessary)
+    // mlx_clear_image(game->image);
+
     for (int ray = 0; ray < NUM_RAYS; ray++)
     {
-        float rayAngle = startAngle + ray * angleIncrement;
-        if (rayAngle < 0)
-            rayAngle += 2 * M_PI;
-        if (rayAngle > 2 * M_PI)
-            rayAngle -= 2 * M_PI;
+        // Ray Initialization
+        float rayAngle, rayDirX, rayDirY;
+        initRay(game, ray, fovRad, &rayAngle, &rayDirX, &rayDirY);
 
-        // DDA algorithm initialization
-        float rayDirX = cos(rayAngle);
-        float rayDirY = sin(rayAngle);
-
+        // Player position in grid coordinates
         int mapX = (int)(game->player.x / TILE_SIZE);
         int mapY = (int)(game->player.y / TILE_SIZE);
 
-        // Calculate deltaDistX and deltaDistY
-        float deltaDistX = (rayDirX == 0) ? 1e30f : fabs(TILE_SIZE / rayDirX);
-        float deltaDistY = (rayDirY == 0) ? 1e30f : fabs(TILE_SIZE / rayDirY);
+        // Perform DDA algorithm to detect walls
+        int side;
+        float perpWallDist;
+        int hit = performDDA(game, rayDirX, rayDirY, &mapX, &mapY, &side, &perpWallDist);
 
-        float sideDistX;
-        float sideDistY;
+        // Correct for fish-eye effect and calculate line height
+        int lineHeight;
+        correctAndComputeWall(&perpWallDist, rayAngle, game, &lineHeight);
 
-        int stepX;
-        int stepY;
-
-        // Calculate step and initial sideDist
-        if (rayDirX < 0)
-        {
-            stepX = -1;
-            sideDistX = (game->player.x - mapX * TILE_SIZE) / fabs(rayDirX);
-        }
-        else
-        {
-            stepX = 1;
-            sideDistX = ((mapX + 1) * TILE_SIZE - game->player.x) / fabs(rayDirX);
-        }
-
-        if (rayDirY < 0)
-        {
-            stepY = -1;
-            sideDistY = (game->player.y - mapY * TILE_SIZE) / fabs(rayDirY);
-        }
-        else
-        {
-            stepY = 1;
-            sideDistY = ((mapY + 1) * TILE_SIZE - game->player.y) / fabs(rayDirY);
-        }
-
-        // Perform DDA
-        int hit = 0; // Was there a wall hit?
-        int side = 0; // Was a NS or EW wall hit?
-        float perpWallDist = 0.0f;
-
-        while (hit == 0)
-        {
-            // Jump to next map square, either in x-direction or y-direction
-            if (sideDistX < sideDistY)
-            {
-                sideDistX += deltaDistX;
-                mapX += stepX;
-                side = 0;
-            }
-            else
-            {
-                sideDistY += deltaDistY;
-                mapY += stepY;
-                side = 1;
-            }
-
-            // Check if ray has gone out of bounds
-            if (mapX < 0 || mapX >= map_width || mapY < 0 || mapY >= map_height)
-            {
-                // Ray is out of bounds
-                perpWallDist = MAX_VIEW_DISTANCE;
-                hit = 2; // No wall hit within view distance
-                break;
-            }
-            // printf("struct___:%d\n", (int)(game->mapGrid->symbols[2][4]));
-            // printf("struct___:%d\n", game->mapGrid->symbols[mapY][mapX] - '0');
-            // printf("int_array__:%d\n", mapGrid[mapY][mapX]);
-            // Check if ray has hit a wall
-            symbol = game->mapGrid->symbols[mapY][mapX];
-            if (ft_char_to_int(symbol) > 0)
-            {
-                hit = 1;
-                // Calculate distance to the point of impact
-                if (side == 0)
-                    perpWallDist = (sideDistX - deltaDistX);
-                else
-                    perpWallDist = (sideDistY - deltaDistY);
-            }
-
-            // Check if the ray has exceeded the maximum view distance
-            if (perpWallDist > MAX_VIEW_DISTANCE)
-            {
-                hit = 2; // No wall hit within view distance
-                perpWallDist = MAX_VIEW_DISTANCE;
-                break;
-            }
-        }
-
-        // Correct for fish-eye effect
-        float angleDiff = rayAngle - game->player.angle;
-        if (angleDiff < -M_PI)
-            angleDiff += 2 * M_PI;
-        if (angleDiff > M_PI)
-            angleDiff -= 2 * M_PI;
-        perpWallDist *= cos(angleDiff);
-
-        // Calculate height of line to draw
-        int lineHeight = (int)(HEIGHT * TILE_SIZE / perpWallDist);
-        if (lineHeight > HEIGHT)
-            lineHeight = HEIGHT;
-        if (lineHeight < 1)
-            lineHeight = 1; // Prevent lineHeight from being zero or negative
-
-        // Calculate lowest and highest pixel to fill in current stripe
+        // Calculate draw positions
         int drawStart = -lineHeight / 2 + HEIGHT / 2;
-        if (drawStart < 0)
-            drawStart = 0;
+        if (drawStart < 0) drawStart = 0;
         int drawEnd = lineHeight / 2 + HEIGHT / 2;
-        if (drawEnd >= HEIGHT)
-            drawEnd = HEIGHT - 1;
+        if (drawEnd >= HEIGHT) drawEnd = HEIGHT - 1;
 
-        // Choose wall color
-        uint32_t color;
-        if (hit == 1)
+        // Choose wall texture based on the side of the hit
+        mlx_texture_t *texture;
+        if (side == 0) // North/South wall
         {
-            if (side == 0)
-                color = 0xFF0000FF; // Red for x-side walls
-            else
-                color = 0x00FF00FF; // Green for y-side walls
-
-            // Apply fog effect
-            float fogFactor = perpWallDist / MAX_VIEW_DISTANCE;
-            if (fogFactor > 1.0f)
-                fogFactor = 1.0f;
-
-            // Apply fog to color
-            uint8_t r = ((color >> 24) & 0xFF) * (1.0f - fogFactor);
-            uint8_t g = ((color >> 16) & 0xFF) * (1.0f - fogFactor);
-            uint8_t b = ((color >> 8) & 0xFF) * (1.0f - fogFactor);
-            uint8_t a = color & 0xFF;
-            color = (r << 24) | (g << 16) | (b << 8) | a;
+            texture = (rayDirX < 0) ? game->assets.textures.WE : game->assets.textures.EA;
         }
-        else
+        else // East/West wall
         {
-            // No wall hit within view distance, use background color
-            color = 0x000000FF; // Black
+            texture = (rayDirY < 0) ? game->assets.textures.SO : game->assets.textures.NO;
         }
 
-        // Draw the vertical line with floor and ceiling
-        for (int y = 0; y < HEIGHT; y++)
+        // Calculate the texture coordinate based on where the ray hit the wall
+        float wallX; // where the wall was hit
+        if (side == 0) // North/South wall
+            wallX = game->player.y + perpWallDist * rayDirY;
+        else // East/West wall
+            wallX = game->player.x + perpWallDist * rayDirX;
+
+        wallX -= floor(wallX); // get the fractional part (texture coord)
+
+        // Calculate texture X coordinate
+        int texX = (int)(wallX * (float)texture->width);
+        if (side == 0 && rayDirX > 0) // correct for direction of the ray
+            texX = texture->width - texX - 1;
+        if (side == 1 && rayDirY < 0) // correct for direction of the ray
+            texX = texture->width - texX - 1;
+
+        // Calculate scaling factor once for this column
+        // Calculate the scaling factor for texture mapping
+        // Calculate scaling factor once for this column
+        float scaling_factor = (float)texture->height / lineHeight;
+
+        // Calculate initial texture position
+        float texture_position = (drawStart - HEIGHT / 2 + lineHeight \
+                / 2) * scaling_factor; // adjust this to your needs
+
+        // Draw the texture on the wall slice
+        for (int y = drawStart; y < drawEnd; y++)
         {
-            if (y < drawStart)
-            {
-                // Ceiling
-              // mlx_put_pixel(game->image, ray, y, 0xFFFFA500);
-           mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->assets.colors.rgb_C));
-              //printf("Clamped RGB values: R=%d, G=%d, B=%d\n", game->rgb.rgb_C[0], game->rgb.rgb_C[1], game->rgb.rgb_C[2]);
-          //printf("Combined uint32_t color: 0x%08X\n", color);
-           }
-            else if (y >= drawStart && y <= drawEnd)
-            {
-                // Wall or background
-                mlx_put_pixel(game->image, ray, y, color);
-            }
-            else
-            {
-                // Floor
-               mlx_put_pixel(game->image, ray, y, rgb_to_uint32(game->assets.colors.rgb_F));
-            }
+            // Calculate the texture Y-coordinate, wrapping correctly
+            int texY = (int)texture_position % (texture->height - 1);
+            // Increment texture position
+            texture_position += scaling_factor;
+            // Fetch the pixel color from the texture using texX and texY
+            uint32_t color = retrieve_color_at_coordinates(texX, texY, (uint32_t *)texture->pixels, texture->width);
+
+            // Optional color manipulation (fog, shading, etc.)
+            color = (color << 24) | (((color >> 16) << 24) >> 16) | \
+                    (((color << 16) >> 24) << 16) | (color >> 24);
+
+            // Draw the pixel on the screen
+            mlx_put_pixel(game->image, ray, y, color);
         }
+        // Call the separate function to draw ceiling and floor
+        drawCeilingAndFloor(game, ray, drawStart, drawEnd);
     }
 }
 
@@ -650,67 +689,121 @@ void update(void *param)
     drawMinimap(game);
 }
 
-
-int raycast_engine(t_vector *map, t_player player, t_assets *assets)
-//int raycast_engine(void)
+mlx_texture_t *load_texture(const char *path)
 {
-    t_game game;
+    mlx_texture_t *texture = mlx_load_png(path);
+    printf("path_____%s\n", path);
+    if (!texture)
+    {
+        ft_putstr_fd("Failed to load texture: ", 2);
+        ft_putstr_fd(path, 2);
+        ft_putstr_fd("\n", 2);
+    }
+    return texture;
+}
+
+t_assets *initialize_ass(t_vector *map, t_assets *assets)
+{
+    // t_assets *assets = malloc(sizeof(t_assets));
+    // if (!assets)
+    //     return NULL;
+
+    // Initialize paths (assuming paths are already assigned to the assets->textures)
+    assets->textures.NO = load_texture(assets->textures.path_NO);
+    assets->textures.SO = load_texture(assets->textures.path_SO);
+    assets->textures.EA = load_texture(assets->textures.path_EA);
+    assets->textures.WE = load_texture(assets->textures.path_WE);
+
+    // Check if any texture failed to load
+    if (!assets->textures.NO || !assets->textures.SO || !assets->textures.EA || !assets->textures.WE)
+    {
+        ft_putstr_fd("Failed to load all required textures\n", 2);
+        free_assets_struct(assets);  // Function to free loaded assets
+        return NULL;
+    }
+
+    // Continue initializing other assets (colors, etc.)
+    // ...
+
+    return assets;
+}
+
+// Function to initialize the game structure
+t_game *initialize_game(t_vector *map, t_player player, t_assets *assets) {
+    t_game *game = malloc(sizeof(t_game));
+    if (!game)
+        return NULL;
 
     // Initialize MLX42
-    game.mlx = mlx_init(WIDTH, HEIGHT, "CUB 3D", true);
-    if (!game.mlx)
+    game->mlx = mlx_init(WIDTH, HEIGHT, "CUB 3D", true);
+    if (!game->mlx)
     {
-        fprintf(stderr, "Failed to initialize MLX42.\n");
-        return EXIT_FAILURE;
+        ft_putstr_fd("Failed to initialize MLX42\n", 2);
+        free(game);
+        return NULL;
     }
 
     // Create an image
-    game.image = mlx_new_image(game.mlx, WIDTH, HEIGHT);
-    if (!game.image)
+    game->image = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+    if (!game->image)
     {
-        fprintf(stderr, "Failed to create image.\n");
-        mlx_terminate(game.mlx);
-        return EXIT_FAILURE;
+        ft_putstr_fd("Failed to create image\n", 2);
+        mlx_terminate(game->mlx);
+        free(game);
+        return NULL;
     }
 
     // Attach the image to the window
-    if (mlx_image_to_window(game.mlx, game.image, 0, 0) < 0)
+    if (mlx_image_to_window(game->mlx, game->image, 0, 0) < 0)
     {
-        fprintf(stderr, "Failed to attach image to window.\n");
-        mlx_delete_image(game.mlx, game.image);
-        mlx_terminate(game.mlx);
-        return EXIT_FAILURE;
+        ft_putstr_fd("Failed to attach image to window\n", 2);
+        mlx_delete_image(game->mlx, game->image);
+        mlx_terminate(game->mlx);
+        free(game);
+        return NULL;
     }
 
     // Initialize player position and angle
-    game.player.x = player.x; // Center of the tile
-    game.player.y = player.y;
-    game.player.angle = player.angle; // Angle in radians
+    game->player.x = player.x;
+    game->player.y = player.y;
+    game->player.angle = player.angle;
+    ft_memcpy(game->assets.colors.rgb_C, assets->colors.rgb_C, sizeof(assets->colors.rgb_C));
+    ft_memcpy(game->assets.colors.rgb_F, assets->colors.rgb_F, sizeof(assets->colors.rgb_F));
+    // Initialize assets (textures, colors, etc.)
+    game->assets = *initialize_ass(map, assets);
+    if (!game->assets.textures.NO || !game->assets.textures.SO || !game->assets.textures.EA || !game->assets.textures.WE)
+    {
+        fprintf(stderr, "Failed to initialize assets or load textures.\n");
+        mlx_delete_image(game->mlx, game->image);
+        mlx_terminate(game->mlx);
+        free(game);
+        return NULL;
+    }
 
-		// for (int i = 0; i < 3; i++) {
-		// 		game.rgb.rgb_C[i] = assets->colors.rgb_C[i];
-		// }
-        
-        ft_memcpy(game.assets.colors.rgb_C, assets->colors.rgb_C, sizeof(assets->colors.rgb_C));
-		// ft_memcpy(game.rgb.rgb_C, assets->colors.rgb_C, sizeof(assets->colors.rgb_C));
-		ft_memcpy(game.assets.colors.rgb_F, assets->colors.rgb_F, sizeof(assets->colors.rgb_F));
-    //printf("Clamped RGB values: R=%d, G=%d, B=%d\n", game.rgb.rgb_C[0], game.rgb.rgb_C[1], game.rgb.rgb_C[2]);
-		printf("Player found at: x = %.2f, y = %.2f, angle = %.2f degrees\n", player.x, player.y, player.angle);
-    game.mapGrid = map;
-    printf("game__raycastengine%c\n", map->symbols[4][2]); 
-    printf("game__raycastengine:%c\n", game.mapGrid->symbols[4][2]);
-    // Register the update function
-    mlx_loop_hook(game.mlx, &update, &game);
+    // Initialize the map
+    game->mapGrid = map;
 
-    // Register the key callback
-    mlx_key_hook(game.mlx, &key_press, &game);
+    return game;
+}
+
+int raycast_engine(t_vector *map, t_player player, t_assets *assets)
+{
+    t_game *game = initialize_game(map, player, assets);
+    if (!game) {
+        return EXIT_FAILURE; // Initialization failed
+    }
+
+    // Register the update function and key press hook
+    mlx_loop_hook(game->mlx, &update, game);
+    mlx_key_hook(game->mlx, &key_press, game);
 
     // Start the MLX42 loop
-    mlx_loop(game.mlx);
+    mlx_loop(game->mlx);
 
-    // Clean up resources after the loop ends
-    mlx_delete_image(game.mlx, game.image);
-    mlx_terminate(game.mlx);
+    // Clean up resources
+    mlx_delete_image(game->mlx, game->image);
+    mlx_terminate(game->mlx);
+    free(game); // Don't forget to free the game struct
 
     return EXIT_SUCCESS;
 }
