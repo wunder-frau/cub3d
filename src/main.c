@@ -42,6 +42,11 @@ t_vector	*read_map(char **argv)
 		}
 	}
 	close(map_fd);
+	// If no lines were read, the map is empty
+	if (map->capacity == 0)
+	{
+		error_exit_cleanup("Map data is missing or empty.", map, NULL);
+	}
 	return (map);
 }
 
@@ -61,7 +66,11 @@ int main(int argc, char **argv)
 		vector_free(map);
 		return EXIT_FAILURE;
 	}
-
+	if (!validate_map(map, assets))
+	{
+			error_exit_cleanup("Map validation failed", map, assets);
+			return EXIT_FAILURE;
+	}
 	// Print out the asset information for verification
 	printf("N Texture: %s\n", assets->textures.path_NO);
 	printf("S Texture: %s\n", assets->textures.path_SO);

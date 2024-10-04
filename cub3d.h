@@ -61,7 +61,7 @@ void	free_assets_struct(t_assets *assets);
 /* validation.c */
 bool process_map(t_vector *map);
 
-bool	validate_map(t_vector *map);
+bool validate_map(t_vector *map, t_assets *assets);
 
 int raycast_engine(t_vector *map, t_player player, t_assets *assets);
 
