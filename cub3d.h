@@ -68,4 +68,6 @@ int raycast_engine(t_vector *map, t_player player, t_assets *assets);
 // int find_player_pos(t_vector *map, t_player *player);
 t_player find_player_pos(t_vector *map);
 
+void cleanup(t_game *game);
+
 #endif
