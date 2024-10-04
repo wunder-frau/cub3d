@@ -10,8 +10,10 @@ CC = gcc
 UNAME_S := $(shell uname -s)
 
 # Default CFLAGS and LDFLAGS
-CFLAGS = -g -fsanitize=address -I $(MLX42_PATH)/include -I $(LIBFT_PATH)
-LDFLAGS = -fsanitize=address
+# CFLAGS = -g -fsanitize=address -I $(MLX42_PATH)/include -I $(LIBFT_PATH)
+# LDFLAGS = -fsanitize=address
+CFLAGS = -g -I $(MLX42_PATH)/include -I $(LIBFT_PATH)
+# LDFLAGS = -fsanitize=address
 
 # Adjust CFLAGS and LDFLAGS based on OS
 ifeq ($(UNAME_S),Linux)
