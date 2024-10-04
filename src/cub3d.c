@@ -718,7 +718,8 @@ t_assets *initialize_ass(t_vector *map, t_assets *assets)
     if (!assets->textures.NO || !assets->textures.SO || !assets->textures.EA || !assets->textures.WE)
     {
         ft_putstr_fd("Failed to load all required textures\n", 2);
-        free_assets_struct(assets);  // Function to free loaded assets
+        //free_assets_struct(assets);  // Function to free loaded assets
+        error_exit_cleanup("Map validation failed", map, assets);
         return NULL;
     }
 

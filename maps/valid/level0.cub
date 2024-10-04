@@ -1,4 +1,4 @@
-NO                    ./textures/42_N.png
+NO ./textures/42_N.png
 SO ./textures/42_S.png
 EA ./textures/42_E.png
 WE ./textures/42_W.png
