@@ -31,10 +31,10 @@ mlx_texture_t	*load_texture(const char *path)
 	if (!texture)
 	{
 		ft_putstr_fd("Failed to load texture: ", 2);
-		ft_putstr_fd(path, 2);
+		ft_putstr_fd((char *)path, 2);
 		ft_putstr_fd("\n", 2);
 	}
-	return texture;
+	return (texture);
 }
 
 int	initialize_ass(t_vector *map, t_assets *assets)
