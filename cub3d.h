@@ -5,25 +5,24 @@
 # include "MLX42/include/MLX42/MLX42.h"
 # include "../src/vector/vector.h"
 # include <fcntl.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <math.h>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+# ifndef M_PI
+#  define M_PI 3.14159265358979323846
+# endif
 
-#define WIDTH 1200
-#define HEIGHT 800
-#define MAX_DEPTH 16 // Increase from 16 to 64
-#define MAX_RENDER_DISTANCE 1000.0f // Adjust as needed
-#define MAX_VIEW_DISTANCE 600.0f 
+# define WIDTH 1200
+# define HEIGHT 800
+# define MAX_DEPTH 16 // Increase from 16 to 64
+# define MAX_RENDER_DISTANCE 1000.0f // Adjust as needed
+# define MAX_VIEW_DISTANCE 600.0f 
 
-#define FOV 75 // Field of View in degrees
-#define NUM_RAYS WIDTH // One ray per screen column
+# define FOV 75 // Field of View in degrees
+# define NUM_RAYS WIDTH // One ray per screen column
 
-#define TILE_SIZE 32 // Size of each tile in pixels
-#define TILE_SIZE 32 // Size of each tile in pixels
+# define TILE_SIZE 32 // Size of each tile in pixels
 
 typedef struct s_textures
 {
