@@ -13,11 +13,19 @@ static float assign_player_angle(char symbol)
 	return 0.0f;
 }
 
+static bool is_player_symbol(char c)
+{
+	return (c == 'N' || c == 'n' ||
+					c == 'S' || c == 's' ||
+					c == 'E' || c == 'e' ||
+					c == 'W' || c == 'w');
+}
+
 /**
  * Function to find the player position in the map
  */
 
-t_player find_player_pos(t_vector *map)
+t_player	find_player_pos(t_vector *map)
 {
 	t_player player = {0};
 	size_t row = 0;
@@ -25,36 +33,33 @@ t_player find_player_pos(t_vector *map)
 
 	if (map == NULL || map->symbols == NULL)
 	{
-		fprintf(stderr, "Error: map or symbols not initialized.\n");
-		player.x = -1;
-		player.y = -1;
-		player.angle = -1.0f;
-		return player;
+			fprintf(stderr, "Error: map or symbols not initialized.\n");
+			player.x = -1;
+			player.y = -1;
+			player.angle = -1.0f;
+			return player;
 	}
 	while (row < map->length)
 	{
-		if (col < ft_strlen(map->symbols[row]))
+		col = 0;
+		while (col < ft_strlen(map->symbols[row]))
 		{
 			char current_symbol = map->symbols[row][col];
-			if (ft_strchr("NSEWnsew", current_symbol))
+			if (is_player_symbol(current_symbol))
 			{
-				player.x = (float)col * (TILE_SIZE / 2.0f);
-				player.y = (float)row * (TILE_SIZE / 2.0f);
+				player.x = (float)col * TILE_SIZE + (TILE_SIZE / 2.0f);
+				player.y = (float)row * TILE_SIZE + (TILE_SIZE / 2.0f);
 				player.angle = assign_player_angle(current_symbol);
-				return player;
+				printf("player_pos:__%.2f, %.2f\n", player.x, player.y);
+				return (player);
 			}
-			}
-			else
-			{
-				row++;
-				col = 0;
-				continue;
-			}
-		col++;
+			col++;
+		}
+		row++;
 	}
 	player.x = -1;
 	player.y = -1;
 	player.angle = -1.0f;
 	fprintf(stderr, "Error: Player not found in the map.\n");
-	return player;
+	return (player);
 }
