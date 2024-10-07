@@ -453,133 +453,145 @@ bool can_move_to(float x, float y, t_game *game)
 
 void drawMinimap(t_game *game)
 {
-	int scale = 8; // Adjust the scale to make the minimap 2x bigger (from 4 to 8)
-	int map_height = game->mapGrid->capacity;
-	int map_width = ft_strlen(game->mapGrid->symbols[0]) - 1;
-	//printf("strlen: %d\n", map_width);
-	// Draw the map grid
-	// for (int y = 0; y < MAP_HEIGHT; y++)
-	for (int y = 0; y < map_height; y++)
-	{
-		for (int x = 0; x < map_width; x++)
-		{
-			uint32_t color = (ft_char_to_int(game->mapGrid->symbols[y][x]) == 1) ? 0x888888FF : 0x222222FF;
-			//uint32_t color = (ft_char_to_int(game->mapGrid->symbols[y][x]) == 1) ? 0xFF007FFF :  0xC8A2C8FF;
-			int tileX = x * scale;
-			int tileY = y * scale;
+    // Desired minimap dimensions (in pixels)
+    int minimap_width = 200; // Adjust as needed
+    int minimap_height = 200; // Adjust as needed
 
-			for (int i = 0; i < scale; i++)
-			{
-				for (int j = 0; j < scale; j++)
-				{
-					int px = tileX + i;
-					int py = tileY + j;
+    // Minimap position on the screen
+    int minimap_offset_x = 10; // Position from the left edge
+    int minimap_offset_y = 10; // Position from the top edge
 
-					if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
-					{
-						mlx_put_pixel(game->image, px, py, color);
-					}
-				}
-			}
-		}
-	}
+    int map_height = game->mapGrid->capacity;
+    int map_width = ft_strlen(game->mapGrid->symbols[0]) - 1;
 
-	// Draw the player on the minimap
-	int playerX = (int)(game->player.x / TILE_SIZE * scale);
-	int playerY = (int)(game->player.y / TILE_SIZE * scale);
+    // Calculate scale factors
+    float scaleX = (float)minimap_width / (float)map_width;
+    float scaleY = (float)minimap_height / (float)map_height;
+    float scale = (scaleX < scaleY) ? scaleX : scaleY;
 
-	// Draw the player as a small rectangle or point
-	for (int i = -2; i <= 2; i++)
-	{
-		for (int j = -2; j <= 2; j++)
-		{
-			int px = playerX + i;
-			int py = playerY + j;
+    // Draw the map grid
+    for (int y = 0; y < map_height; y++)
+    {
+        for (int x = 0; x < map_width; x++)
+        {
+            uint32_t color = (ft_char_to_int(game->mapGrid->symbols[y][x]) == 1) ? 0x888888FF : 0x222222FF;
 
-			if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
-			{
-				mlx_put_pixel(game->image, px, py, 0xFF0000FF); // Red color for the player
-			}
-		}
-	}
+            // Calculate scaled positions
+            int tileX0 = minimap_offset_x + (int)(x * scale);
+            int tileY0 = minimap_offset_y + (int)(y * scale);
+            int tileX1 = minimap_offset_x + (int)((x + 1) * scale);
+            int tileY1 = minimap_offset_y + (int)((y + 1) * scale);
 
-	// Draw the player's viewing direction
-	float dirX = cos(game->player.angle) * 5 * scale;
-	float dirY = sin(game->player.angle) * 5 * scale;
+            // Draw the tile
+            for (int py = tileY0; py < tileY1; py++)
+            {
+                for (int px = tileX0; px < tileX1; px++)
+                {
+                    if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
+                    {
+                        mlx_put_pixel(game->image, px, py, color);
+                    }
+                }
+            }
+        }
+    }
 
-	int lineEndX = playerX + (int)dirX;
-	int lineEndY = playerY + (int)dirY;
+    // Draw the player on the minimap
+    float playerX = minimap_offset_x + (game->player.x / TILE_SIZE) * scale;
+    float playerY = minimap_offset_y + (game->player.y / TILE_SIZE) * scale;
 
-	// Draw the line representing the player's viewing direction
-	draw_line(game->image, playerX, playerY, lineEndX, lineEndY, 0xFFFF00FF); // Yellow color
+    // Draw the player as a small rectangle or point
+    for (int i = -2; i <= 2; i++)
+    {
+        for (int j = -2; j <= 2; j++)
+        {
+            int px = (int)(playerX + i);
+            int py = (int)(playerY + j);
 
-	// Visualize rays on the minimap with collision detection
-	float fovRad = FOV * M_PI / 180.0f;
-	float angleIncrement = fovRad / NUM_RAYS;
-	float startAngle = game->player.angle - (fovRad / 2.0f);
+            if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
+            {
+                mlx_put_pixel(game->image, px, py, 0xFF0000FF); // Red color for the player
+            }
+        }
+    }
 
-	for (int ray = 0; ray < NUM_RAYS; ray += 10) // Skip some rays for clarity
-	{
-	float rayAngle = startAngle + ray * angleIncrement;
+    // Draw the player's viewing direction
+    float dirX = cos(game->player.angle) * 5 * scale;
+    float dirY = sin(game->player.angle) * 5 * scale;
 
-	// Normalize angle
-	if (rayAngle < 0)
-			rayAngle += 2 * M_PI;
-	if (rayAngle > 2 * M_PI)
-			rayAngle -= 2 * M_PI;
+    int lineEndX = (int)(playerX + dirX);
+    int lineEndY = (int)(playerY + dirY);
 
-	// Raycasting variables for minimap
-	float rayX = game->player.x;
-	float rayY = game->player.y;
+    // Draw the line representing the player's viewing direction
+    draw_line(game->image, (int)playerX, (int)playerY, lineEndX, lineEndY, 0xFFFF00FF); // Yellow color
 
-	float rayDirX = cos(rayAngle);
-	float rayDirY = sin(rayAngle);
+    // Visualize rays on the minimap with collision detection
+    float fovRad = FOV * M_PI / 180.0f;
+    float angleIncrement = fovRad / NUM_RAYS;
+    float startAngle = game->player.angle - (fovRad / 2.0f);
 
-	// Perform simplified DDA
-	int hit = 0;
-	float totalDistance = 0.0f;
-	float stepSize = 1.0f; // Adjust the increment as needed
+    for (int ray = 0; ray < NUM_RAYS; ray += 10) // Skip some rays for clarity
+    {
+        float rayAngle = startAngle + ray * angleIncrement;
 
-	while (!hit)
-	{
-		// Increment ray position
-		rayX += rayDirX * stepSize;
-		rayY += rayDirY * stepSize;
-		totalDistance += stepSize;
+        // Normalize angle
+        if (rayAngle < 0)
+            rayAngle += 2 * M_PI;
+        if (rayAngle > 2 * M_PI)
+            rayAngle -= 2 * M_PI;
 
-		// Calculate map coordinates
-		int mapX = (int)(rayX / TILE_SIZE);
-		int mapY = (int)(rayY / TILE_SIZE);
+        // Raycasting variables for minimap
+        float rayX = game->player.x;
+        float rayY = game->player.y;
 
-		// Check if ray is out of bounds
-		if (mapX < 0 || mapX >= map_height || mapY < 0 || mapY >= map_width)
-		{
-			hit = 1;
-			break;
-		}
+        float rayDirX = cos(rayAngle);
+        float rayDirY = sin(rayAngle);
 
-		// Check if the ray has hit a wall
-		if ((game->mapGrid->symbols[mapY][mapX]) - '0' > 0)
-		{
-			hit = 1;
-			break;
-		}
+        // Perform simplified DDA
+        int hit = 0;
+        float totalDistance = 0.0f;
+        float stepSize = 1.0f; // Adjust the increment as needed
 
-		// Check if the ray has reached maximum view distance
-		if (totalDistance >= MAX_VIEW_DISTANCE)
-		{
-			hit = 1;
-			break;
-		}
-	}
+        while (!hit)
+        {
+            // Increment ray position
+            rayX += rayDirX * stepSize;
+            rayY += rayDirY * stepSize;
+            totalDistance += stepSize;
 
-	// Scale to minimap
-	int endMinimapX = (int)(rayX / TILE_SIZE * scale);
-	int endMinimapY = (int)(rayY / TILE_SIZE * scale);
+            // Calculate map coordinates
+            int mapX = (int)(rayX / TILE_SIZE);
+            int mapY = (int)(rayY / TILE_SIZE);
 
-	// Draw the ray on the minimap
-	draw_line(game->image, playerX, playerY, endMinimapX, endMinimapY, 0x0000FFFF); // Blue color
-	}
+            // Check if ray is out of bounds
+            if (mapX < 0 || mapX >= map_width || mapY < 0 || mapY >= map_height)
+            {
+                hit = 1;
+                break;
+            }
+
+            // Check if the ray has hit a wall
+            if ((game->mapGrid->symbols[mapY][mapX]) - '0' > 0)
+            {
+                hit = 1;
+                break;
+            }
+
+            // Check if the ray has reached maximum view distance
+            if (totalDistance >= MAX_VIEW_DISTANCE)
+            {
+                hit = 1;
+                break;
+            }
+        }
+
+        // Scale to minimap
+        float endMinimapX = minimap_offset_x + (rayX / TILE_SIZE) * scale;
+        float endMinimapY = minimap_offset_y + (rayY / TILE_SIZE) * scale;
+
+        // Draw the ray on the minimap
+        draw_line(game->image, (int)playerX, (int)playerY, (int)endMinimapX, (int)endMinimapY, 0x0000FFFF); // Blue color
+    }
 }
 
 void	update(void *param)
