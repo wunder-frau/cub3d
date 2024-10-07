@@ -6,7 +6,8 @@ void	vector_free(t_vector *vector)
 
 	while (i < vector->capacity)
 	{
-		free(vector->symbols[i]);
+		if (vector->symbols[i])
+			free(vector->symbols[i]);
 		i++;
 	}
 	free(vector->symbols);

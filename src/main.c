@@ -94,5 +94,6 @@ int	main(int argc, char **argv)
 	}
 	if (raycast_engine(map, player, assets) != EXIT_SUCCESS)
 		return (EXIT_FAILURE);
+	vector_free(map);
 	return (EXIT_SUCCESS);
 }

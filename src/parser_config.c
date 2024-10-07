@@ -3,7 +3,7 @@
 /**
  * Trims the identifier (NO, SO, EA, WE, F, C) from the config line and removes trailing spaces and newlines.
  */
-static char	*trim_and_extract(const char *str, unsigned int prefix_len)
+static char	*trim_and_extract(char *str, unsigned int prefix_len)
 {
 	unsigned int	end;
 
@@ -12,7 +12,11 @@ static char	*trim_and_extract(const char *str, unsigned int prefix_len)
 	end = ft_strlen(str);
 	while (end > prefix_len && (str[end - 1] == ' ' || str[end - 1] == '\n'))
 		end--;
-	return (ft_substr(str, prefix_len, end - prefix_len));
+
+	char *trimmed = ft_substr(str, prefix_len, end - prefix_len);
+	free(str);	
+	str = NULL;
+	return (trimmed);
 }
 
 /**
@@ -67,6 +71,12 @@ static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
 		assets->colors.rgb_C[0] = r;
 		assets->colors.rgb_C[1] = g;
 		assets->colors.rgb_C[2] = b;
+	}
+	int i = 0;
+	while (rgb_arr[i] != NULL)
+	{
+		free(rgb_arr[i]);
+		i++;
 	}
 	free(rgb_arr);
 	return (true);
