@@ -85,5 +85,6 @@ t_player find_player_pos(t_vector *map);
 
 void cleanup(t_game *game);
 t_game *initialize_game(t_vector *map, t_player player, t_assets *assets);
+bool is_player_symbol(char c);
 
 #endif

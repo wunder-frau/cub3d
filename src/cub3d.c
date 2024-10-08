@@ -126,7 +126,7 @@ int performDDA(t_game *game, float rayDirX, float rayDirY, int *mapX, int *mapY,
 
         // Check if ray has hit a wall
         char symbol = game->mapGrid->symbols[*mapY][*mapX];
-        if (ft_char_to_int(symbol) > 0)
+        if (symbol == '1')
         {
             hit = 1; // Wall hit
 
@@ -444,30 +444,71 @@ void clear_image(mlx_image_t *image, uint32_t color)
 	}
 }
 
+// bool can_move_to(float x, float y, t_game *game)
+// {
+// 	int map_height = game->mapGrid->capacity;
+// 	int map_width = ft_strlen(game->mapGrid->symbols[0]);
+// 	float radius = 2.0f; // Adjust the radius as needed
+// 	int mapX1 = (int)((x - radius) / TILE_SIZE);
+// 	int mapY1 = (int)((y - radius) / TILE_SIZE);
+// 	int mapX2 = (int)((x + radius) / TILE_SIZE);
+// 	int mapY2 = (int)((y + radius) / TILE_SIZE);
+
+// 	// Check for out-of-bounds
+// 	if (mapX1 < 0 || mapX2 >= map_width || mapY1 < 0 || mapY2 >= map_height)
+// 	{
+// 		return false;
+// 	}
+// 	// Check all corners of the player's bounding box
+// 	if (ft_char_to_int(game->mapGrid->symbols[mapY1][mapX1]) > 0 ||
+// 		ft_char_to_int(game->mapGrid->symbols[mapY1][mapX2]) > 0 ||
+// 		ft_char_to_int(game->mapGrid->symbols[mapY2][mapX1]) > 0 ||
+// 		ft_char_to_int(game->mapGrid->symbols[mapY2][mapX2]) > 0)
+// 	{
+// 		return false;
+// 	}
+// 	return true;
+// }
+
+static bool is_walkable(char c)
+{
+	return (c == '0' || is_player_symbol(c));
+}
+
+
 bool can_move_to(float x, float y, t_game *game)
 {
-	int map_height = game->mapGrid->capacity;
-	int map_width = ft_strlen(game->mapGrid->symbols[0]);
-	float radius = 2.0f; // Adjust the radius as needed
-	int mapX1 = (int)((x - radius) / TILE_SIZE);
-	int mapY1 = (int)((y - radius) / TILE_SIZE);
-	int mapX2 = (int)((x + radius) / TILE_SIZE);
-	int mapY2 = (int)((y + radius) / TILE_SIZE);
+		int map_height = game->mapGrid->capacity; // Ensure this reflects the actual number of rows
+		int map_width = ft_strlen(game->mapGrid->symbols[0]);
+		float radius = 10.0f; // Adjust the radius based on TILE_SIZE
 
-	// Check for out-of-bounds
-	if (mapX1 < 0 || mapX2 >= map_width || mapY1 < 0 || mapY2 >= map_height)
+		int mapX1 = (int)((x - radius) / TILE_SIZE);
+		int mapY1 = (int)((y - radius) / TILE_SIZE);
+		int mapX2 = (int)((x + radius) / TILE_SIZE);
+		int mapY2 = (int)((y + radius) / TILE_SIZE);
+
+		// Debugging: Print the map coordinates being checked
+		printf("Checking movement to (%.2f, %.2f): mapX1=%d, mapY1=%d, mapX2=%d, mapY2=%d\n",
+						x, y, mapX1, mapY1, mapX2, mapY2);
+
+		// Check for out-of-bounds
+		if (mapX1 < 0 || mapX2 >= map_width || mapY1 < 0 || mapY2 >= map_height)
+		{
+				printf("Movement blocked: Out of bounds\n");
+				return false;
+		}
+
+		// Check all corners of the player's bounding box
+	if (!is_walkable(game->mapGrid->symbols[mapY1][mapX1]) ||
+		!is_walkable(game->mapGrid->symbols[mapY1][mapX2]) ||
+		!is_walkable(game->mapGrid->symbols[mapY2][mapX1]) ||
+		!is_walkable(game->mapGrid->symbols[mapY2][mapX2]))
 	{
+		printf("Movement blocked: Collision detected\n");
 		return false;
 	}
-	// Check all corners of the player's bounding box
-	if (ft_char_to_int(game->mapGrid->symbols[mapY1][mapX1]) > 0 ||
-		ft_char_to_int(game->mapGrid->symbols[mapY1][mapX2]) > 0 ||
-		ft_char_to_int(game->mapGrid->symbols[mapY2][mapX1]) > 0 ||
-		ft_char_to_int(game->mapGrid->symbols[mapY2][mapX2]) > 0)
-	{
-		return false;
-	}
-	return true;
+
+		return true;
 }
 
 void drawMinimap(t_game *game)
@@ -590,7 +631,7 @@ void drawMinimap(t_game *game)
             }
 
             // Check if the ray has hit a wall
-            if ((game->mapGrid->symbols[mapY][mapX]) - '0' > 0)
+            if ((game->mapGrid->symbols[mapY][mapX]) == '1')
             {
                 hit = 1;
                 break;

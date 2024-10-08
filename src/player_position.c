@@ -13,7 +13,7 @@ static float assign_player_angle(char symbol)
 	return 0.0f;
 }
 
-static bool is_player_symbol(char c)
+bool is_player_symbol(char c)
 {
 	return (c == 'N' || c == 'n' ||
 					c == 'S' || c == 's' ||
