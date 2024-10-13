@@ -136,6 +136,16 @@ static bool	validate_colors(t_assets *assets)
 	return true;
 }
 
+bool	is_cub(const char *str)
+{
+	size_t	len;
+
+	len = ft_strlen(str);
+	if (ft_strncmp(".cub", str + len - 4, 4) == 0)
+		return (true);
+	return (false);
+}
+
 bool	validate_map(t_vector *map, t_assets *assets)
 {
 	if (!validate_texture_paths(assets))

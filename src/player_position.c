@@ -21,6 +21,24 @@ bool is_player_symbol(char c)
 					c == 'W' || c == 'w');
 }
 
+bool	is_valid_map_symbol(char c, t_vector *map)
+{
+	const char	valid_symbols[] = "01NSEW";
+	return (ft_strchr(valid_symbols, c) != NULL || c == '\n');
+	// const char valid_symbols[] = {'0', '1', 'N', 'S', 'E', 'W'};
+	// int	i;
+
+	// i = 0;
+	// while (i < ft_strlen(map->symbols))
+	// {
+	// 	printf("symb_%c\n", c);
+	// 		if (c == valid_symbols[i] || c == '\n')
+	// 				return true;
+	// 		i++;
+	// }
+	// return false;
+}
+
 /**
  * Function to find the player position in the map
  */
@@ -52,6 +70,10 @@ t_player	find_player_pos(t_vector *map)
 				player.angle = assign_player_angle(current_symbol);
 				printf("player_pos:__%.2f, %.2f\n", player.x, player.y);
 				return (player);
+			}
+			else if (!is_valid_map_symbol(current_symbol, map))
+			{
+				error_exit_cleanup("Invalid symbol", map, NULL);
 			}
 			col++;
 		}

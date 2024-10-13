@@ -68,6 +68,11 @@ int	main(int argc, char **argv)
 		ft_putstr_fd("Incorrect number of arguments\n", 2);
 		return (EXIT_FAILURE);
 	}
+	if (!is_cub(argv[1]))
+	{
+		ft_putstr_fd("Error\nInvalid file format. Use a .cub file.\n", 2);
+		exit(1);
+	}
 	map = read_map(argv);
 	if (!map)
 		return (EXIT_FAILURE);
