@@ -488,8 +488,8 @@ bool can_move_to(float x, float y, t_game *game)
 		int mapY2 = (int)((y + radius) / TILE_SIZE);
 
 		// Debugging: Print the map coordinates being checked
-		printf("Checking movement to (%.2f, %.2f): mapX1=%d, mapY1=%d, mapX2=%d, mapY2=%d\n",
-						x, y, mapX1, mapY1, mapX2, mapY2);
+		//printf("Checking movement to (%.2f, %.2f): mapX1=%d, mapY1=%d, mapX2=%d, mapY2=%d\n",
+					//	x, y, mapX1, mapY1, mapX2, mapY2);
 
 		// Check for out-of-bounds
 		if (mapX1 < 0 || mapX2 >= map_width || mapY1 < 0 || mapY2 >= map_height)

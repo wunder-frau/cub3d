@@ -24,7 +24,7 @@ bool is_player_symbol(char c)
 bool	is_valid_map_symbol(char c, t_vector *map)
 {
 	const char	valid_symbols[] = "01NSEW";
-	return (ft_strchr(valid_symbols, c) != NULL || c == '\n');
+	return (ft_strchr(valid_symbols, c) != NULL || c == '\n' || c == '\0' || c == ' ');
 	// const char valid_symbols[] = {'0', '1', 'N', 'S', 'E', 'W'};
 	// int	i;
 
@@ -32,7 +32,7 @@ bool	is_valid_map_symbol(char c, t_vector *map)
 	// while (i < ft_strlen(map->symbols))
 	// {
 	// 	printf("symb_%c\n", c);
-	// 		if (c == valid_symbols[i] || c == '\n')
+	// 		if (c == valid_symbols[i] || c == '\n' || c == '\0' || c == ' ')
 	// 				return true;
 	// 		i++;
 	// }

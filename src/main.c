@@ -46,6 +46,7 @@ t_vector	*read_map(char **argv)
 			close(map_fd);
 			return (NULL);
 		}
+		vector_print(map);
 	}
 	close(map_fd);
 	if (map->capacity == 0)

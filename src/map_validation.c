@@ -11,7 +11,6 @@ static bool	validate_boundary_line(const char *line)
 		return (false);
 	}
 	line_len = ft_strlen(line);
-	// if (line_len < 2 || line[line_len - 1] != '\n')
 	if (line_len < 2)
 	{
 		log_error_message("Invalid map format - boundary line too small");
@@ -24,9 +23,10 @@ static bool	validate_boundary_line(const char *line)
 	}
 	i = 0;
 	while (line[i] != '\n')
-	{
+	{			printf("look___:[%c]\n", line[i]);
 		if (line[i] != '1' && line[i] != ' ')
 		{
+			printf("look___:%c\n", line[i]);
 			log_error_message("Invalid map format - boundary line must only contain '1' and spaces");
 			return (false);
 		}
@@ -154,13 +154,13 @@ bool	validate_map(t_vector *map, t_assets *assets)
 		return (false);
 	if (!validate_map_presence(map))
 		return (false);
-	if (!validate_top_line(map))
-		return (false);
-	if (!validate_bottom_line(map))
-		return (false);
-	if (!validate_side_walls(map))
-		return (false);
-	if (!validate_map_shape(map))
-		return (false);
+	// if (!validate_top_line(map))
+	// 	return (false);
+	// if (!validate_bottom_line(map))
+	// 	return (false);
+	// if (!validate_side_walls(map))
+	// 	return (false);
+	// if (!validate_map_shape(map))
+	// 	return (false);
 	return (true);
 }
