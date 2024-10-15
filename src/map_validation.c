@@ -19,10 +19,10 @@ static bool	validate_boundary_line(const char *line)
 	i = 0;
 	while (line[i] && line[i] != '\n')
 	{
-		printf("look___:[%c]\n", line[i]);
+		//printf("look___:[%c]\n", line[i]);
 		if (line[i] != '1' && line[i] != ' ')
 		{
-			printf("look___:%c\n", line[i]);
+			//printf("look___:%c\n", line[i]);
 			log_error_message("Invalid map format - boundary line must only contain '1' and spaces");
 			return (false);
 		}
@@ -144,6 +144,8 @@ bool	is_cub(const char *str)
 
 bool	validate_map(t_vector *map, t_assets *assets)
 {
+	if (count_players(map) != 1)
+		error_exit_cleanup("Invalid player count in the map.", map, assets);
 	if (!validate_texture_paths(assets))
 		return (false);
 	if (!validate_colors(assets))
