@@ -16,14 +16,10 @@ static bool	validate_boundary_line(const char *line)
 		log_error_message("Invalid map format - boundary line too small");
 		return (false);
 	}
-	if (line[0] != '1' || line[line_len - 2] != '1')
-	{
-		log_error_message("Invalid map format - boundary line not enclosed by walls");
-		return (false);
-	}
 	i = 0;
-	while (line[i] != '\n')
-	{			printf("look___:[%c]\n", line[i]);
+	while (line[i] && line[i] != '\n')
+	{
+		printf("look___:[%c]\n", line[i]);
 		if (line[i] != '1' && line[i] != ' ')
 		{
 			printf("look___:%c\n", line[i]);
@@ -154,13 +150,14 @@ bool	validate_map(t_vector *map, t_assets *assets)
 		return (false);
 	if (!validate_map_presence(map))
 		return (false);
-	// if (!validate_top_line(map))
-	// 	return (false);
-	// if (!validate_bottom_line(map))
-	// 	return (false);
+	if (!validate_top_line(map))
+		return (false);
+	if (!validate_bottom_line(map))
+		return (false);
 	// if (!validate_side_walls(map))
 	// 	return (false);
 	// if (!validate_map_shape(map))
 	// 	return (false);
 	return (true);
 }
+       
