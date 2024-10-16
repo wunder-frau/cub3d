@@ -144,6 +144,7 @@ bool	is_cub(const char *str)
 
 bool	validate_map(t_vector *map, t_assets *assets)
 {
+	// validate_map_file_structure(map);
 	if (count_players(map) != 1)
 		error_exit_cleanup("Invalid player count in the map.", map, assets);
 	if (!validate_texture_paths(assets))

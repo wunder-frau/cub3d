@@ -46,7 +46,7 @@ t_vector	*read_map(char **argv)
 			close(map_fd);
 			return (NULL);
 		}
-		vector_print(map);
+		//vector_print(map);
 	}
 	close(map_fd);
 	if (map->capacity == 0)
@@ -75,6 +75,7 @@ int	main(int argc, char **argv)
 		exit(1);
 	}
 	map = read_map(argv);
+	validate_map_file_structure(map);
 	if (!map)
 		return (EXIT_FAILURE);
 	assets = initialize_assets(map);

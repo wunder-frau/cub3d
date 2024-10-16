@@ -88,5 +88,6 @@ t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets);
 bool	is_player_symbol(char c);
 bool	is_cub(const char *str);
 int count_players(t_vector *map);
+void validate_map_file_structure(t_vector *map);
 
 #endif
