@@ -30,7 +30,8 @@ mlx_texture_t	*load_texture(const char *path)
 	printf("Loading texture from path: %s\n", path);
 	if (!texture)
 	{
-		ft_putstr_fd("Failed to load texture: ", 2);
+		ft_putstr_fd("Error\n", 2);
+		ft_putstr_fd("Failed to load texture. Wrong path: ", 2);
 		ft_putstr_fd((char *)path, 2);
 		ft_putstr_fd("\n", 2);
 	}

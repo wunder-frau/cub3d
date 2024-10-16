@@ -488,8 +488,8 @@ bool can_move_to(float x, float y, t_game *game)
 		int mapY2 = (int)((y + radius) / TILE_SIZE);
 
 		// Debugging: Print the map coordinates being checked
-		printf("Checking movement to (%.2f, %.2f): mapX1=%d, mapY1=%d, mapX2=%d, mapY2=%d\n",
-						x, y, mapX1, mapY1, mapX2, mapY2);
+		//printf("Checking movement to (%.2f, %.2f): mapX1=%d, mapY1=%d, mapX2=%d, mapY2=%d\n",
+					//	x, y, mapX1, mapY1, mapX2, mapY2);
 
 		// Check for out-of-bounds
 		if (mapX1 < 0 || mapX2 >= map_width || mapY1 < 0 || mapY2 >= map_height)
@@ -522,8 +522,16 @@ void drawMinimap(t_game *game)
     int minimap_offset_y = 10; // Position from the top edge
 
     int map_height = game->mapGrid->capacity;
-    int map_width = ft_strlen(game->mapGrid->symbols[0]) - 1;
+    // int map_width = ft_strlen(game->mapGrid->symbols[0]);
+    int map_width = 0;
 
+    // Calculate maximum map width
+    for (int i = 0; i < map_height; i++)
+    {
+        int line_length = ft_strlen(game->mapGrid->symbols[i]) - 1; // Adjust for '\n' if necessary
+        if (line_length > map_width)
+            map_width = line_length;
+    }
     // Calculate scale factors
     float scaleX = (float)minimap_width / (float)map_width;
     float scaleY = (float)minimap_height / (float)map_height;
@@ -531,10 +539,12 @@ void drawMinimap(t_game *game)
 
     // Draw the map grid
     for (int y = 0; y < map_height; y++)
-    {
-        for (int x = 0; x < map_width; x++)
+    { 
+			int line_length = ft_strlen(game->mapGrid->symbols[y]) - 1;
+        for (int x = 0; x < line_length; x++)
         {
-            uint32_t color = (ft_char_to_int(game->mapGrid->symbols[y][x]) == 1) ? 0x888888FF : 0x222222FF;
+            uint32_t color = (game->mapGrid->symbols[y][x] == '1' ||
+															game->mapGrid->symbols[y][x] == ' ') ? 0x888888FF : 0x222222FF;
 
             // Calculate scaled positions
             int tileX0 = minimap_offset_x + (int)(x * scale);
