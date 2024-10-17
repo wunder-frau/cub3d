@@ -16,7 +16,7 @@ static void	flood_fill_vector(t_vector *map, int row, int col)
 	}
 }
 
-bool	is_symbol(t_vector *map, int *row_out, int *col_out)
+bool	is_symbol(t_vector *map, char *symbols)
 {
 	int	row;
 	int	col;
@@ -27,10 +27,8 @@ bool	is_symbol(t_vector *map, int *row_out, int *col_out)
 		col = 0;
 		while(col < ft_strlen(map->symbols[row]))
 		{
-			if (ft_strchr("NWSE", map->symbols[row][col]))
+			if (ft_strchr(symbols, map->symbols[row][col]))
 			{
-				*row_out = row;
-				*col_out = col;
 				return (true);
 			}
 			col++;
@@ -38,6 +36,32 @@ bool	is_symbol(t_vector *map, int *row_out, int *col_out)
 		row++;
 	}
 	return	(false);
+}
+
+bool	find_symbol_position(t_vector *map, const char *symbols, int *row_out, int *col_out)
+{
+	int row = 0;
+	int col = 0;
+
+	while (row < map->length)
+	{
+		col = 0;
+		while (col < ft_strlen(map->symbols[row]))
+		{
+			if (ft_strchr(symbols, map->symbols[row][col]))
+			{
+				if (row_out != NULL && col_out != NULL)
+				{
+					*row_out = row;
+					*col_out = col;
+				}
+				return (true);
+			}
+			col++;
+		}
+		row++;
+	}
+	return (false);
 }
 
 void	validate_path(t_vector *map_ptr)
@@ -51,7 +75,7 @@ void	validate_path(t_vector *map_ptr)
 		ft_putstr_fd("Error\nMemory allocation failed for map duplication\n", 2);
 		exit(1);
 	}
-	if (!is_symbol(dup, &row, &col))
+	if (!find_symbol_position(dup, "NWSE", &row, &col))
 	{
 		ft_putstr_fd("Error\nInitial position not found in the map\n", 2);
 		vector_free(dup);
@@ -79,4 +103,3 @@ void	validate_path(t_vector *map_ptr)
 	}
 	vector_free(dup);
 }
-
