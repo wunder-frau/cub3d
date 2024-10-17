@@ -89,5 +89,7 @@ bool	is_player_symbol(char c);
 bool	is_cub(const char *str);
 int count_players(t_vector *map);
 void validate_map_file_structure(t_vector *map);
+void validate_path(t_vector *data_ptr);
+bool	is_valid_map_symbol(char c, t_vector *map);
 
 #endif

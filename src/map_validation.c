@@ -153,10 +153,11 @@ bool	validate_map(t_vector *map, t_assets *assets)
 		return (false);
 	if (!validate_map_presence(map))
 		return (false);
-	if (!validate_top_line(map))
-		return (false);
-	if (!validate_bottom_line(map))
-		return (false);
+	validate_path(map);
+	// if (!validate_top_line(map))
+	// 	return (false);
+	// if (!validate_bottom_line(map))
+	// 	return (false);
 	// if (!validate_side_walls(map))
 	// 	return (false);
 	// if (!validate_map_shape(map))
