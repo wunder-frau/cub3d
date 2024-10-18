@@ -16,28 +16,6 @@ static void	flood_fill_vector(t_vector *map, int row, int col)
 	}
 }
 
-bool	is_symbol(t_vector *map, char *symbols)
-{
-	int	row;
-	int	col;
-
-	row = 0;
-	while(row < map->length)
-	{
-		col = 0;
-		while(col < ft_strlen(map->symbols[row]))
-		{
-			if (ft_strchr(symbols, map->symbols[row][col]))
-			{
-				return (true);
-			}
-			col++;
-		}
-		row++;
-	}
-	return	(false);
-}
-
 bool	find_symbol_position(t_vector *map, const char *symbols, int *row_out, int *col_out)
 {
 	int row = 0;

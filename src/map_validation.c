@@ -17,15 +17,18 @@ static bool	validate_boundary_line(const char *line)
 		return (false);
 	}
 	i = 0;
-	while (line[i] && line[i] != '\n')
+	// while (line[i] == ' ' || line[i] == '\t')
+	// 	i++;
+	while (line[i])
 	{
 		//printf("look___:[%c]\n", line[i]);
+		//if (line[i] != '1' && line[i] != ' ')
 		if (line[i] != '1' && line[i] != ' ')
 		{
-			//printf("look___:%c\n", line[i]);
+			printf("char___:%d at ind:[%d]\n", line[i], i);
 			log_error_message("Invalid map format - boundary line must only contain '1' and spaces");
 			return (false);
-		}
+		} 
 		i++;
 	}
 	return (true);
@@ -145,6 +148,12 @@ bool	is_cub(const char *str)
 bool	validate_map(t_vector *map, t_assets *assets)
 {
 	// validate_map_file_structure(map);
+	if (!validate_map_form(map))
+		return (false);
+	// if (!validate_top_line(map))
+	// 	return (false);
+	// if (!validate_bottom_line(map))
+	// 	return (false);
 	if (count_players(map) != 1)
 		error_exit_cleanup("Invalid player count in the map.", map, assets);
 	if (!validate_texture_paths(assets))
@@ -154,10 +163,6 @@ bool	validate_map(t_vector *map, t_assets *assets)
 	if (!validate_map_presence(map))
 		return (false);
 	validate_path(map);
-	// if (!validate_top_line(map))
-	// 	return (false);
-	// if (!validate_bottom_line(map))
-	// 	return (false);
 	// if (!validate_side_walls(map))
 	// 	return (false);
 	// if (!validate_map_shape(map))

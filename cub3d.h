@@ -91,5 +91,6 @@ int count_players(t_vector *map);
 void validate_map_file_structure(t_vector *map);
 void validate_path(t_vector *data_ptr);
 bool	is_valid_map_symbol(char c, t_vector *map);
+bool validate_map_form(t_vector *map);
 
 #endif
