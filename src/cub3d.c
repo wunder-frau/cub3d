@@ -543,8 +543,7 @@ void drawMinimap(t_game *game)
 			int line_length = ft_strlen(game->mapGrid->symbols[y]) - 1;
         for (int x = 0; x < line_length; x++)
         {
-            uint32_t color = (game->mapGrid->symbols[y][x] == '1' ||
-															game->mapGrid->symbols[y][x] == ' ') ? 0x888888FF : 0x222222FF;
+            uint32_t color = (game->mapGrid->symbols[y][x] == '1') ? 0x888888FF : 0x222222FF;
 
             // Calculate scaled positions
             int tileX0 = minimap_offset_x + (int)(x * scale);
