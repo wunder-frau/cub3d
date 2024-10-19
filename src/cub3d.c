@@ -478,8 +478,19 @@ static bool is_walkable(char c)
 
 bool can_move_to(float x, float y, t_game *game)
 {
-		int map_height = game->mapGrid->capacity; // Ensure this reflects the actual number of rows
-		int map_width = ft_strlen(game->mapGrid->symbols[0]);
+		// int map_height = game->mapGrid->capacity; // Ensure this reflects the actual number of rows
+		// int map_width = ft_strlen(game->mapGrid->symbols[0]);
+		int map_height = game->mapGrid->capacity;
+		int map_width = 0;
+
+		int i = 0;
+		while (i < map_height)
+		{
+			int line_length = ft_strlen(game->mapGrid->symbols[i]) - 1;
+			if (line_length > map_width)
+					map_width = line_length;
+			i++;
+		}
 		float radius = 10.0f; // Adjust the radius based on TILE_SIZE
 
 		int mapX1 = (int)((x - radius) / TILE_SIZE);
@@ -521,17 +532,17 @@ void drawMinimap(t_game *game)
     int minimap_offset_x = 10; // Position from the left edge
     int minimap_offset_y = 10; // Position from the top edge
 
-    int map_height = game->mapGrid->capacity;
-    // int map_width = ft_strlen(game->mapGrid->symbols[0]);
-    int map_width = 0;
+ 		int map_height = game->mapGrid->capacity;
+		int map_width = 0;
 
-    // Calculate maximum map width
-    for (int i = 0; i < map_height; i++)
-    {
-        int line_length = ft_strlen(game->mapGrid->symbols[i]) - 1; // Adjust for '\n' if necessary
-        if (line_length > map_width)
-            map_width = line_length;
-    }
+		int i = 0;
+		while (i < map_height)
+		{
+			int line_length = ft_strlen(game->mapGrid->symbols[i]) - 1;
+			if (line_length > map_width)
+					map_width = line_length;
+			i++;
+		}
     // Calculate scale factors
     float scaleX = (float)minimap_width / (float)map_width;
     float scaleY = (float)minimap_height / (float)map_height;
