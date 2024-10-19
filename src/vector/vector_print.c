@@ -11,7 +11,7 @@ void	vector_print(t_vector *vector)
 		printf("Line %zu: %s\n", i + 1, vector->symbols[i]);
 		//printf("Total lines: %zu\n", vector->capacity + 1);
 		//printf("len: %zu\n", vector->length);
-		printf("line_len: %zu\n", ft_strlen(vector->symbols[i]));
+		//printf("line_len: %zu\n", ft_strlen(vector->symbols[i]));
 		i++;
 	}
 }
