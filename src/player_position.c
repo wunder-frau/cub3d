@@ -25,21 +25,9 @@ bool	is_valid_map_symbol(char c, t_vector *map)
 {
 	const char	valid_symbols[] = "01NSEW";
 	return (ft_strchr(valid_symbols, c) != NULL || c == '\n' || c == '\0' || c == ' ');
-	// const char valid_symbols[] = {'0', '1', 'N', 'S', 'E', 'W'};
-	// int	i;
-
-	// i = 0;
-	// while (i < ft_strlen(map->symbols))
-	// {
-	// 	printf("symb_%c\n", c);
-	// 		if (c == valid_symbols[i] || c == '\n' || c == '\0' || c == ' ')
-	// 				return true;
-	// 		i++;
-	// }
-	// return false;
 }
 
-int count_players(t_vector *map)
+int	count_players(t_vector *map)
 {
 	size_t row = 0;
 	size_t col = 0;
@@ -47,37 +35,36 @@ int count_players(t_vector *map)
 
 	if (map == NULL || map->symbols == NULL)
 	{
-			log_error_message("Error: Map or symbols array is not initialized.");
-			return (-1);
+		log_error_message("Error: Map or symbols array is not initialized.");
+		return (-1);
 	}
-
 	while (row < map->capacity)
 	{
-			if (map->symbols[row] == NULL)
+		if (map->symbols[row] == NULL)
+		{
+			fprintf(stderr, "Error: Row %zu in the map is NULL.\n", row);
+			error_exit_cleanup("Row in the map is NULL.", map, NULL);
+		}
+		col = 0;
+		while (col < ft_strlen(map->symbols[row]))
+		{
+			char current_symbol = map->symbols[row][col];
+			//validate_map_symbol(current_symbol, row, col, map);
+			if (is_player_symbol(current_symbol))
 			{
-				fprintf(stderr, "Error: Row %zu in the map is NULL.\n", row);
-				error_exit_cleanup("Row in the map is NULL.", map, NULL);
+				player_count++;
+				if (player_count > 1)
+				{
+					log_error_message("Error: Multiple player symbols found in the map.");
+					error_exit_cleanup("Multiple player symbols found in the map.", map, NULL);
+				}
 			}
-
-			col = 0;
-			while (col < ft_strlen(map->symbols[row]))
-			{
-				char current_symbol = map->symbols[row][col];
-				if (is_player_symbol(current_symbol))
-				{
-					player_count++;
-					if (player_count > 1)
-					{
-						log_error_message("Error: Multiple player symbols found in the map.");
-						error_exit_cleanup("Multiple player symbols found in the map.", map, NULL);
-					}
-				}
-				else if (!is_valid_map_symbol(current_symbol, map))
-				{
-					fprintf(stderr, "Error: Invalid symbol '%c' found at row %zu, col %zu\n", current_symbol, row, col);
-					error_exit_cleanup("Invalid symbol found in the map.", map, NULL);
-				}
-				col++;
+			// else if (!is_valid_map_symbol(current_symbol, map))
+			// {
+			// 	fprintf(stderr, "Error: Invalid symbol '%c' found at row %zu, col %zu\n", current_symbol, row, col);
+			// 	error_exit_cleanup("Invalid symbol found in the map.", map, NULL);
+			// }
+			col++;
 		}
 		row++;
 	}

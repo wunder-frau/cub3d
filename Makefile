@@ -30,7 +30,7 @@ OBJ_PATH = build/
 SRC_PATH = src/
 VEC_PATH = vector/
 
-SRC_FILES = main.c parser_config.c error_handling.c free.c process_map.c map_validation.c cub3d.c player_position.c allocate.c config_order_validation.c
+SRC_FILES = main.c parser_config.c error_handling.c free.c process_map.c map_validation.c cub3d.c player_position.c allocate.c config_order_validation.c flood_fill.c map_form_validation.c boundary_lines_validation.c
 VEC_FILES = ft_realloc.c vector_create.c vector_free.c vector_methods.c vector_push_back.c vector_copy.c vector_print.c
 
 CUB3D_SRC = $(addprefix $(SRC_PATH), $(SRC_FILES)) \
