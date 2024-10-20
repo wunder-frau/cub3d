@@ -59,11 +59,11 @@ int	count_players(t_vector *map)
 					error_exit_cleanup("Multiple player symbols found in the map.", map, NULL);
 				}
 			}
-			// else if (!is_valid_map_symbol(current_symbol, map))
-			// {
-			// 	fprintf(stderr, "Error: Invalid symbol '%c' found at row %zu, col %zu\n", current_symbol, row, col);
-			// 	error_exit_cleanup("Invalid symbol found in the map.", map, NULL);
-			// }
+			else if (!is_valid_map_symbol(current_symbol, map))
+			{
+				fprintf(stderr, "Error: Invalid symbol '%c' found at row %zu, col %zu\n", current_symbol, row, col);
+				error_exit_cleanup("Invalid symbol found in the map.", map, NULL);
+			}
 			col++;
 		}
 		row++;
