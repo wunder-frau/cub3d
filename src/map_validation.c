@@ -48,64 +48,37 @@ bool	is_cub(const char *str)
 	return (false);
 }
 
-void trim_leading_spaces(t_vector *map)
-{
-    size_t i = 0;
-
-    // Iterate over each line of the map and remove leading spaces
-    while (i < map->capacity)
-    {
-        char *line = map->symbols[i];
-        while (*line == ' ' || *line == '\t') // Skip leading spaces and tabs
-            line++;
-
-        // Copy back the trimmed line to map->text[i]
-        map->symbols[i] = ft_strdup(line);
-        if (map->symbols[i] == NULL)
-        {
-            log_error_message("Memory allocation failed");
-            exit(1);
-        }
-
-        i++;
-    }
-}
-
 void	space_to_wall(t_vector *map)
 {
-    int	row;
-    int	col;
+	int	row;
+	int	col;
 
-    if (map == NULL || map->symbols == NULL)
-    {
-        ft_putstr_fd("Error\nMap or map symbols are NULL.\n", 2);
-        return;  // Avoid segmentation fault by early exit
-    }
-
-    row = 0;
-    while (row < map->length)
-    {
-        if (map->symbols[row] == NULL)
-        {
-            row++;
-            continue;  // Safeguard to skip any NULL rows
-        }
-
-        col = 0;
-        while (col < ft_strlen(map->symbols[row]))
-        {
-            // Directly compare to the space character instead of using ft_strchr
-            if (map->symbols[row][col] == ' ')
-            {
-                printf("DEBUG: SPACE found at row %d, col %d\n", row, col);
-                map->symbols[row][col] = '1';
-            }
-            col++;
-        }
-        row++;
-    }
+	if (map == NULL || map->symbols == NULL)
+	{
+		ft_putstr_fd("Error\nMap or map symbols are NULL.\n", 2);
+		return;
+	}
+	row = 0;
+	while (row < map->length)
+	{
+		if (map->symbols[row] == NULL)
+		{
+			row++;
+			continue;
+		}
+		col = 0;
+		while (col < ft_strlen(map->symbols[row]))
+		{
+			if (map->symbols[row][col] == ' ')
+			{
+				printf("DEBUG: SPACE found at row %d, col %d\n", row, col);
+				map->symbols[row][col] = '1';
+			}
+			col++;
+		}
+		row++;
+	}
 }
-
 
 bool	validate_map(t_vector *map, t_assets *assets)
 {
@@ -118,6 +91,7 @@ bool	validate_map(t_vector *map, t_assets *assets)
 		error_exit_cleanup("Invalid player count in the map.", map, assets);
 	validate_map_with_flood_fill(map);
 		printf("DEBUG: Map successfully passed flood fill validation.\n");
+	space_to_wall(map);
 	if (!validate_texture_paths(assets))
 		return (false);
 	if (!validate_colors(assets))
