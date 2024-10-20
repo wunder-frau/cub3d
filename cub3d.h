@@ -102,7 +102,7 @@ bool validate_map_form(t_vector *map);
 void validate_map_with_flood_fill(t_vector *map);
 void validate_map_symbol(char symbol, size_t row, size_t col, t_vector *map);
 bool	is_valid_boundaries(t_vector *map);
-void flood_fill_vector(t_vector *map, int row, int col);
+void flood_fill(t_vector *map, int row, int col);
 bool is_valid(t_vector *map, size_t row, size_t col);
 
 #endif
