@@ -8,10 +8,10 @@ void	vector_print(t_vector *vector)
 
 	while (i < vector->capacity)
 	{
-		printf("Line %zu: %s\n", i + 1, vector->symbols[i]);
+		printf("Line %zu: %s  line_len: %zu    ", i, vector->symbols[i], ft_strlen(vector->symbols[i]));
 		//printf("Total lines: %zu\n", vector->capacity + 1);
 		//printf("len: %zu\n", vector->length);
-		//printf("line_len: %zu\n", ft_strlen(vector->symbols[i]));
+		//printf("line_len: %zu    ", ft_strlen(vector->symbols[i]));
 		i++;
 	}
 }

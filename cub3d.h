@@ -63,6 +63,13 @@ typedef struct s_game {
 		t_assets assets;
 } t_game;
 
+typedef enum e_line_type
+{
+	LINE_TOP,
+	LINE_BOTTOM,
+	LINE_MIDDLE
+} t_line_type;
+
 t_vector	*read_map(char **argv);
 t_assets	*initialize_assets(t_vector *map);
 
@@ -92,5 +99,10 @@ void validate_map_file_structure(t_vector *map);
 void validate_path(t_vector *data_ptr);
 bool	is_valid_map_symbol(char c, t_vector *map);
 bool validate_map_form(t_vector *map);
+void validate_map_with_flood_fill(t_vector *map);
+void validate_map_symbol(char symbol, size_t row, size_t col, t_vector *map);
+bool	is_valid_boundaries(t_vector *map);
+void flood_fill_vector(t_vector *map, int row, int col);
+bool is_valid(t_vector *map, size_t row, size_t col);
 
 #endif

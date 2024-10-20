@@ -1,102 +1,5 @@
 #include "../cub3d.h"
 
-static bool	validate_boundary_line(const char *line)
-{
-	size_t i;
-	size_t line_len;
-
-	if (line == NULL)
-	{
-		log_error_message("Invalid map format - boundary line is NULL");
-		return (false);
-	}
-	line_len = ft_strlen(line);
-	if (line_len < 2)
-	{
-		log_error_message("Invalid map format - boundary line too small");
-		return (false);
-	}
-	i = 0;
-	// while (line[i] == ' ' || line[i] == '\t')
-	// 	i++;
-	while (line[i])
-	{
-		//printf("look___:[%c]\n", line[i]);
-		//if (line[i] != '1' && line[i] != ' ')
-		if (line[i] != '1' && line[i] != ' ')
-		{
-			printf("char___:%d at ind:[%d]\n", line[i], i);
-			log_error_message("Invalid map format - boundary line must only contain '1' and spaces");
-			return (false);
-		} 
-		i++;
-	}
-	return (true);
-}
-
-static bool	validate_top_line(t_vector *map)
-{
-	if (map->capacity < 3)
-	{
-		log_error_message("Map too small");
-		return (false);
-	}
-	return (validate_boundary_line(map->symbols[0]));
-}
-
-static bool	validate_bottom_line(t_vector *map)
-{
-	return (validate_boundary_line(map->symbols[map->capacity - 1]));
-}
-
-static bool	validate_map_shape(t_vector *map)
-{
-	size_t first_line_len;
-	size_t i;
-
-	first_line_len = ft_strlen(map->symbols[0]);
-	i = 1;
-	while (i < map->capacity)
-	{
-		if (ft_strlen(map->symbols[i]) != first_line_len)
-		{
-			log_error_message("Invalid map format - map lines are not of equal length");
-			return (false);
-		}
-		i++;
-	}
-	return (true);
-}
-
-static bool	validate_side_walls(t_vector *map)
-{
-	size_t i;
-	size_t line_len;
-
-	i = 1;
-	while (i < map->capacity - 1)
-	{
-		line_len = ft_strlen(map->symbols[i]);
-		if (map->symbols[i][0] != '1' || map->symbols[i][line_len - 2] != '1')
-		{
-			ft_putstr_fd("Invalid map format - map not enclosed by walls on line", 2);
-			ft_printf(" %d\n", i + 1);
-			return (false);
-		}
-		i++;
-	}
-	return (true);
-}
-bool	validate_map_presence(t_vector *map)
-{
-	if (!map || map->capacity == 0)
-	{
-		log_error_message("Map data is missing or empty.");
-		return (false);
-	}
-	return (true);
-}
-
 static bool	validate_texture_paths(t_assets *assets)
 {
 	if (!assets->textures.path_NO)
@@ -145,28 +48,79 @@ bool	is_cub(const char *str)
 	return (false);
 }
 
+void trim_leading_spaces(t_vector *map)
+{
+    size_t i = 0;
+
+    // Iterate over each line of the map and remove leading spaces
+    while (i < map->capacity)
+    {
+        char *line = map->symbols[i];
+        while (*line == ' ' || *line == '\t') // Skip leading spaces and tabs
+            line++;
+
+        // Copy back the trimmed line to map->text[i]
+        map->symbols[i] = ft_strdup(line);
+        if (map->symbols[i] == NULL)
+        {
+            log_error_message("Memory allocation failed");
+            exit(1);
+        }
+
+        i++;
+    }
+}
+
+void	space_to_wall(t_vector *map)
+{
+    int	row;
+    int	col;
+
+    if (map == NULL || map->symbols == NULL)
+    {
+        ft_putstr_fd("Error\nMap or map symbols are NULL.\n", 2);
+        return;  // Avoid segmentation fault by early exit
+    }
+
+    row = 0;
+    while (row < map->length)
+    {
+        if (map->symbols[row] == NULL)
+        {
+            row++;
+            continue;  // Safeguard to skip any NULL rows
+        }
+
+        col = 0;
+        while (col < ft_strlen(map->symbols[row]))
+        {
+            // Directly compare to the space character instead of using ft_strchr
+            if (map->symbols[row][col] == ' ')
+            {
+                printf("DEBUG: SPACE found at row %d, col %d\n", row, col);
+                map->symbols[row][col] = '1';
+            }
+            col++;
+        }
+        row++;
+    }
+}
+
+
 bool	validate_map(t_vector *map, t_assets *assets)
 {
-	// validate_map_file_structure(map);
-	if (!validate_map_form(map))
-		return (false);
-	// if (!validate_top_line(map))
-	// 	return (false);
-	// if (!validate_bottom_line(map))
-	// 	return (false);
+	size_t	i;
+
+	i = 0;
+	if (!is_valid_boundaries(map))
+		error_exit_cleanup("Invalid map boundaries.", map, assets);
 	if (count_players(map) != 1)
 		error_exit_cleanup("Invalid player count in the map.", map, assets);
+	validate_map_with_flood_fill(map);
+		printf("DEBUG: Map successfully passed flood fill validation.\n");
 	if (!validate_texture_paths(assets))
 		return (false);
 	if (!validate_colors(assets))
 		return (false);
-	if (!validate_map_presence(map))
-		return (false);
-	validate_path(map);
-	// if (!validate_side_walls(map))
-	// 	return (false);
-	// if (!validate_map_shape(map))
-	// 	return (false);
 	return (true);
 }
-       
