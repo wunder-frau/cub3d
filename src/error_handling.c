@@ -18,3 +18,15 @@ void	error_exit_cleanup(char *msg, t_vector *map, t_assets *assets)
 		log_error_message(msg);
 	exit(1);
 }
+
+t_player	set_player_not_found(char *error_message)
+{
+	t_player	player = {0};
+	player.x = -1;
+	player.y = -1;
+	player.angle = -1.0f;
+
+	if (error_message != NULL)
+		log_error_message(error_message);
+	return (player);
+}

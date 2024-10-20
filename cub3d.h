@@ -104,5 +104,6 @@ void validate_map_symbol(char symbol, size_t row, size_t col, t_vector *map);
 bool	is_valid_boundaries(t_vector *map);
 void flood_fill(t_vector *map, int row, int col);
 bool is_valid(t_vector *map, size_t row, size_t col);
+t_player	set_player_not_found(char *error_message);
 
 #endif
