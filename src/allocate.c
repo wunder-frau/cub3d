@@ -1,8 +1,9 @@
 #include "../cub3d.h"
 
-t_game	*allocate_game_structure(t_vector *map, t_player player, t_assets *assets)
+t_game	*allocate_game_structure(t_vector *map, t_player player,
+		t_assets *assets)
 {
-	t_game *game;
+	t_game	*game;
 
 	game = malloc(sizeof(t_game));
 	if (!game)
@@ -17,14 +18,16 @@ t_game	*allocate_game_structure(t_vector *map, t_player player, t_assets *assets
 	game->player.x = player.x;
 	game->player.y = player.y;
 	game->player.angle = player.angle;
-	ft_memcpy(game->assets.colors.rgb_C, assets->colors.rgb_C, sizeof(assets->colors.rgb_C));
-	ft_memcpy(game->assets.colors.rgb_F, assets->colors.rgb_F, sizeof(assets->colors.rgb_F));
+	ft_memcpy(game->assets.colors.rgb_C, assets->colors.rgb_C,
+		sizeof(assets->colors.rgb_C));
+	ft_memcpy(game->assets.colors.rgb_F, assets->colors.rgb_F,
+		sizeof(assets->colors.rgb_F));
 	return (game);
 }
 
 mlx_texture_t	*load_texture(const char *path)
 {
-	mlx_texture_t *texture;
+	mlx_texture_t	*texture;
 
 	texture = mlx_load_png(path);
 	printf("Loading texture from path: %s\n", path);
@@ -44,7 +47,8 @@ int	initialize_ass(t_vector *map, t_assets *assets)
 	assets->textures.SO = load_texture(assets->textures.path_SO);
 	assets->textures.EA = load_texture(assets->textures.path_EA);
 	assets->textures.WE = load_texture(assets->textures.path_WE);
-	if (!assets->textures.NO || !assets->textures.SO || !assets->textures.EA || !assets->textures.WE)
+	if (!assets->textures.NO || !assets->textures.SO
+		|| !assets->textures.EA || !assets->textures.WE)
 	{
 		ft_putstr_fd("Failed to load all required textures\n", 2);
 		error_exit_cleanup("Map validation failed", map, assets);
@@ -93,7 +97,7 @@ int	initialize_graphics(t_game *game)
 
 t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets)
 {
-	t_game *game;
+	t_game	*game;
 
 	game = allocate_game_structure(map, player, assets);
 	if (!game)

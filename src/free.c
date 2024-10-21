@@ -12,11 +12,10 @@ void	free_assets_struct(t_assets *assets)
 		free(assets->textures.path_WE);
 }
 
-static void cleanup_textures_and_images(t_game *game)
+static void	cleanup_textures_and_images(t_game *game)
 {
 	if (!game)
-		return;
-
+		return ;
 	if (game->assets.textures.NO)
 		mlx_delete_texture(game->assets.textures.NO);
 	if (game->assets.textures.SO)
@@ -34,7 +33,7 @@ static void	cleanup_map_and_game(t_game *game)
 	int	y;
 
 	if (!game)
-		return;
+		return ;
 	if (game->mapGrid && game->mapGrid->symbols)
 	{
 		y = 0;
