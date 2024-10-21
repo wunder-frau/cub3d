@@ -10,32 +10,34 @@ static bool	validate_texture_paths(t_assets *assets)
 		log_error_message("Missing texture path for East (EA).");
 	if (!assets->textures.path_WE)
 		log_error_message("Missing texture path for West (WE).");
-	if (!assets->textures.path_NO || !assets->textures.path_SO ||
-		!assets->textures.path_EA || !assets->textures.path_WE)
+	if (!assets->textures.path_NO || !assets->textures.path_SO
+		|| !assets->textures.path_EA || !assets->textures.path_WE)
 		return (false);
 	return (true);
 }
 
 static bool	validate_colors(t_assets *assets)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < 3)
 	{
 		if (assets->colors.rgb_C[i] < 0 || assets->colors.rgb_C[i] > 255)
 		{
-			ft_printf("Invalid ceiling color component at index %d: %d\n", i, assets->colors.rgb_C[i]);
+			log_error_message("Invalid ceiling color component");
+			ft_printf("at index %d: %d\n", i, assets->colors.rgb_C[i]);
 			return (false);
 		}
 		if (assets->colors.rgb_F[i] < 0 || assets->colors.rgb_F[i] > 255)
 		{
-			ft_printf("Invalid floor color component at index %d: %d\n", i, assets->colors.rgb_F[i]);
+			log_error_message("Invalid floor color component ");
+			ft_printf("at index %d: %d\n", i, assets->colors.rgb_F[i]);
 			return (false);
 		}
 		i++;
 	}
-	return true;
+	return (true);
 }
 
 bool	is_cub(const char *str)
@@ -56,7 +58,7 @@ void	space_to_wall(t_vector *map)
 	if (map == NULL || map->symbols == NULL)
 	{
 		ft_putstr_fd("Error\nMap or map symbols are NULL.\n", 2);
-		return;
+		return ;
 	}
 	row = 0;
 	while (row < map->length)
@@ -64,16 +66,13 @@ void	space_to_wall(t_vector *map)
 		if (map->symbols[row] == NULL)
 		{
 			row++;
-			continue;
+			continue ;
 		}
 		col = 0;
 		while (col < ft_strlen(map->symbols[row]))
 		{
 			if (map->symbols[row][col] == ' ')
-			{
-				printf("DEBUG: SPACE found at row %d, col %d\n", row, col);
 				map->symbols[row][col] = '1';
-			}
 			col++;
 		}
 		row++;
