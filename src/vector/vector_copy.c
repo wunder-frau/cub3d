@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   vector_copy.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/22 01:30:56 by istasheu          #+#    #+#             */
+/*   Updated: 2024/10/22 01:30:58 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "vector.h"
 
 t_vector	*vector_copy(t_vector *vector)
 {
 	t_vector	*vec_cpy;
-	char			*cpy_line;
+	char		*cpy_line;
 	size_t		i;
 
 	vec_cpy = vector_create(vector->capacity);

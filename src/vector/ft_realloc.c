@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_realloc.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/22 01:30:00 by istasheu          #+#    #+#             */
+/*   Updated: 2024/10/22 01:30:10 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "vector.h"
 
 void	*ft_realloc(void *ptr, size_t current_size, size_t new_size)
 {
 	char		*old_ptr;
 	char		*new_ptr;
-	size_t	i;
+	size_t		i;
 
 	old_ptr = (char *)ptr;
 	if (!new_size)

@@ -1,6 +1,19 @@
-# include "vector.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   vector_methods.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/22 01:33:11 by istasheu          #+#    #+#             */
+/*   Updated: 2024/10/22 01:34:02 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static void	vector_erase_at(t_vector *vector, size_t index, char **remaining_symbs)
+#include "vector.h"
+
+static void	vector_erase_at(t_vector *vector, size_t index,
+	char **remaining_symbs)
 {
 	size_t	i;
 	size_t	j;
@@ -32,7 +45,8 @@ char	*vector_get_at(t_vector *vector, size_t index)
 
 	if (index >= vector->capacity)
 		return (NULL);
-	remaining_symbs = (char **)malloc(sizeof(char *) * (vector->length - 1));
+	remaining_symbs = (char **)malloc(sizeof(char *)
+			* (vector->length - 1));
 	if (remaining_symbs == NULL)
 		return (NULL);
 	removed_symb = vector->symbols[index];
