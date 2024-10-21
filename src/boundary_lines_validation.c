@@ -86,30 +86,41 @@ static bool	is_valid_boundary_line(const char *line)
 	return (true);
 }
 
-bool	validate_line(const char *line, const char *valid_chars,
-	t_line_type line_type)
+bool	starts_with_wall(const char *line)
 {
 	size_t	i;
 
+	i = 0;
+	while (line[i] == ' ')
+		i++;
+	return (line[i] == '1');
+}
+
+bool	ends_with_wall(const char *line)
+{
+	size_t	i;
+
+	i = ft_strlen(line) - 1;
+	while (i > 0 && (line[i] == ' ' || line[i] == '\n'))
+		i--;
+	return (line[i] == '1');
+}
+
+bool	validate_line(const char *line, const char *valid_chars,
+	t_line_type line_type)
+{
 	if (!is_valid_line_len_and_nl(line, line_type))
 		return (false);
 	if (!is_valid_line_characters(line, valid_chars, line_type))
 		return (false);
 	if (line_type == LINE_MIDDLE)
 	{
-		i = 0;
-		while (line[i] == ' ')
-			i++;
-		if (line[i] != '1')
+		if (!starts_with_wall(line))
 		{
 			log_error_message("Map middle line must start with wall '1'");
 			return (false);
 		}
-		while (line[i] != '\n' && line[i] != '\0')
-      i++;
-    while (i > 0 && line[i - 1] == ' ')
-      i--;
-		if (i > 0 && line[i - 1] != '1')
+		if (!ends_with_wall(line))
 		{
 			log_error_message("Map middle line must end with wall '1'");
 			return (false);
