@@ -21,7 +21,9 @@ void	error_exit_cleanup(char *msg, t_vector *map, t_assets *assets)
 
 t_player	set_player_not_found(char *error_message)
 {
-	t_player	player = {0};
+	t_player	player;
+
+	player = (t_player){0};
 	player.x = -1;
 	player.y = -1;
 	player.angle = -1.0f;

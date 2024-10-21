@@ -27,7 +27,8 @@ static void	check_no_config_after_map(t_vector *map, size_t i)
 	while (i < map->capacity)
 	{
 		if (is_config_line(map->symbols[i]))
-			error_exit_cleanup("Texture configuration found after map data", map, NULL);
+			error_exit_cleanup("Texture configuration found"
+				" after map data", map, NULL);
 		i++;
 	}
 }
@@ -50,7 +51,7 @@ static int	count_config_lines(t_vector *map, size_t *i)
 		else if (!is_blank_line(map->symbols[*i]))
 		{
 			printf("-> Found map data start.\n");
-			break;
+			break ;
 		}
 		else
 		{
@@ -61,11 +62,10 @@ static int	count_config_lines(t_vector *map, size_t *i)
 	return (texture_info_count);
 }
 
-
 void	validate_map_file_structure(t_vector *map)
 {
-	size_t i;
-	int texture_info_count;
+	size_t	i;
+	int		texture_info_count;
 
 	i = 0;
 	texture_info_count = count_config_lines(map, &i);

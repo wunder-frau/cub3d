@@ -82,15 +82,11 @@ void	space_to_wall(t_vector *map)
 
 bool	validate_map(t_vector *map, t_assets *assets)
 {
-	size_t	i;
-
-	i = 0;
 	if (!is_valid_boundaries(map))
 		error_exit_cleanup("Invalid map boundaries.", map, assets);
-	if (count_players(map) != 1)
-		error_exit_cleanup("Invalid player count in the map.", map, assets);
+	count_players(map);
 	validate_map_with_flood_fill(map);
-		printf("DEBUG: Map successfully passed flood fill validation.\n");
+	printf("DEBUG: Map successfully passed flood fill validation.\n");
 	space_to_wall(map);
 	if (!validate_texture_paths(assets))
 		return (false);
