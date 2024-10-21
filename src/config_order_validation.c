@@ -63,20 +63,16 @@ static int	count_config_lines(t_vector *map, size_t *i)
 		(*i)++;
 	while (*i < map->capacity)
 	{
-		printf("Checking line %zu: '%s'\n", *i, map->symbols[*i]);
 		if (is_config_line(map->symbols[*i]))
 		{
-			printf("-> Counted as asset line.\n");
 			texture_info_count++;
 		}
 		else if (!is_blank_line(map->symbols[*i]))
 		{
-			printf("-> Found map data start.\n");
+			if (!is_map_line(map->symbols[*i], map))
+				error_exit_cleanup("Invalid configuration identifier. "
+					"Expected one of: NO, SO, EA, WE, F, C.", map, NULL);
 			break ;
-		}
-		else
-		{
-			printf("-> Blank line.\n");
 		}
 		(*i)++;
 	}
