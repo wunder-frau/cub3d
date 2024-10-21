@@ -111,8 +111,8 @@ int	main(int argc, char **argv)
 		vector_free(map);
 		return (EXIT_FAILURE);
 	}
-	if (!validate_map(map, assets))
-		error_exit_cleanup("Map validation failed", map, assets);
+	// if (!validate_map(map, assets))
+	// 	error_exit_cleanup("Map validation failed", map, assets);
 	player = find_player_pos(map);
 	if (player.x == -1 && player.y == -1)
 		error_exit_cleanup("Player not found in the map.\n", map, assets);

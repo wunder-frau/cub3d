@@ -150,13 +150,11 @@ t_assets	*initialize_assets(t_vector *map)
 	assets->textures.SO = NULL;
 	assets->textures.EA = NULL;
 	assets->textures.WE = NULL;
+	if (remove_empty_line(map) == -1)
+		error_exit_cleanup("Failed to remove empty lines", map, assets);
 	load_asset_config(map, assets);
 	load_asset_rgb(map, assets);
-	if (!process_map(map))
-	{
-		free_assets_struct(assets);
-		vector_free(map);
-		exit(1);
-	}
+	if (!validate_map(map, assets))
+		error_exit_cleanup("Map validation failed", map, assets);
 	return (assets);
 }

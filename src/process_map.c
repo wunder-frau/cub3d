@@ -16,7 +16,7 @@ static bool	is_empty_string(const char *line)
 	return (true);
 }
 
-static int	remove_empty_line(t_vector *map)
+int	remove_empty_line(t_vector *map)
 {
 	size_t	i;
 	char	*empty_line;
@@ -41,8 +41,3 @@ static int	remove_empty_line(t_vector *map)
 	return (0);
 }
 
-bool	process_map(t_vector *map)
-{
-	remove_empty_line(map);
-	return (true);
-}
