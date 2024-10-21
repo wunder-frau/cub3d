@@ -27,7 +27,6 @@ t_player	set_player_not_found(char *error_message)
 	player.x = -1;
 	player.y = -1;
 	player.angle = -1.0f;
-
 	if (error_message != NULL)
 		log_error_message(error_message);
 	return (player);
