@@ -1,9 +1,10 @@
 #include "../cub3d.h"
 
-bool	find_symbol_position(t_vector *map, const char *symbols, int *row_out, int *col_out)
+bool	find_symbol_position(t_vector *map, const char *symbols,
+	int *row_out, int *col_out)
 {
-	int row;
-	int col;
+	int	row;
+	int	col;
 
 	row = 0;
 	while (row < map->length)
@@ -31,7 +32,7 @@ void	flood_fill(t_vector *map, int row, int col)
 {
 	if (row < 0 || row >= map->length || col < 0
 		|| col >= ft_strlen(map->symbols[row]))
-		return;
+		return ;
 	if (is_player_symbol(map->symbols[row][col]) ||
 			map->symbols[row][col] == ' ' || map->symbols[row][col] == '0')
 	{
@@ -43,8 +44,13 @@ void	flood_fill(t_vector *map, int row, int col)
 	}
 }
 
+bool	is_boundary(const t_vector *map, const size_t row, const size_t col)
+{
+	size_t	row_count;
+  size_t	len;
 
-bool is_boundary(const t_vector *map, const size_t row, const size_t col, const size_t len, const size_t row_count) {
+	row_count = map->capacity;
+	len = ft_strlen(map->symbols[row]);
 	if (row == 0 || row == row_count - 1 || col == 0 || col == len - 1)
 		return (true);
 	if (row == 0 || row >= row_count - 1)
@@ -84,7 +90,7 @@ bool is_valid(t_vector *map, size_t row, size_t col)
 		{
 			if (map->symbols[row_idx][col_idx] == '*')
 			{
-				const bool is_on_boundary = is_boundary(map, row_idx, col_idx, col_count, row_count);
+				const bool is_on_boundary = is_boundary(map, row_idx, col_idx);
 				if (is_on_boundary)
 				{
 					log_error_message("Error: Flood fill reached a boundary. Map is not enclosed properly.");

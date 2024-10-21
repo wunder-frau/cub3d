@@ -105,8 +105,10 @@ bool	validate_line(const char *line, const char *valid_chars,
 			log_error_message("Map middle line must start with wall '1'");
 			return (false);
 		}
-		while (line[i] != '\n')
-			i++;
+		while (line[i] != '\n' && line[i] != '\0')
+      i++;
+    while (i > 0 && line[i - 1] == ' ')
+      i--;
 		if (i > 0 && line[i - 1] != '1')
 		{
 			log_error_message("Map middle line must end with wall '1'");
