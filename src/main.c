@@ -1,4 +1,35 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/22 10:21:14 by istasheu          #+#    #+#             */
+/*   Updated: 2024/10/22 10:21:44 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3d.h"
+
+static int	handle_assets_and_player(t_vector *map, t_assets **assets,
+		t_player *player)
+{
+	*assets = initialize_assets(map);
+	if (!*assets)
+	{
+		log_error_message("Failed to initialize assets");
+		vector_free(map);
+		return (EXIT_FAILURE);
+	}
+	*player = find_player_pos(map);
+	if (player->x == -1 && player->y == -1)
+	{
+		error_exit_cleanup("Player not found in the map.", map, *assets);
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
 
 int	main(int argc, char **argv)
 {
@@ -11,27 +42,12 @@ int	main(int argc, char **argv)
 		log_error_message("Incorrect number of arguments");
 		return (EXIT_FAILURE);
 	}
-	if (!is_cub(argv[1]))
-	{
-		log_error_message("Error\nInvalid file format. Use a .cub file.");
-		exit(1);
-	}
 	map = read_map(argv);
 	validate_map_file_structure(map);
 	if (!map)
 		return (EXIT_FAILURE);
-	assets = initialize_assets(map);
-	if (!assets)
-	{
-		log_error_message("Failed to initialize assets");
-		vector_free(map);
+	if (handle_assets_and_player(map, &assets, &player) != EXIT_SUCCESS)
 		return (EXIT_FAILURE);
-	}
-	// if (!validate_map(map, assets))
-	// 	error_exit_cleanup("Map validation failed", map, assets);
-	player = find_player_pos(map);
-	if (player.x == -1 && player.y == -1)
-		error_exit_cleanup("Player not found in the map.\n", map, assets);
 	if (raycast_engine(map, player, assets) != EXIT_SUCCESS)
 		return (EXIT_FAILURE);
 	vector_free(map);

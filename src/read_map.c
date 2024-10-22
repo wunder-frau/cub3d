@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:12:14 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:12:16 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/10/22 10:17:08 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,11 @@ static int	open_map_file(char **argv)
 {
 	int	map_fd;
 
+	if (!is_cub(argv[1]))
+	{
+		log_error_message("Invalid file format. Use a .cub file.");
+		exit(1);
+	}
 	map_fd = safe_open(argv[1]);
 	if (map_fd < 0)
 	{
