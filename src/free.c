@@ -1,16 +1,16 @@
-#include "../cub3d.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/22 10:05:09 by istasheu          #+#    #+#             */
+/*   Updated: 2024/10/22 10:44:12 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-void	free_assets_struct(t_assets *assets)
-{
-	if (assets->textures.path_EA)
-		free(assets->textures.path_EA);
-	if (assets->textures.path_NO)
-		free(assets->textures.path_NO);
-	if (assets->textures.path_SO)
-		free(assets->textures.path_SO);
-	if (assets->textures.path_WE)
-		free(assets->textures.path_WE);
-}
+#include "../cub3d.h"
 
 static void	cleanup_textures_and_images(t_game *game)
 {
@@ -56,8 +56,33 @@ static void	cleanup_map_and_game(t_game *game)
 	free(game);
 }
 
+void	free_assets_struct(t_assets *assets)
+{
+	if (assets->textures.path_EA)
+		free(assets->textures.path_EA);
+	if (assets->textures.path_NO)
+		free(assets->textures.path_NO);
+	if (assets->textures.path_SO)
+		free(assets->textures.path_SO);
+	if (assets->textures.path_WE)
+		free(assets->textures.path_WE);
+}
+
 void	cleanup(t_game *game)
 {
 	cleanup_textures_and_images(game);
 	cleanup_map_and_game(game);
+}
+
+void	free_split_rgb_array(char **rgb_arr)
+{
+	int	i;
+
+	i = 0;
+	while (rgb_arr[i] != NULL)
+	{
+		free(rgb_arr[i]);
+		i++;
+	}
+	free(rgb_arr);
 }

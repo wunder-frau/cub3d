@@ -22,7 +22,8 @@ ifeq ($(UNAME_S),Linux)
 else ifeq ($(UNAME_S),Darwin)
 	# For macOS, specify the path to the GLFW library and required frameworks
 	CFLAGS += -I /opt/homebrew/include
-	LDFLAGS += -L $(MLX42_PATH)/build -lmlx42 -L $(LIBFT_PATH) -lft -L /opt/homebrew/lib -lglfw -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+	LDFLAGS += -L $(MLX42_PATH)/build -lmlx42 -L $(LIBFT_PATH) -lft -L /opt/homebrew/lib -lglfw -framework Cocoa \
+							-framework OpenGL -framework IOKit -framework CoreVideo
 	GLFW_INSTALL_CMD = true  # No-op command to prevent syntax errors
 endif
 
@@ -30,7 +31,9 @@ OBJ_PATH = build/
 SRC_PATH = src/
 VEC_PATH = vector/
 
-SRC_FILES = main.c parser_config.c error_handling.c free.c process_map.c map_validation.c cub3d.c player_position.c allocate.c config_order_validation.c flood_fill.c map_form_validation.c boundary_lines_validation.c
+SRC_FILES = main.c parser_config.c error_handling.c free.c map_validation.c cub3d.c player_position.c \
+						allocate.c config_order_validation.c flood_fill.c boundary_lines_validation.c \
+						utils.c utils_symbol.c read_map.c
 VEC_FILES = ft_realloc.c vector_create.c vector_free.c vector_methods.c vector_push_back.c vector_copy.c vector_print.c
 
 CUB3D_SRC = $(addprefix $(SRC_PATH), $(SRC_FILES)) \

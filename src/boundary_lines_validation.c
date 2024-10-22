@@ -1,63 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   boundary_lines_validation.c                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/22 10:03:40 by istasheu          #+#    #+#             */
+/*   Updated: 2024/10/22 10:38:37 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3d.h"
-
-static bool	validate_map_presence(t_vector *map)
-{
-	if (!map || map->capacity == 0)
-	{
-		log_error_message("Map data is missing or empty.");
-		return (false);
-	}
-	return (true);
-}
-
-bool	is_valid_line_len_and_nl(const char *line, t_line_type line_type)
-{
-	size_t	len;
-
-	len = ft_strlen(line);
-	if (len < 2 || line[len - 1] != '\n')
-	{
-		if (line_type == LINE_TOP)
-			log_error_message("Invalid top line: "
-				"line too small or missing '\\n'");
-		else if (line_type == LINE_BOTTOM)
-			log_error_message("Invalid bottom line: "
-				"line too small or missing '\\n'");
-		else if (line_type == LINE_MIDDLE)
-			log_error_message("Invalid middle line: "
-				"line too small or missing '\\n'");
-		return (false);
-	}
-	return (true);
-}
-
-bool	is_valid_line_characters(const char *line, const char *valid_chars,
-	t_line_type line_type)
-{
-	size_t	len;
-	size_t	i;
-
-	len = ft_strlen(line);
-	i = 0;
-	while (i < len - 1)
-	{
-		if (ft_strchr(valid_chars, line[i]) == NULL)
-		{
-			if (line_type == LINE_TOP)
-				log_error_message("Invalid character "
-					"found in the top line of the map");
-			else if (line_type == LINE_BOTTOM)
-				log_error_message("Invalid character "
-					"found in the bottom line of the map");
-			else if (line_type == LINE_MIDDLE)
-				log_error_message("Invalid character "
-					"found in the middle line of the map");
-			return (false);
-		}
-		i++;
-	}
-	return (true);
-}
 
 static bool	is_valid_boundary_line(const char *line)
 {
@@ -86,7 +39,7 @@ static bool	is_valid_boundary_line(const char *line)
 	return (true);
 }
 
-bool	starts_with_wall(const char *line)
+static bool	starts_with_wall(const char *line)
 {
 	size_t	i;
 
@@ -96,7 +49,7 @@ bool	starts_with_wall(const char *line)
 	return (line[i] == '1');
 }
 
-bool	ends_with_wall(const char *line)
+static bool	ends_with_wall(const char *line)
 {
 	size_t	i;
 
@@ -106,7 +59,7 @@ bool	ends_with_wall(const char *line)
 	return (line[i] == '1');
 }
 
-bool	validate_line(const char *line, const char *valid_chars,
+static bool	validate_line(const char *line, const char *valid_chars,
 	t_line_type line_type)
 {
 	if (!is_valid_line_len_and_nl(line, line_type))

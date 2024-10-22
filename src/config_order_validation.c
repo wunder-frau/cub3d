@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   config_order_validation.c                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/22 10:03:52 by istasheu          #+#    #+#             */
+/*   Updated: 2024/10/22 10:03:53 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3d.h"
 
 static bool	is_config_line(char *str)
@@ -23,17 +35,6 @@ static bool	is_map_line(const char *str, t_vector *map)
 	while (*str)
 	{
 		if (!is_valid_map_symbol(*str, map))
-			return (false);
-		str++;
-	}
-	return (true);
-}
-
-static bool	is_blank_line(const char *str)
-{
-	while (*str)
-	{
-		if (!ft_is_space(*str))
 			return (false);
 		str++;
 	}

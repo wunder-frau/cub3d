@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   allocate.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
+/*   Updated: 2024/10/22 10:36:26 by istasheu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3d.h"
 
-t_game	*allocate_game_structure(t_vector *map, t_player player,
+static t_game	*allocate_game_structure(t_vector *map, t_player player,
 		t_assets *assets)
 {
 	t_game	*game;
@@ -25,7 +37,7 @@ t_game	*allocate_game_structure(t_vector *map, t_player player,
 	return (game);
 }
 
-mlx_texture_t	*load_texture(const char *path)
+static mlx_texture_t	*load_texture_from_path(const char *path)
 {
 	mlx_texture_t	*texture;
 
@@ -41,12 +53,12 @@ mlx_texture_t	*load_texture(const char *path)
 	return (texture);
 }
 
-int	initialize_ass(t_vector *map, t_assets *assets)
+int	load_textures_into_assets(t_vector *map, t_assets *assets)
 {
-	assets->textures.NO = load_texture(assets->textures.path_NO);
-	assets->textures.SO = load_texture(assets->textures.path_SO);
-	assets->textures.EA = load_texture(assets->textures.path_EA);
-	assets->textures.WE = load_texture(assets->textures.path_WE);
+	assets->textures.NO = load_texture_from_path(assets->textures.path_NO);
+	assets->textures.SO = load_texture_from_path(assets->textures.path_SO);
+	assets->textures.EA = load_texture_from_path(assets->textures.path_EA);
+	assets->textures.WE = load_texture_from_path(assets->textures.path_WE);
 	if (!assets->textures.NO || !assets->textures.SO
 		|| !assets->textures.EA || !assets->textures.WE)
 	{
@@ -57,7 +69,7 @@ int	initialize_ass(t_vector *map, t_assets *assets)
 	return (0);
 }
 
-int	setup_mlx_and_image(t_game *game)
+static int	setup_mlx_and_image(t_game *game)
 {
 	game->mlx = mlx_init(WIDTH, HEIGHT, "CUB 3D", true);
 	if (!game->mlx)
@@ -82,19 +94,6 @@ int	setup_mlx_and_image(t_game *game)
 	return (0);
 }
 
-int	initialize_graphics(t_game *game)
-{
-	if (setup_mlx_and_image(game) != 0)
-		return (-1);
-	if (initialize_ass(game->mapGrid, &game->assets) != 0)
-	{
-		mlx_delete_image(game->mlx, game->image);
-		mlx_terminate(game->mlx);
-		return (-1);
-	}
-	return (0);
-}
-
 t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets)
 {
 	t_game	*game;
@@ -102,8 +101,15 @@ t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets)
 	game = allocate_game_structure(map, player, assets);
 	if (!game)
 		return (NULL);
-	if (initialize_graphics(game) != 0)
+	if (setup_mlx_and_image(game) != 0)
 	{
+		cleanup(game);
+		return (NULL);
+	}
+	if (load_textures_into_assets(game->mapGrid, &game->assets) != 0)
+	{
+		mlx_delete_image(game->mlx, game->image);
+		mlx_terminate(game->mlx);
 		cleanup(game);
 		return (NULL);
 	}
