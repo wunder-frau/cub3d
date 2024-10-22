@@ -6,23 +6,11 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:09 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:05:11 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/10/22 10:44:12 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
-
-void	free_assets_struct(t_assets *assets)
-{
-	if (assets->textures.path_EA)
-		free(assets->textures.path_EA);
-	if (assets->textures.path_NO)
-		free(assets->textures.path_NO);
-	if (assets->textures.path_SO)
-		free(assets->textures.path_SO);
-	if (assets->textures.path_WE)
-		free(assets->textures.path_WE);
-}
 
 static void	cleanup_textures_and_images(t_game *game)
 {
@@ -66,6 +54,18 @@ static void	cleanup_map_and_game(t_game *game)
 	if (game->mlx)
 		mlx_terminate(game->mlx);
 	free(game);
+}
+
+void	free_assets_struct(t_assets *assets)
+{
+	if (assets->textures.path_EA)
+		free(assets->textures.path_EA);
+	if (assets->textures.path_NO)
+		free(assets->textures.path_NO);
+	if (assets->textures.path_SO)
+		free(assets->textures.path_SO);
+	if (assets->textures.path_WE)
+		free(assets->textures.path_WE);
 }
 
 void	cleanup(t_game *game)

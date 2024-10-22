@@ -6,13 +6,13 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:03:13 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/10/22 10:36:26 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
 
-t_game	*allocate_game_structure(t_vector *map, t_player player,
+static t_game	*allocate_game_structure(t_vector *map, t_player player,
 		t_assets *assets)
 {
 	t_game	*game;
@@ -37,7 +37,7 @@ t_game	*allocate_game_structure(t_vector *map, t_player player,
 	return (game);
 }
 
-mlx_texture_t	*load_texture_from_path(const char *path)
+static mlx_texture_t	*load_texture_from_path(const char *path)
 {
 	mlx_texture_t	*texture;
 
@@ -69,7 +69,7 @@ int	load_textures_into_assets(t_vector *map, t_assets *assets)
 	return (0);
 }
 
-int	setup_mlx_and_image(t_game *game)
+static int	setup_mlx_and_image(t_game *game)
 {
 	game->mlx = mlx_init(WIDTH, HEIGHT, "CUB 3D", true);
 	if (!game->mlx)

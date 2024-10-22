@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:40 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:03:42 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/10/22 10:38:37 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static bool	is_valid_boundary_line(const char *line)
 	return (true);
 }
 
-bool	starts_with_wall(const char *line)
+static bool	starts_with_wall(const char *line)
 {
 	size_t	i;
 
@@ -49,7 +49,7 @@ bool	starts_with_wall(const char *line)
 	return (line[i] == '1');
 }
 
-bool	ends_with_wall(const char *line)
+static bool	ends_with_wall(const char *line)
 {
 	size_t	i;
 
@@ -59,7 +59,7 @@ bool	ends_with_wall(const char *line)
 	return (line[i] == '1');
 }
 
-bool	validate_line(const char *line, const char *valid_chars,
+static bool	validate_line(const char *line, const char *valid_chars,
 	t_line_type line_type)
 {
 	if (!is_valid_line_len_and_nl(line, line_type))

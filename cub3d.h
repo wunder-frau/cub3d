@@ -70,46 +70,49 @@ typedef enum e_line_type
 	LINE_MIDDLE
 } t_line_type;
 
-t_vector	*read_map(char **argv);
-t_assets	*initialize_assets(t_vector *map);
+/* allocate.c */
+t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets);
+
+/* boundary_lines_validation.c */
+bool	is_valid_boundaries(t_vector *map);
+
+/* config_order_validation.c */
+void	validate_map_file_structure(t_vector *map);
 
 /* error_handling.c */
 void	log_error_message(char *msg);
 void	error_exit_cleanup(char *msg, t_vector *map, t_assets *assets);
+t_player	set_player_not_found(char *error_message);
 bool	is_valid_line_len_and_nl(const char *line, t_line_type line_type);
 bool	is_valid_line_characters(const char *line, const char *valid_chars,
 	t_line_type line_type);
 
+/* flood_fill.c */
+void	validate_map_with_flood_fill(t_vector *map);
+
 /* free.c */
 void	free_assets_struct(t_assets *assets);
 void	free_split_rgb_array(char **rgb_arr);
+void	cleanup(t_game *game);
+void	free_split_rgb_array(char **rgb_arr);
 
-/* validation.c */
-bool process_map(t_vector *map);
+/* main.c */
+int	main(int argc, char **argv);
 
-bool validate_map(t_vector *map, t_assets *assets);
-
-int raycast_engine(t_vector *map, t_player player, t_assets *assets);
-
-// int find_player_pos(t_vector *map, t_player *player);
-t_player find_player_pos(t_vector *map);
-
-void cleanup(t_game *game);
-t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets);
-bool	is_player_symbol(char c);
+/* map_validation.c */
 bool	is_cub(const char *str);
-int count_players(t_vector *map);
-void validate_map_file_structure(t_vector *map);
-void validate_path(t_vector *data_ptr);
-bool	is_valid_map_symbol(char c, t_vector *map);
-bool validate_map_form(t_vector *map);
-void validate_map_with_flood_fill(t_vector *map);
-void validate_map_symbol(char symbol, size_t row, size_t col, t_vector *map);
-bool	is_valid_boundaries(t_vector *map);
-void flood_fill(t_vector *map, int row, int col);
-bool is_valid(t_vector *map, size_t row, size_t col);
-t_player	set_player_not_found(char *error_message);
-int	remove_empty_line(t_vector *map);
+void	space_to_wall(t_vector *map);
+bool	validate_map(t_vector *map, t_assets *assets);
+
+/* parser_config.c */
+t_assets	*initialize_assets(t_vector *map);
+
+/* player_position.c */
+int	count_players(t_vector *map);
+t_player	find_player_pos(t_vector *map);
+
+/*read_map.c */
+t_vector	*read_map(char **argv);
 
 /* utils.c */
 char	*trim_and_extract(char *str, unsigned int prefix_len);
@@ -123,7 +126,7 @@ float	assign_player_angle(char symbol);
 bool	is_player_symbol(char c);
 bool	is_valid_map_symbol(char c, t_vector *map);
 
-/* read_map.c */
-t_vector	*read_map(char **argv);
+/* cub3d.c */
+int raycast_engine(t_vector *map, t_player player, t_assets *assets);
 
 #endif

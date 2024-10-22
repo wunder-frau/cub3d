@@ -6,13 +6,13 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:04:49 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:04:50 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/10/22 10:42:44 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
 
-bool	find_symbol_position(t_vector *map, const char *symbols,
+static bool	find_symbol_position(t_vector *map, const char *symbols,
 	int *row_out, int *col_out)
 {
 	int	row;
@@ -40,7 +40,7 @@ bool	find_symbol_position(t_vector *map, const char *symbols,
 	return (false);
 }
 
-void	flood_fill(t_vector *map, int row, int col)
+static void	flood_fill(t_vector *map, int row, int col)
 {
 	if (row < 0 || row >= map->length || col < 0
 		|| col >= ft_strlen(map->symbols[row]))
@@ -56,7 +56,7 @@ void	flood_fill(t_vector *map, int row, int col)
 	}
 }
 
-bool	is_boundary(const t_vector *map, const size_t row, const size_t col)
+static bool	is_boundary(const t_vector *map, const size_t row, const size_t col)
 {
 	size_t	row_count;
 	size_t	len;
@@ -78,7 +78,7 @@ bool	is_boundary(const t_vector *map, const size_t row, const size_t col)
 	return (true);
 }
 
-bool	is_valid(t_vector *map, size_t row, size_t col)
+static bool	is_valid(t_vector *map, size_t row, size_t col)
 {
 	size_t	row_count;
 	size_t	col_count;
