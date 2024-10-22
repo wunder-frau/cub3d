@@ -29,17 +29,6 @@ static bool	is_map_line(const char *str, t_vector *map)
 	return (true);
 }
 
-static bool	is_blank_line(const char *str)
-{
-	while (*str)
-	{
-		if (!ft_is_space(*str))
-			return (false);
-		str++;
-	}
-	return (true);
-}
-
 static void	check_no_config_after_map(t_vector *map, size_t i)
 {
 	while (i < map->capacity)

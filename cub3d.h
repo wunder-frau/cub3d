@@ -76,6 +76,9 @@ t_assets	*initialize_assets(t_vector *map);
 /* error_handling.c */
 void	log_error_message(char *msg);
 void	error_exit_cleanup(char *msg, t_vector *map, t_assets *assets);
+bool	is_valid_line_len_and_nl(const char *line, t_line_type line_type);
+bool	is_valid_line_characters(const char *line, const char *valid_chars,
+	t_line_type line_type);
 
 /* free.c */
 void	free_assets_struct(t_assets *assets);
@@ -110,5 +113,14 @@ int	remove_empty_line(t_vector *map);
 
 /* utils.c */
 char	*trim_and_extract(char *str, unsigned int prefix_len);
+bool	is_empty_string(const char *line);
+int	remove_empty_line(t_vector *map);
+bool	validate_map_presence(t_vector *map);
+bool	is_blank_line(const char *str);
+
+/* utils_symbol.c */
+float	assign_player_angle(char symbol);
+bool	is_player_symbol(char c);
+bool	is_valid_map_symbol(char c, t_vector *map);
 
 #endif

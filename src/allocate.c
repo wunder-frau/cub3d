@@ -82,19 +82,6 @@ int	setup_mlx_and_image(t_game *game)
 	return (0);
 }
 
-int	initialize_graphics(t_game *game)
-{
-	if (setup_mlx_and_image(game) != 0)
-		return (-1);
-	if (load_textures_into_assets(game->mapGrid, &game->assets) != 0)
-	{
-		mlx_delete_image(game->mlx, game->image);
-		mlx_terminate(game->mlx);
-		return (-1);
-	}
-	return (0);
-}
-
 t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets)
 {
 	t_game	*game;
@@ -102,8 +89,15 @@ t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets)
 	game = allocate_game_structure(map, player, assets);
 	if (!game)
 		return (NULL);
-	if (initialize_graphics(game) != 0)
+	if (setup_mlx_and_image(game) != 0)
 	{
+		cleanup(game);
+		return (NULL);
+	}
+	if (load_textures_into_assets(game->mapGrid, &game->assets) != 0)
+	{
+		mlx_delete_image(game->mlx, game->image);
+		mlx_terminate(game->mlx);
 		cleanup(game);
 		return (NULL);
 	}
