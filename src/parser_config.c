@@ -1,30 +1,11 @@
 #include "../cub3d.h"
 
 /**
- * Trims the identifier (NO, SO, EA, WE, F, C)
- * from the config line and removes trailing spaces and newlines.
- */
-static char	*trim_and_extract(char *str, unsigned int prefix_len)
-{
-	unsigned int	end;
-	char			*trimmed;
-
-	while (str[prefix_len] == ' ' || str[prefix_len] == '\n')
-		prefix_len++;
-	end = ft_strlen(str);
-	while (end > prefix_len && (str[end - 1] == ' ' || str[end - 1] == '\n'))
-		end--;
-	trimmed = ft_substr(str, prefix_len, end - prefix_len);
-	free(str);
-	str = NULL;
-	return (trimmed);
-}
-
-/**
  * Extracts the texture path from the map,
  * based on the identifier (e.g., "NO ", "SO ").
  */
-static char	*extract_path(const char *id, t_vector *map, t_assets *assets)
+static char	*extract_texture_path(const char *id, t_vector *map,
+		t_assets *assets)
 {
 	size_t	i;
 	char	*path;
@@ -51,19 +32,6 @@ static char	*extract_path(const char *id, t_vector *map, t_assets *assets)
 	return (NULL);
 }
 
-static void	free_rgb_array(char **rgb_arr)
-{
-	int	i;
-
-	i = 0;
-	while (rgb_arr[i] != NULL)
-	{
-		free(rgb_arr[i]);
-		i++;
-	}
-	free(rgb_arr);
-}
-
 static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
 {
 	char	**rgb_arr;
@@ -84,7 +52,7 @@ static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
 		assets->colors.rgb_C[1] = ft_atoi(rgb_arr[1]);
 		assets->colors.rgb_C[2] = ft_atoi(rgb_arr[2]);
 	}
-	free_rgb_array(rgb_arr);
+	free_split_rgb_array(rgb_arr);
 	return (true);
 }
 
@@ -118,16 +86,12 @@ static char	*get_rgb(const char *id, t_vector *map, t_assets *assets)
 /**
  * Loads texture paths from the map into the assets structure.
  */
-static void	load_asset_config(t_vector *map, t_assets *assets)
+static void	load_config_path_and_rgb(t_vector *map, t_assets *assets)
 {
-	assets->textures.path_NO = extract_path("NO ", map, assets);
-	assets->textures.path_SO = extract_path("SO ", map, assets);
-	assets->textures.path_EA = extract_path("EA ", map, assets);
-	assets->textures.path_WE = extract_path("WE ", map, assets);
-}
-
-static void	load_asset_rgb(t_vector *map, t_assets *assets)
-{
+	assets->textures.path_NO = extract_texture_path("NO ", map, assets);
+	assets->textures.path_SO = extract_texture_path("SO ", map, assets);
+	assets->textures.path_EA = extract_texture_path("EA ", map, assets);
+	assets->textures.path_WE = extract_texture_path("WE ", map, assets);
 	get_rgb("C ", map, assets);
 	get_rgb("F ", map, assets);
 }
@@ -152,8 +116,7 @@ t_assets	*initialize_assets(t_vector *map)
 	assets->textures.WE = NULL;
 	if (remove_empty_line(map) == -1)
 		error_exit_cleanup("Failed to remove empty lines", map, assets);
-	load_asset_config(map, assets);
-	load_asset_rgb(map, assets);
+	load_config_path_and_rgb(map, assets);
 	if (!validate_map(map, assets))
 		error_exit_cleanup("Map validation failed", map, assets);
 	return (assets);

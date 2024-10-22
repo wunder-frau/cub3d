@@ -79,6 +79,7 @@ void	error_exit_cleanup(char *msg, t_vector *map, t_assets *assets);
 
 /* free.c */
 void	free_assets_struct(t_assets *assets);
+void	free_split_rgb_array(char **rgb_arr);
 
 /* validation.c */
 bool process_map(t_vector *map);
@@ -106,5 +107,8 @@ void flood_fill(t_vector *map, int row, int col);
 bool is_valid(t_vector *map, size_t row, size_t col);
 t_player	set_player_not_found(char *error_message);
 int	remove_empty_line(t_vector *map);
+
+/* utils.c */
+char	*trim_and_extract(char *str, unsigned int prefix_len);
 
 #endif

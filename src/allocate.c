@@ -25,7 +25,7 @@ t_game	*allocate_game_structure(t_vector *map, t_player player,
 	return (game);
 }
 
-mlx_texture_t	*load_texture(const char *path)
+mlx_texture_t	*load_texture_from_path(const char *path)
 {
 	mlx_texture_t	*texture;
 
@@ -41,12 +41,12 @@ mlx_texture_t	*load_texture(const char *path)
 	return (texture);
 }
 
-int	initialize_ass(t_vector *map, t_assets *assets)
+int	load_textures_into_assets(t_vector *map, t_assets *assets)
 {
-	assets->textures.NO = load_texture(assets->textures.path_NO);
-	assets->textures.SO = load_texture(assets->textures.path_SO);
-	assets->textures.EA = load_texture(assets->textures.path_EA);
-	assets->textures.WE = load_texture(assets->textures.path_WE);
+	assets->textures.NO = load_texture_from_path(assets->textures.path_NO);
+	assets->textures.SO = load_texture_from_path(assets->textures.path_SO);
+	assets->textures.EA = load_texture_from_path(assets->textures.path_EA);
+	assets->textures.WE = load_texture_from_path(assets->textures.path_WE);
 	if (!assets->textures.NO || !assets->textures.SO
 		|| !assets->textures.EA || !assets->textures.WE)
 	{
@@ -86,7 +86,7 @@ int	initialize_graphics(t_game *game)
 {
 	if (setup_mlx_and_image(game) != 0)
 		return (-1);
-	if (initialize_ass(game->mapGrid, &game->assets) != 0)
+	if (load_textures_into_assets(game->mapGrid, &game->assets) != 0)
 	{
 		mlx_delete_image(game->mlx, game->image);
 		mlx_terminate(game->mlx);

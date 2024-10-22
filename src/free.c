@@ -61,3 +61,16 @@ void	cleanup(t_game *game)
 	cleanup_textures_and_images(game);
 	cleanup_map_and_game(game);
 }
+
+void	free_split_rgb_array(char **rgb_arr)
+{
+	int	i;
+
+	i = 0;
+	while (rgb_arr[i] != NULL)
+	{
+		free(rgb_arr[i]);
+		i++;
+	}
+	free(rgb_arr);
+}
