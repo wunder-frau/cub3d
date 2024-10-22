@@ -123,4 +123,7 @@ float	assign_player_angle(char symbol);
 bool	is_player_symbol(char c);
 bool	is_valid_map_symbol(char c, t_vector *map);
 
+/* read_map.c */
+t_vector	*read_map(char **argv);
+
 #endif
