@@ -1,5 +1,10 @@
 #include "../cub3d.h"
 
+#include <math.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
+
 typedef struct s_keys
 {
 	bool w;
@@ -10,166 +15,245 @@ typedef struct s_keys
 	bool right;
 } t_keys;
 
-t_keys keys = {false, false, false, false};
+typedef struct s_ray
+{
+	float ray_dir_x;
+	float ray_dir_y;
+	int map_x;
+	int map_y;
+	float delta_dist_x;
+	float delta_dist_y;
+	float side_dist_x;
+	float side_dist_y;
+	int step_x;
+	int step_y;
+	int side;
+	float perp_wall_dist;
+} t_ray;
 
+// Global variables
+static t_keys g_keys = {false, false, false, false, false, false};
+
+// Convert character to integer
 int ft_char_to_int(char c)
 {
-	return(c - '0');
+	return (c - '0');
 }
 
-uint32_t	rgb_to_uint32(int rgb[3])
+// Convert RGB array to uint32_t color value
+uint32_t rgb_to_uint32(int rgb[3])
 {
-	//printf("Clamped RGB values: R=%d, G=%d, B=%d\n", r, g, b);
-	//printf("Combined uint32_t color: 0x%08X\n", color);
-	return (rgb[0] << 24 | rgb[1] << 16 | rgb[2] << 8 | 255);
-}
-uint32_t	applyFogEffect(uint32_t color, float perpWallDist, float maxViewDistance)
-{
-	float fogFactor = perpWallDist / maxViewDistance;
-	if (fogFactor > 1.0f)
-		fogFactor = 1.0f;
-	uint8_t r = ((color >> 24) & 0xFF) * (1.0f - fogFactor);
-	uint8_t g = ((color >> 16) & 0xFF) * (1.0f - fogFactor);
-	uint8_t b = ((color >> 8) & 0xFF) * (1.0f - fogFactor);
-	uint8_t a = color & 0xFF;
-	return (r << 24) | (g << 16) | (b << 8) | a;
+	return ((rgb[0] << 24) | (rgb[1] << 16) | (rgb[2] << 8) | 255);
 }
 
-void	initRay(t_game *game, int ray, float fovRad, float *rayAngle, float *rayDirX, float *rayDirY)
+// Apply fog effect to color based on wall distance
+uint32_t apply_fog_effect(uint32_t color, float perp_wall_dist, float max_view_distance)
 {
-	float angleIncrement = fovRad / NUM_RAYS;
-	float startAngle = game->player.angle - (fovRad / 2.0f);
+	float fog_factor;
+	uint8_t r, g, b, a;
 
-	// Normalize start angle within the range of 0 to 2 * PI
-	if (startAngle < 0)
-		startAngle += 2 * M_PI;
-	if (startAngle > 2 * M_PI)
-		startAngle -= 2 * M_PI;
-
-	*rayAngle = startAngle + ray * angleIncrement;
-
-	// Normalize the ray angle between 0 and 2 * PI
-	if (*rayAngle < 0)
-		*rayAngle += 2 * M_PI;
-	if (*rayAngle > 2 * M_PI)
-		*rayAngle -= 2 * M_PI;
-
-	*rayDirX = cos(*rayAngle);
-	*rayDirY = sin(*rayAngle);
+	fog_factor = perp_wall_dist / max_view_distance;
+	if (fog_factor > 1.0f)
+		fog_factor = 1.0f;
+	r = ((color >> 24) & 0xFF) * (1.0f - fog_factor);
+	g = ((color >> 16) & 0xFF) * (1.0f - fog_factor);
+	b = ((color >> 8) & 0xFF) * (1.0f - fog_factor);
+	a = color & 0xFF;
+	return ((r << 24) | (g << 16) | (b << 8) | a);
 }
 
-int performDDA(t_game *game, float rayDirX, float rayDirY, int *mapX, int *mapY, int *side, float *perpWallDist)
+// Initialize a ray for casting
+void init_ray_angle(t_game *game, int ray, float fov_rad, float *ray_angle)
 {
-    // Calculate delta distances (in tile units)
-    float deltaDistX = (rayDirX == 0) ? 1e30f : fabs(1.0f / rayDirX);
-    float deltaDistY = (rayDirY == 0) ? 1e30f : fabs(1.0f / rayDirY);
+	float angle_increment;
+	float start_angle;
 
-    float sideDistX, sideDistY;
-    int stepX, stepY;
+	angle_increment = fov_rad / NUM_RAYS;
+	start_angle = game->player.angle - (fov_rad / 2.0f);
+	if (start_angle < 0)
+		start_angle += 2 * M_PI;
+	if (start_angle > 2 * M_PI)
+		start_angle -= 2 * M_PI;
 
-    // Player position in tile units
-    float playerXInTiles = game->player.x / TILE_SIZE;
-    float playerYInTiles = game->player.y / TILE_SIZE;
+	*ray_angle = start_angle + ray * angle_increment;
+	if (*ray_angle < 0)
+		*ray_angle += 2 * M_PI;
+	if (*ray_angle > 2 * M_PI)
+		*ray_angle -= 2 * M_PI;
+}
 
-    // Determine step direction and initial side distances
-    if (rayDirX < 0)
-    {
-        stepX = -1;
-        sideDistX = (playerXInTiles - *mapX) * deltaDistX;
-    }
-    else
-    {
-        stepX = 1;
-        sideDistX = (*mapX + 1.0f - playerXInTiles) * deltaDistX;
-    }
+void init_ray_direction(float ray_angle, float *ray_dir_x, float *ray_dir_y)
+{
+	*ray_dir_x = cos(ray_angle);
+	*ray_dir_y = sin(ray_angle);
+}
 
-    if (rayDirY < 0)
-    {
-        stepY = -1;
-        sideDistY = (playerYInTiles - *mapY) * deltaDistY;
-    }
-    else
-    {
-        stepY = 1;
-        sideDistY = (*mapY + 1.0f - playerYInTiles) * deltaDistY;
-    }
+// Calculate delta distances for DDA
+void calculate_delta_distances(t_ray *ray)
+{
+	ray->delta_dist_x = (ray->ray_dir_x == 0) ? 1e30f : fabs(1.0f / ray->ray_dir_x);
+	ray->delta_dist_y = (ray->ray_dir_y == 0) ? 1e30f : fabs(1.0f / ray->ray_dir_y);
+}
 
-    int hit = 0;
-    *perpWallDist = 0.0f; // Initialize before the loop
+// Calculate step values for X direction
+void calculate_step_x(t_game *game, t_ray *ray)
+{
+	float player_x_in_tiles;
 
-    while (hit == 0)
-    {
-        // Jump to next map square
-        if (sideDistX < sideDistY)
-        {
-            sideDistX += deltaDistX;
-            *mapX += stepX;
-            *side = 0; // Hit a vertical wall
-        }
-        else
-        {
-            sideDistY += deltaDistY;
-            *mapY += stepY;
-            *side = 1; // Hit a horizontal wall
-        }
+	player_x_in_tiles = game->player.x / TILE_SIZE;
 
-        // Calculate map dimensions
-        int map_width = ft_strlen(game->mapGrid->symbols[0]);
+	if (ray->ray_dir_x < 0)
+	{
+		ray->step_x = -1;
+		ray->side_dist_x = (player_x_in_tiles - ray->map_x) * ray->delta_dist_x;
+	}
+	else
+	{
+		ray->step_x = 1;
+		ray->side_dist_x = (ray->map_x + 1.0f - player_x_in_tiles) * ray->delta_dist_x;
+	}
+}
 
-        // Check if we're outside the map boundaries
-        if (*mapX < 0 || *mapX >= map_width || *mapY < 0 || *mapY >= game->mapGrid->capacity)
-        {
-            *perpWallDist = MAX_VIEW_DISTANCE;
-            hit = 2; // Indicate that the ray went out of bounds
-            break;
-        }
+// Calculate step values for Y direction
+void calculate_step_y(t_game *game, t_ray *ray)
+{
+	float player_y_in_tiles;
 
-        // Check if ray has hit a wall
-        char symbol = game->mapGrid->symbols[*mapY][*mapX];
-        if (symbol == '1')
-        {
-            hit = 1; // Wall hit
+	player_y_in_tiles = game->player.y / TILE_SIZE;
 
-            // Calculate perpendicular wall distance
-            if (*side == 0)
-                *perpWallDist = sideDistX - deltaDistX;
-            else
-                *perpWallDist = sideDistY - deltaDistY;
-        }
+	if (ray->ray_dir_y < 0)
+	{
+		ray->step_y = -1;
+		ray->side_dist_y = (player_y_in_tiles - ray->map_y) * ray->delta_dist_y;
+	}
+	else
+	{
+		ray->step_y = 1;
+		ray->side_dist_y = (ray->map_y + 1.0f - player_y_in_tiles) * ray->delta_dist_y;
+	}
+}
 
-        // Check for maximum view distance
-        if (*perpWallDist > MAX_VIEW_DISTANCE)
-        {
-            *perpWallDist = MAX_VIEW_DISTANCE;
-            hit = 2; // Indicate that the ray reached max view distance
-            break;
-        }
-    }
-    return hit;
+// Initialize step and side distances for DDA
+void calculate_step_and_side_dist(t_game *game, t_ray *ray)
+{
+	calculate_delta_distances(ray);
+	calculate_step_x(game, ray);
+	calculate_step_y(game, ray);
+}
+
+// Update ray position and side distance
+void update_ray_position(t_ray *ray)
+{
+	if (ray->side_dist_x < ray->side_dist_y)
+	{
+		ray->side_dist_x += ray->delta_dist_x;
+		ray->map_x += ray->step_x;
+		ray->side = 0;
+	}
+	else
+	{
+		ray->side_dist_y += ray->delta_dist_y;
+		ray->map_y += ray->step_y;
+		ray->side = 1;
+	}
+}
+
+// Check if ray is out of bounds
+int check_out_of_bounds(t_game *game, t_ray *ray)
+{
+	int map_width;
+
+	map_width = ft_strlen(game->mapGrid->symbols[0]);
+	if (ray->map_x < 0 || ray->map_x >= map_width || ray->map_y < 0 || ray->map_y >= game->mapGrid->capacity)
+	{
+		ray->perp_wall_dist = MAX_VIEW_DISTANCE;
+		return (2);
+	}
+	return (0);
+}
+
+// Check if ray hit a wall
+int check_wall_hit(t_game *game, t_ray *ray)
+{
+	char symbol;
+
+	symbol = game->mapGrid->symbols[ray->map_y][ray->map_x];
+	if (symbol == '1')
+	{
+		if (ray->side == 0)
+			ray->perp_wall_dist = ray->side_dist_x - ray->delta_dist_x;
+		else
+			ray->perp_wall_dist = ray->side_dist_y - ray->delta_dist_y;
+		return (1);
+	}
+	return (0);
+}
+
+// Perform DDA loop to find wall hit
+int perform_dda_loop(t_game *game, t_ray *ray)
+{
+	int hit = 0;
+
+	ray->perp_wall_dist = 0.0f;
+	while (hit == 0)
+	{
+		update_ray_position(ray);
+		if ((hit = check_out_of_bounds(game, ray)) != 0)
+			break;
+		hit = check_wall_hit(game, ray);
+		if (ray->perp_wall_dist > MAX_VIEW_DISTANCE)
+		{
+			ray->perp_wall_dist = MAX_VIEW_DISTANCE;
+			hit = 2;
+			break;
+		}
+	}
+	return (hit);
+}
+
+int perform_dda(t_game *game, float ray_dir_x, float ray_dir_y, int *map_x, int *map_y, int *side, float *perp_wall_dist)
+{
+	t_ray ray;
+
+	ray.ray_dir_x = ray_dir_x;
+	ray.ray_dir_y = ray_dir_y;
+	ray.map_x = *map_x;
+	ray.map_y = *map_y;
+
+	calculate_step_and_side_dist(game, &ray);
+	int hit = perform_dda_loop(game, &ray);
+
+	*map_x = ray.map_x;
+	*map_y = ray.map_y;
+	*side = ray.side;
+	*perp_wall_dist = ray.perp_wall_dist;
+
+	return (hit);
 }
 
 
 
-void correctAndComputeWall(float *perpWallDist, float rayAngle, t_game *game, int *lineHeight)
+
+void correctAndComputeWall(float *perpWallDist, float ray_angle, t_game *game, int *lineHeight)
 {
-    // Correct for the fish-eye effect
-    float angleDiff = rayAngle - game->player.angle;
-    if (angleDiff < -M_PI)
-        angleDiff += 2 * M_PI;
-    if (angleDiff > M_PI)
-        angleDiff -= 2 * M_PI;
-    *perpWallDist *= cos(angleDiff);
+	// Correct for the fish-eye effect
+	float angleDiff = ray_angle - game->player.angle;
+	if (angleDiff < -M_PI)
+		angleDiff += 2 * M_PI;
+	if (angleDiff > M_PI)
+		angleDiff -= 2 * M_PI;
+	*perpWallDist *= cos(angleDiff);
 
-    // Prevent division by zero
-    if (*perpWallDist < 0.0001f)
-        *perpWallDist = 0.0001f;
+	// Prevent division by zero
+	if (*perpWallDist < 0.0001f)
+		*perpWallDist = 0.0001f;
 
-    // Calculate height of the line to draw (proportional to the inverse of distance)
-    *lineHeight = (int)(HEIGHT / (*perpWallDist));
-    if (*lineHeight > HEIGHT)
-        *lineHeight = HEIGHT;
-    if (*lineHeight < 1)
-        *lineHeight = 1; // Ensure lineHeight is at least 1
+	// Calculate height of the line to draw (proportional to the inverse of distance)
+	*lineHeight = (int)(HEIGHT / (*perpWallDist));
+	if (*lineHeight > HEIGHT)
+		*lineHeight = HEIGHT;
+	if (*lineHeight < 1)
+		*lineHeight = 1; // Ensure lineHeight is at least 1
 }
 
 
@@ -217,88 +301,90 @@ uint32_t	retrieve_color_at_coordinates(int x, int y, uint32_t *arr, int tex_widt
 
 void castRays(t_game *game)
 {
-    int map_height = game->mapGrid->capacity;
-    int map_width = ft_strlen(game->mapGrid->symbols[0]);
-    float fovRad = FOV * M_PI / 180.0f;
+	int map_height = game->mapGrid->capacity;
+	int map_width = ft_strlen(game->mapGrid->symbols[0]);
+	float fov_rad = FOV * M_PI / 180.0f;
 
-    // Convert player position to tile units
-    float playerXInTiles = game->player.x / TILE_SIZE;
-    float playerYInTiles = game->player.y / TILE_SIZE;
+	// Convert player position to tile units
+	float playerXInTiles = game->player.x / TILE_SIZE;
+	float playerYInTiles = game->player.y / TILE_SIZE;
 
-    for (int ray = 0; ray < NUM_RAYS; ray++)
-    {
-        // Ray Initialization
-        float rayAngle, rayDirX, rayDirY;
-        initRay(game, ray, fovRad, &rayAngle, &rayDirX, &rayDirY);
+	for (int ray = 0; ray < NUM_RAYS; ray++)
+	{
+		// Ray Initialization
+		float ray_angle, ray_dir_x, ray_dir_y;
+		init_ray_angle(game, ray, fov_rad, &ray_angle);
+		init_ray_direction(ray_angle, &ray_dir_x, &ray_dir_y);
 
-        // Player position in grid coordinates
-        int mapX = (int)(playerXInTiles);
-        int mapY = (int)(playerYInTiles);
 
-        // Perform DDA algorithm to detect walls
-        int side;
-        float perpWallDist;
-        int hit = performDDA(game, rayDirX, rayDirY, &mapX, &mapY, &side, &perpWallDist);
+		// Player position in grid coordinates
+		int mapX = (int)(playerXInTiles);
+		int mapY = (int)(playerYInTiles);
 
-        // Correct for fish-eye effect and calculate line height
-        int lineHeight;
-        correctAndComputeWall(&perpWallDist, rayAngle, game, &lineHeight);
+		// Perform DDA algorithm to detect walls
+		int side;
+		float perpWallDist;
+		int hit = perform_dda(game, ray_dir_x, ray_dir_y, &mapX, &mapY, &side, &perpWallDist);
 
-        // Calculate draw positions
-        int drawStart = -lineHeight / 2 + HEIGHT / 2;
-        if (drawStart < 0) drawStart = 0;
-        int drawEnd = lineHeight / 2 + HEIGHT / 2;
-        if (drawEnd >= HEIGHT) drawEnd = HEIGHT - 1;
+		// Correct for fish-eye effect and calculate line height
+		int lineHeight;
+		correctAndComputeWall(&perpWallDist, ray_angle, game, &lineHeight);
 
-        // Choose wall texture based on the side of the hit
-        mlx_texture_t *texture;
-        if (side == 0) // North/South wall
-        {
-            texture = (rayDirX < 0) ? game->assets.textures.WE : game->assets.textures.EA;
-        }
-        else // East/West wall
-        {
-            texture = (rayDirY < 0) ? game->assets.textures.SO : game->assets.textures.NO;
-        }
+		// Calculate draw positions
+		int drawStart = -lineHeight / 2 + HEIGHT / 2;
+		if (drawStart < 0) drawStart = 0;
+		int drawEnd = lineHeight / 2 + HEIGHT / 2;
+		if (drawEnd >= HEIGHT) drawEnd = HEIGHT - 1;
 
-        // Calculate the texture coordinate based on where the ray hit the wall
-        float wallX; // where the wall was hit
-        if (side == 0) // North/South wall
-            wallX = playerYInTiles + perpWallDist * rayDirY;
-        else // East/West wall
-            wallX = playerXInTiles + perpWallDist * rayDirX;
+		// Choose wall texture based on the side of the hit
+		mlx_texture_t *texture;
+		if (side == 0) // North/South wall
+		{
+			texture = (ray_dir_x < 0) ? game->assets.textures.WE : game->assets.textures.EA;
+		}
+		else // East/West wall
+		{
+			texture = (ray_dir_y < 0) ? game->assets.textures.SO : game->assets.textures.NO;
+		}
 
-        wallX -= floor(wallX); // get the fractional part (texture coord)
+		// Calculate the texture coordinate based on where the ray hit the wall
+		float wallX; // where the wall was hit
+		if (side == 0) // North/South wall
+			wallX = playerYInTiles + perpWallDist * ray_dir_y;
+		else // East/West wall
+			wallX = playerXInTiles + perpWallDist * ray_dir_x;
 
-        // Calculate texture X coordinate
-        int texX = (int)(wallX * (float)texture->width);
-        if (side == 0 && rayDirX > 0) // correct for direction of the ray
-            texX = texture->width - texX - 1;
-        if (side == 1 && rayDirY < 0) // correct for direction of the ray
-            texX = texture->width - texX - 1;
+		wallX -= floor(wallX); // get the fractional part (texture coord)
 
-        // Calculate step and initial texture position
-        float step = 1.0f * texture->height / lineHeight;
-        float texPos = (drawStart - HEIGHT / 2 + lineHeight / 2) * step;
+		// Calculate texture X coordinate
+		int texX = (int)(wallX * (float)texture->width);
+		if (side == 0 && ray_dir_x > 0) // correct for direction of the ray
+			texX = texture->width - texX - 1;
+		if (side == 1 && ray_dir_y < 0) // correct for direction of the ray
+			texX = texture->width - texX - 1;
 
-        // Draw the texture on the wall slice
-        for (int y = drawStart; y < drawEnd; y++)
-        {
-            int texY = (int)texPos;
-            if (texY < 0) texY = 0;
-            if (texY >= texture->height) texY = texture->height - 1;
-            texPos += step;
+		// Calculate step and initial texture position
+		float step = 1.0f * texture->height / lineHeight;
+		float texPos = (drawStart - HEIGHT / 2 + lineHeight / 2) * step;
 
-            // Fetch the pixel color from the texture using texX and texY
-            uint32_t color = retrieve_color_at_coordinates(texX, texY, (uint32_t *)texture->pixels, texture->width, texture->height);
+		// Draw the texture on the wall slice
+		for (int y = drawStart; y < drawEnd; y++)
+		{
+			int texY = (int)texPos;
+			if (texY < 0) texY = 0;
+			if (texY >= texture->height) texY = texture->height - 1;
+			texPos += step;
 
-            // Handle endianness if necessary
-            color = (color << 24) | (((color >> 16) << 24) >> 16) | (((color << 16) >> 24) << 16) | (color >> 24);
+			// Fetch the pixel color from the texture using texX and texY
+			uint32_t color = retrieve_color_at_coordinates(texX, texY, (uint32_t *)texture->pixels, texture->width, texture->height);
 
-            // Draw the pixel on the screen
-            mlx_put_pixel(game->image, ray, y, color);
-        }
-    }
+			// Handle endianness if necessary
+			color = (color << 24) | (((color >> 16) << 24) >> 16) | (((color << 16) >> 24) << 16) | (color >> 24);
+
+			// Draw the pixel on the screen
+			mlx_put_pixel(game->image, ray, y, color);
+		}
+	}
 }
 
 
@@ -365,17 +451,17 @@ void key_press(mlx_key_data_t keydata, void *param)
 	if (keydata.action == MLX_PRESS)
 	{
 		if (keydata.key == MLX_KEY_W)
-			keys.w = true;
+			g_keys.w = true;
 		if (keydata.key == MLX_KEY_A)
-			keys.a = true;
+			g_keys.a = true;
 		if (keydata.key == MLX_KEY_S)
-			keys.s = true;
+			g_keys.s = true;
 		if (keydata.key == MLX_KEY_D)
-			keys.d = true;
+			g_keys.d = true;
 		if (keydata.key == MLX_KEY_LEFT)
-			keys.left = true;
+			g_keys.left = true;
 		if (keydata.key == MLX_KEY_RIGHT)
-			keys.right = true;
+			g_keys.right = true;
 		if (keydata.key == MLX_KEY_ESCAPE)
 		{
 			// Exit the game gracefully
@@ -387,19 +473,19 @@ void key_press(mlx_key_data_t keydata, void *param)
 	else if (keydata.action == MLX_RELEASE)
 	{
 		if (keydata.key == MLX_KEY_W)
-			keys.w = false;
+			g_keys.w = false;
 		if (keydata.key == MLX_KEY_A)
-			keys.a = false;
+			g_keys.a = false;
 		if (keydata.key == MLX_KEY_S)
-			keys.s = false;
+			g_keys.s = false;
 		if (keydata.key == MLX_KEY_D)
-			keys.d = false;
+			g_keys.d = false;
 		if (keydata.key == MLX_KEY_LEFT)
-			keys.left = false;
+			g_keys.left = false;
 		if (keydata.key == MLX_KEY_RIGHT)
-			keys.right = false;
+			g_keys.right = false;
 	}
-	printf("W: %d, A: %d, S: %d, D: %d, Left: %d, Right: %d\n", keys.w, keys.a, keys.s, keys.d, keys.left, keys.right);
+	printf("W: %d, A: %d, S: %d, D: %d, Left: %d, Right: %d\n", g_keys.w, g_keys.a, g_keys.s, g_keys.d, g_keys.left, g_keys.right);
 }
 
 void draw_line(mlx_image_t *image, int x0, int y0, int x1, int y1, uint32_t color)
@@ -524,13 +610,13 @@ bool can_move_to(float x, float y, t_game *game)
 
 void drawMinimap(t_game *game)
 {
-    // Desired minimap dimensions (in pixels)
-    int minimap_width = 200; // Adjust as needed
-    int minimap_height = 200; // Adjust as needed
+	// Desired minimap dimensions (in pixels)
+	int minimap_width = 200; // Adjust as needed
+	int minimap_height = 200; // Adjust as needed
 
-    // Minimap position on the screen
-    int minimap_offset_x = 10; // Position from the left edge
-    int minimap_offset_y = 10; // Position from the top edge
+	// Minimap position on the screen
+	int minimap_offset_x = 10; // Position from the left edge
+	int minimap_offset_y = 10; // Position from the top edge
 
  		int map_height = game->mapGrid->capacity;
 		int map_width = 0;
@@ -543,135 +629,135 @@ void drawMinimap(t_game *game)
 					map_width = line_length;
 			i++;
 		}
-    // Calculate scale factors
-    float scaleX = (float)minimap_width / (float)map_width;
-    float scaleY = (float)minimap_height / (float)map_height;
-    float scale = (scaleX < scaleY) ? scaleX : scaleY;
+	// Calculate scale factors
+	float scaleX = (float)minimap_width / (float)map_width;
+	float scaleY = (float)minimap_height / (float)map_height;
+	float scale = (scaleX < scaleY) ? scaleX : scaleY;
 
-    // Draw the map grid
-    for (int y = 0; y < map_height; y++)
-    { 
+	// Draw the map grid
+	for (int y = 0; y < map_height; y++)
+	{ 
 			int line_length = ft_strlen(game->mapGrid->symbols[y]) - 1;
-        for (int x = 0; x < line_length; x++)
-        {
-            uint32_t color = (game->mapGrid->symbols[y][x] == '1') ? 0x888888FF : 0x222222FF;
+		for (int x = 0; x < line_length; x++)
+		{
+			uint32_t color = (game->mapGrid->symbols[y][x] == '1') ? 0x888888FF : 0x222222FF;
 
-            // Calculate scaled positions
-            int tileX0 = minimap_offset_x + (int)(x * scale);
-            int tileY0 = minimap_offset_y + (int)(y * scale);
-            int tileX1 = minimap_offset_x + (int)((x + 1) * scale);
-            int tileY1 = minimap_offset_y + (int)((y + 1) * scale);
+			// Calculate scaled positions
+			int tileX0 = minimap_offset_x + (int)(x * scale);
+			int tileY0 = minimap_offset_y + (int)(y * scale);
+			int tileX1 = minimap_offset_x + (int)((x + 1) * scale);
+			int tileY1 = minimap_offset_y + (int)((y + 1) * scale);
 
-            // Draw the tile
-            for (int py = tileY0; py < tileY1; py++)
-            {
-                for (int px = tileX0; px < tileX1; px++)
-                {
-                    if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
-                    {
-                        mlx_put_pixel(game->image, px, py, color);
-                    }
-                }
-            }
-        }
-    }
+			// Draw the tile
+			for (int py = tileY0; py < tileY1; py++)
+			{
+				for (int px = tileX0; px < tileX1; px++)
+				{
+					if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
+					{
+						mlx_put_pixel(game->image, px, py, color);
+					}
+				}
+			}
+		}
+	}
 
-    // Draw the player on the minimap
-    float playerX = minimap_offset_x + (game->player.x / TILE_SIZE) * scale;
-    float playerY = minimap_offset_y + (game->player.y / TILE_SIZE) * scale;
+	// Draw the player on the minimap
+	float playerX = minimap_offset_x + (game->player.x / TILE_SIZE) * scale;
+	float playerY = minimap_offset_y + (game->player.y / TILE_SIZE) * scale;
 
-    // Draw the player as a small rectangle or point
-    for (int i = -2; i <= 2; i++)
-    {
-        for (int j = -2; j <= 2; j++)
-        {
-            int px = (int)(playerX + i);
-            int py = (int)(playerY + j);
+	// Draw the player as a small rectangle or point
+	for (int i = -2; i <= 2; i++)
+	{
+		for (int j = -2; j <= 2; j++)
+		{
+			int px = (int)(playerX + i);
+			int py = (int)(playerY + j);
 
-            if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
-            {
-                mlx_put_pixel(game->image, px, py, 0xFF0000FF); // Red color for the player
-            }
-        }
-    }
+			if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
+			{
+				mlx_put_pixel(game->image, px, py, 0xFF0000FF); // Red color for the player
+			}
+		}
+	}
 
-    // Draw the player's viewing direction
-    float dirX = cos(game->player.angle) * 5 * scale;
-    float dirY = sin(game->player.angle) * 5 * scale;
+	// Draw the player's viewing direction
+	float dirX = cos(game->player.angle) * 5 * scale;
+	float dirY = sin(game->player.angle) * 5 * scale;
 
-    int lineEndX = (int)(playerX + dirX);
-    int lineEndY = (int)(playerY + dirY);
+	int lineEndX = (int)(playerX + dirX);
+	int lineEndY = (int)(playerY + dirY);
 
-    // Draw the line representing the player's viewing direction
-    draw_line(game->image, (int)playerX, (int)playerY, lineEndX, lineEndY, 0xFFFF00FF); // Yellow color
+	// Draw the line representing the player's viewing direction
+	draw_line(game->image, (int)playerX, (int)playerY, lineEndX, lineEndY, 0xFFFF00FF); // Yellow color
 
-    // Visualize rays on the minimap with collision detection
-    float fovRad = FOV * M_PI / 180.0f;
-    float angleIncrement = fovRad / NUM_RAYS;
-    float startAngle = game->player.angle - (fovRad / 2.0f);
+	// Visualize rays on the minimap with collision detection
+	float fov_rad = FOV * M_PI / 180.0f;
+	float angleIncrement = fov_rad / NUM_RAYS;
+	float startAngle = game->player.angle - (fov_rad / 2.0f);
 
-    for (int ray = 0; ray < NUM_RAYS; ray += 10) // Skip some rays for clarity
-    {
-        float rayAngle = startAngle + ray * angleIncrement;
+	for (int ray = 0; ray < NUM_RAYS; ray += 10) // Skip some rays for clarity
+	{
+		float ray_angle = startAngle + ray * angleIncrement;
 
-        // Normalize angle
-        if (rayAngle < 0)
-            rayAngle += 2 * M_PI;
-        if (rayAngle > 2 * M_PI)
-            rayAngle -= 2 * M_PI;
+		// Normalize angle
+		if (ray_angle < 0)
+			ray_angle += 2 * M_PI;
+		if (ray_angle > 2 * M_PI)
+			ray_angle -= 2 * M_PI;
 
-        // Raycasting variables for minimap
-        float rayX = game->player.x;
-        float rayY = game->player.y;
+		// Raycasting variables for minimap
+		float rayX = game->player.x;
+		float rayY = game->player.y;
 
-        float rayDirX = cos(rayAngle);
-        float rayDirY = sin(rayAngle);
+		float ray_dir_x = cos(ray_angle);
+		float ray_dir_y = sin(ray_angle);
 
-        // Perform simplified DDA
-        int hit = 0;
-        float totalDistance = 0.0f;
-        float stepSize = 1.0f; // Adjust the increment as needed
+		// Perform simplified DDA
+		int hit = 0;
+		float totalDistance = 0.0f;
+		float stepSize = 1.0f; // Adjust the increment as needed
 
-        while (!hit)
-        {
-            // Increment ray position
-            rayX += rayDirX * stepSize;
-            rayY += rayDirY * stepSize;
-            totalDistance += stepSize;
+		while (!hit)
+		{
+			// Increment ray position
+			rayX += ray_dir_x * stepSize;
+			rayY += ray_dir_y * stepSize;
+			totalDistance += stepSize;
 
-            // Calculate map coordinates
-            int mapX = (int)(rayX / TILE_SIZE);
-            int mapY = (int)(rayY / TILE_SIZE);
+			// Calculate map coordinates
+			int mapX = (int)(rayX / TILE_SIZE);
+			int mapY = (int)(rayY / TILE_SIZE);
 
-            // Check if ray is out of bounds
-            if (mapX < 0 || mapX >= map_width || mapY < 0 || mapY >= map_height)
-            {
-                hit = 1;
-                break;
-            }
+			// Check if ray is out of bounds
+			if (mapX < 0 || mapX >= map_width || mapY < 0 || mapY >= map_height)
+			{
+				hit = 1;
+				break;
+			}
 
-            // Check if the ray has hit a wall
-            if ((game->mapGrid->symbols[mapY][mapX]) == '1')
-            {
-                hit = 1;
-                break;
-            }
+			// Check if the ray has hit a wall
+			if ((game->mapGrid->symbols[mapY][mapX]) == '1')
+			{
+				hit = 1;
+				break;
+			}
 
-            // Check if the ray has reached maximum view distance
-            if (totalDistance >= MAX_VIEW_DISTANCE)
-            {
-                hit = 1;
-                break;
-            }
-        }
+			// Check if the ray has reached maximum view distance
+			if (totalDistance >= MAX_VIEW_DISTANCE)
+			{
+				hit = 1;
+				break;
+			}
+		}
 
-        // Scale to minimap
-        float endMinimapX = minimap_offset_x + (rayX / TILE_SIZE) * scale;
-        float endMinimapY = minimap_offset_y + (rayY / TILE_SIZE) * scale;
+		// Scale to minimap
+		float endMinimapX = minimap_offset_x + (rayX / TILE_SIZE) * scale;
+		float endMinimapY = minimap_offset_y + (rayY / TILE_SIZE) * scale;
 
-        // Draw the ray on the minimap
-        draw_line(game->image, (int)playerX, (int)playerY, (int)endMinimapX, (int)endMinimapY, 0x0000FFFF); // Blue color
-    }
+		// Draw the ray on the minimap
+		draw_line(game->image, (int)playerX, (int)playerY, (int)endMinimapX, (int)endMinimapY, 0x0000FFFF); // Blue color
+	}
 }
 
 void	update(void *param)
@@ -686,13 +772,13 @@ void	update(void *param)
 	float rotSpeed = 2.0f * M_PI / 180.0f; // Rotation speed
 
 	// Rotate the player
-	if (keys.left)
+	if (g_keys.left)
 	{
 		game->player.angle -= rotSpeed;
 		if (game->player.angle < 0)
 			game->player.angle += 2 * M_PI;
 	}
-	if (keys.right)
+	if (g_keys.right)
 	{
 		game->player.angle += rotSpeed;
 		if (game->player.angle >= 2 * M_PI)
@@ -703,23 +789,23 @@ void	update(void *param)
 	float moveX = 0.0f;
 	float moveY = 0.0f;
 
-	if (keys.w)
+	if (g_keys.w)
 	{
 		moveX += cos(game->player.angle) * moveSpeed;
 		moveY += sin(game->player.angle) * moveSpeed;
 	}
-	if (keys.s)
+	if (g_keys.s)
 	{
 		moveX -= cos(game->player.angle) * moveSpeed;
 		moveY -= sin(game->player.angle) * moveSpeed;
 	}
 
-	if (keys.a)
+	if (g_keys.a)
 	{
 		moveX += cos(game->player.angle - M_PI / 2) * moveSpeed;
 		moveY += sin(game->player.angle - M_PI / 2) * moveSpeed;
 	}
-	if (keys.d)
+	if (g_keys.d)
 	{
 		moveX += cos(game->player.angle + M_PI / 2) * moveSpeed;
 		moveY += sin(game->player.angle + M_PI / 2) * moveSpeed;
