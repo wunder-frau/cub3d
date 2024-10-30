@@ -3,7 +3,7 @@ SO ./textures/42_S.png
 EA ./textures/42_E.png
 WE ./textures/42_W.png
 
-F 220,100,0
+F 220 100,0
 C 225,30,0
 
         1111111111111111111111111

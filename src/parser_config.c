@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:05:56 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/10/30 15:54:04 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,29 +44,67 @@ static char	*extract_texture_path(const char *id, t_vector *map,
 	return (NULL);
 }
 
-static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
-{
-	char	**rgb_arr;
+static bool store_rgb(char *rgb_trimmed, t_assets *assets, const char *id) {
+    char **rgb_arr;
 
-	rgb_arr = ft_split(rgb_trimmed, ',');
-	free(rgb_trimmed);
-	if (!rgb_arr || !rgb_arr[0] || !rgb_arr[1] || !rgb_arr[2])
-		return (false);
-	if (id[0] == 'F')
-	{
-		assets->colors.rgb_F[0] = ft_atoi(rgb_arr[0]);
-		assets->colors.rgb_F[1] = ft_atoi(rgb_arr[1]);
-		assets->colors.rgb_F[2] = ft_atoi(rgb_arr[2]);
-	}
-	else
-	{
-		assets->colors.rgb_C[0] = ft_atoi(rgb_arr[0]);
-		assets->colors.rgb_C[1] = ft_atoi(rgb_arr[1]);
-		assets->colors.rgb_C[2] = ft_atoi(rgb_arr[2]);
-	}
-	free_split_rgb_array(rgb_arr);
-	return (true);
+    rgb_arr = ft_split(rgb_trimmed, ',');
+    free(rgb_trimmed);
+
+    if (!rgb_arr) {
+        return false;
+    }
+    
+    if (!rgb_arr[0] || !rgb_arr[1] || !rgb_arr[2]) {
+        free_split_rgb_array(rgb_arr);
+        return false;
+    }
+
+    int r = ft_atoi(rgb_arr[0]);
+    int g = ft_atoi(rgb_arr[1]);
+    int b = ft_atoi(rgb_arr[2]);
+
+    if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+        free_split_rgb_array(rgb_arr);
+        return false;
+    }
+
+    if (id[0] == 'F') {
+        assets->colors.rgb_F[0] = r;
+        assets->colors.rgb_F[1] = g;
+        assets->colors.rgb_F[2] = b;
+    } else {
+        assets->colors.rgb_C[0] = r;
+        assets->colors.rgb_C[1] = g;
+        assets->colors.rgb_C[2] = b;
+    }
+
+    free_split_rgb_array(rgb_arr);
+    return true;
 }
+
+// static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
+// {
+// 	char	**rgb_arr;
+
+// 	rgb_arr = ft_split(rgb_trimmed, ',');
+// 	free(rgb_trimmed);
+// 	if (!rgb_arr || !rgb_arr[0] || !rgb_arr[1] || !rgb_arr[2])
+// 		return (false);
+// 	if (id[0] == 'F')
+// 	{
+// 		assets->colors.rgb_F[0] = ft_atoi(rgb_arr[0]);
+// 		assets->colors.rgb_F[1] = ft_atoi(rgb_arr[1]);
+// 		assets->colors.rgb_F[2] = ft_atoi(rgb_arr[2]);
+// 	}
+// 	else
+// 	{
+// 		assets->colors.rgb_C[0] = ft_atoi(rgb_arr[0]);
+// 		assets->colors.rgb_C[1] = ft_atoi(rgb_arr[1]);
+// 		assets->colors.rgb_C[2] = ft_atoi(rgb_arr[2]);
+// 	}
+// 	free_split_rgb_array(rgb_arr);
+// 	return (true);
+// }
 
 static char	*get_rgb(const char *id, t_vector *map, t_assets *assets)
 {
