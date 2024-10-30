@@ -7,50 +7,91 @@
 
 typedef struct s_keys
 {
-	bool w;
-	bool a;
-	bool s;
-	bool d;
-	bool left;
-	bool right;
-} t_keys;
+	bool	w;
+	bool	a;
+	bool	s;
+	bool	d;
+	bool	left;
+	bool	right;
+}	t_keys;
 
 typedef struct s_ray
 {
-	float ray_dir_x;
-	float ray_dir_y;
-	int map_x;
-	int map_y;
-	float delta_dist_x;
-	float delta_dist_y;
-	float side_dist_x;
-	float side_dist_y;
-	int step_x;
-	int step_y;
-	int side;
-	float perp_wall_dist;
-} t_ray;
+	float	ray_dir_x;
+	float	ray_dir_y;
+	int		map_x;
+	int		map_y;
+	float	delta_dist_x;
+	float	delta_dist_y;
+	float	side_dist_x;
+	float	side_dist_y;
+	int		step_x;
+	int		step_y;
+	int		side;
+	float	perp_wall_dist;
+}	t_ray;
+
+typedef struct s_ray_data
+{
+	float			ray_angle;
+	float			ray_dir_x;
+	float			ray_dir_y;
+	int				map_x;
+	int				map_y;
+	int				side;
+	float			perp_wall_dist;
+	float			corrected_perp_wall_dist;
+	int				line_height;
+	int				draw_start;
+	int				draw_end;
+	mlx_texture_t	*texture;
+	float			wall_x;
+	int				tex_x;
+	float			step;
+	float			tex_pos;
+}t_ray_data;
+
+typedef struct s_texture_data
+{
+	uint32_t	*pixels;
+	int			width;
+	int			height;
+}	t_texture_data;
+
+// Function prototypes
+void	process_ray(t_game *game, int ray);
+void	initialize_ray(t_game *game, int ray, t_ray_data *ray_data);
+void	perform_dda(t_game *game, t_ray_data *ray_data);
+void	correct_perp_wall_dist(t_game *game, t_ray_data *ray_data);
+void	calculate_line_height(t_ray_data *ray_data);
+void	choose_wall_texture(t_game *game, t_ray_data *ray_data);
+void	calculate_texture_coordinates(t_game *game, t_ray_data *ray_data);
+void	draw_wall_slice(t_game *game, int ray, t_ray_data *ray_data);
 
 // Global variables
-static t_keys g_keys = {false, false, false, false, false, false};
+static t_keys	g_keys = {false, false, false, false, false, false};
 
 // Convert character to integer
-int ft_char_to_int(char c)
+int	ft_char_to_int(char c)
 {
 	return (c - '0');
 }
 
 // Convert RGB array to uint32_t color value
-uint32_t rgb_to_uint32(int rgb[3])
+uint32_t	rgb_to_uint32(int rgb[3])
 {
 	return ((rgb[0] << 24) | (rgb[1] << 16) | (rgb[2] << 8) | 255);
 }
 
 // Apply fog effect to color based on wall distance
-uint32_t apply_fog_effect(uint32_t color, float perp_wall_dist, float max_view_distance)
+uint32_t	apply_fog_effect(uint32_t color, float perp_wall_dist, \
+float max_view_distance)
 {
-	float fog_factor;
-	uint8_t r, g, b, a;
+	float	fog_factor;
+	uint8_t	r;
+	uint8_t	g;
+	uint8_t	b;
+	uint8_t	a;
 
 	fog_factor = perp_wall_dist / max_view_distance;
 	if (fog_factor > 1.0f)
@@ -63,10 +104,10 @@ uint32_t apply_fog_effect(uint32_t color, float perp_wall_dist, float max_view_d
 }
 
 // Initialize a ray for casting
-void init_ray_angle(t_game *game, int ray, float fov_rad, float *ray_angle)
+void	init_ray_angle(t_game *game, int ray, float fov_rad, float *ray_angle)
 {
-	float angle_increment;
-	float start_angle;
+	float	angle_increment;
+	float	start_angle;
 
 	angle_increment = fov_rad / NUM_RAYS;
 	start_angle = game->player.angle - (fov_rad / 2.0f);
@@ -74,7 +115,6 @@ void init_ray_angle(t_game *game, int ray, float fov_rad, float *ray_angle)
 		start_angle += 2 * M_PI;
 	if (start_angle > 2 * M_PI)
 		start_angle -= 2 * M_PI;
-
 	*ray_angle = start_angle + ray * angle_increment;
 	if (*ray_angle < 0)
 		*ray_angle += 2 * M_PI;
@@ -82,26 +122,29 @@ void init_ray_angle(t_game *game, int ray, float fov_rad, float *ray_angle)
 		*ray_angle -= 2 * M_PI;
 }
 
-void init_ray_direction(float ray_angle, float *ray_dir_x, float *ray_dir_y)
+void	init_ray_direction(float ray_angle, float *ray_dir_x, float *ray_dir_y)
 {
 	*ray_dir_x = cos(ray_angle);
 	*ray_dir_y = sin(ray_angle);
 }
 
-// Calculate delta distances for DDA
-void calculate_delta_distances(t_ray *ray)
+void	calculate_delta_distances(t_ray *ray)
 {
-	ray->delta_dist_x = (ray->ray_dir_x == 0) ? 1e30f : fabs(1.0f / ray->ray_dir_x);
-	ray->delta_dist_y = (ray->ray_dir_y == 0) ? 1e30f : fabs(1.0f / ray->ray_dir_y);
+	if (ray->ray_dir_x == 0)
+		ray->delta_dist_x = 2147483647;
+	else
+		ray->delta_dist_x = fabs(1.0f / ray->ray_dir_x);
+	if (ray->ray_dir_y == 0)
+		ray->delta_dist_y = 2147483647;
+	else
+		ray->delta_dist_y = fabs(1.0f / ray->ray_dir_y);
 }
 
-// Calculate step values for X direction
-void calculate_step_x(t_game *game, t_ray *ray)
+void	calculate_step_x(t_game *game, t_ray *ray)
 {
-	float player_x_in_tiles;
+	float	player_x_in_tiles;
 
 	player_x_in_tiles = game->player.x / TILE_SIZE;
-
 	if (ray->ray_dir_x < 0)
 	{
 		ray->step_x = -1;
@@ -110,17 +153,16 @@ void calculate_step_x(t_game *game, t_ray *ray)
 	else
 	{
 		ray->step_x = 1;
-		ray->side_dist_x = (ray->map_x + 1.0f - player_x_in_tiles) * ray->delta_dist_x;
+		ray->side_dist_x = (ray->map_x + 1.0f - player_x_in_tiles) * \
+		ray->delta_dist_x;
 	}
 }
 
-// Calculate step values for Y direction
-void calculate_step_y(t_game *game, t_ray *ray)
+void	calculate_step_y(t_game *game, t_ray *ray)
 {
-	float player_y_in_tiles;
+	float	player_y_in_tiles;
 
 	player_y_in_tiles = game->player.y / TILE_SIZE;
-
 	if (ray->ray_dir_y < 0)
 	{
 		ray->step_y = -1;
@@ -129,20 +171,19 @@ void calculate_step_y(t_game *game, t_ray *ray)
 	else
 	{
 		ray->step_y = 1;
-		ray->side_dist_y = (ray->map_y + 1.0f - player_y_in_tiles) * ray->delta_dist_y;
+		ray->side_dist_y = (ray->map_y + 1.0f - player_y_in_tiles) * \
+		ray->delta_dist_y;
 	}
 }
 
-// Initialize step and side distances for DDA
-void calculate_step_and_side_dist(t_game *game, t_ray *ray)
+void	calculate_step_and_side_dist(t_game *game, t_ray *ray)
 {
 	calculate_delta_distances(ray);
 	calculate_step_x(game, ray);
 	calculate_step_y(game, ray);
 }
 
-// Update ray position and side distance
-void update_ray_position(t_ray *ray)
+void	update_ray_position(t_ray *ray)
 {
 	if (ray->side_dist_x < ray->side_dist_y)
 	{
@@ -158,13 +199,13 @@ void update_ray_position(t_ray *ray)
 	}
 }
 
-// Check if ray is out of bounds
-int check_out_of_bounds(t_game *game, t_ray *ray)
+int	check_out_of_bounds(t_game *game, t_ray *ray)
 {
-	int map_width;
+	int	map_width;
 
 	map_width = ft_strlen(game->mapGrid->symbols[0]);
-	if (ray->map_x < 0 || ray->map_x >= map_width || ray->map_y < 0 || ray->map_y >= game->mapGrid->capacity)
+	if (ray->map_x < 0 || ray->map_x >= map_width || \
+	ray->map_y < 0 || ray->map_y >= game->mapGrid->capacity)
 	{
 		ray->perp_wall_dist = MAX_VIEW_DISTANCE;
 		return (2);
@@ -172,10 +213,9 @@ int check_out_of_bounds(t_game *game, t_ray *ray)
 	return (0);
 }
 
-// Check if ray hit a wall
-int check_wall_hit(t_game *game, t_ray *ray)
+int	check_wall_hit(t_game *game, t_ray *ray)
 {
-	char symbol;
+	char	symbol;
 
 	symbol = game->mapGrid->symbols[ray->map_y][ray->map_x];
 	if (symbol == '1')
@@ -189,81 +229,72 @@ int check_wall_hit(t_game *game, t_ray *ray)
 	return (0);
 }
 
-// Perform DDA loop to find wall hit
-int perform_dda_loop(t_game *game, t_ray *ray)
+int	perform_dda_loop(t_game *game, t_ray *ray)
 {
-	int hit = 0;
+	int	hit;
 
+	hit = 0;
 	ray->perp_wall_dist = 0.0f;
 	while (hit == 0)
 	{
 		update_ray_position(ray);
-		if ((hit = check_out_of_bounds(game, ray)) != 0)
-			break;
+		hit = check_out_of_bounds(game, ray);
+		if (hit != 0)
+			break ;
 		hit = check_wall_hit(game, ray);
 		if (ray->perp_wall_dist > MAX_VIEW_DISTANCE)
 		{
 			ray->perp_wall_dist = MAX_VIEW_DISTANCE;
 			hit = 2;
-			break;
+			break ;
 		}
 	}
 	return (hit);
 }
 
-int perform_dda(t_game *game, float ray_dir_x, float ray_dir_y, int *map_x, int *map_y, int *side, float *perp_wall_dist)
+void	perform_dda(t_game *game, t_ray_data *ray_data)
 {
-	t_ray ray;
+	t_ray	ray;
+	int		hit;
 
-	ray.ray_dir_x = ray_dir_x;
-	ray.ray_dir_y = ray_dir_y;
-	ray.map_x = *map_x;
-	ray.map_y = *map_y;
-
+	ray.ray_dir_x = ray_data->ray_dir_x;
+	ray.ray_dir_y = ray_data->ray_dir_y;
+	ray.map_x = ray_data->map_x;
+	ray.map_y = ray_data->map_y;
 	calculate_step_and_side_dist(game, &ray);
-	int hit = perform_dda_loop(game, &ray);
-
-	*map_x = ray.map_x;
-	*map_y = ray.map_y;
-	*side = ray.side;
-	*perp_wall_dist = ray.perp_wall_dist;
-
-	return (hit);
+	hit = perform_dda_loop(game, &ray);
+	ray_data->map_x = ray.map_x;
+	ray_data->map_y = ray.map_y;
+	ray_data->side = ray.side;
+	ray_data->perp_wall_dist = ray.perp_wall_dist;
 }
 
-
-
-
-void correctAndComputeWall(float *perpWallDist, float ray_angle, t_game *game, int *lineHeight)
+void	correct_and_compute_wall(float *perp_wall_dist, float ray_angle, \
+t_game *game, int *line_height)
 {
-	float angleDiff;
+	float	angle_diff;
 
-	// Correct for the fish-eye effect
-	angleDiff = ray_angle - game->player.angle;
-	if (angleDiff < -M_PI)
-		angleDiff += 2 * M_PI;
-	if (angleDiff > M_PI)
-		angleDiff -= 2 * M_PI;
-	*perpWallDist *= cos(angleDiff);
-
-	// Prevent division by zero
-	if (*perpWallDist < 0.0001f)
-		*perpWallDist = 0.0001f;
-
-	// Calculate height of the line to draw (proportional to the inverse of distance)
-	*lineHeight = (int)(HEIGHT / (*perpWallDist));
-	if (*lineHeight > HEIGHT)
-		*lineHeight = HEIGHT;
-	if (*lineHeight < 1)
-		*lineHeight = 1; // Ensure lineHeight is at least 1
+	angle_diff = ray_angle - game->player.angle;
+	if (angle_diff < -M_PI)
+		angle_diff += 2 * M_PI;
+	if (angle_diff > M_PI)
+		angle_diff -= 2 * M_PI;
+	*perp_wall_dist *= cos(angle_diff);
+	if (*perp_wall_dist < 0.0001f)
+		*perp_wall_dist = 0.0001f;
+	*line_height = (int)(HEIGHT / (*perp_wall_dist));
+	if (*line_height > HEIGHT)
+		*line_height = HEIGHT;
+	if (*line_height < 1)
+		*line_height = 1;
 }
 
-
-void drawCeilingAndFloor(mlx_image_t *image, uint32_t ceilingColor, uint32_t floorColor)
+void	draw_ceiling_and_floor(mlx_image_t *image, uint32_t ceilingColor, \
+uint32_t floorColor)
 {
 	int	x;
 	int	y;
-	
+
 	y = 0;
 	while (y < HEIGHT / 2)
 	{
@@ -288,123 +319,160 @@ void drawCeilingAndFloor(mlx_image_t *image, uint32_t ceilingColor, uint32_t flo
 	}
 }
 
-uint32_t	retrieve_color_at_coordinates(int x, int y, uint32_t *arr, int tex_width, int tex_height)
+uint32_t	retrieve_color_at_coordinates(int x, int y, t_texture_data *texture)
 {
 	int	index;
-	// Check if the calculated index is within the bounds of the array
-	if (x < 0 || x >= tex_width || y < 0 || y >= tex_height)
-	// Optionally, return a default color or handle the error as needed
-		return (0x000000FF); // Black color with full alpha
-	// Calculate the index based on the y coordinate
-	index = y * tex_width + x;
-	// Retrieve the color from the array
-	return (arr[index]);
+
+	if (x < 0 || x >= texture->width || y < 0 || y >= texture->height)
+		return (0x000000FF);
+	index = y * texture->width + x;
+	return (texture->pixels[index]);
 }
 
-void castRays(t_game *game)
+void	process_ray(t_game *game, int ray)
 {
-    int map_height = game->mapGrid->capacity;
-    int map_width = ft_strlen(game->mapGrid->symbols[0]);
-    float fov_rad = FOV * M_PI / 180.0f;
+	t_ray_data	ray_data;
 
-    // Convert player position to tile units
-    float playerXInTiles = game->player.x / TILE_SIZE;
-    float playerYInTiles = game->player.y / TILE_SIZE;
+	initialize_ray(game, ray, &ray_data);
+	perform_dda(game, &ray_data);
+	correct_perp_wall_dist(game, &ray_data);
+	calculate_line_height(&ray_data);
+	choose_wall_texture(game, &ray_data);
+	calculate_texture_coordinates(game, &ray_data);
+	draw_wall_slice(game, ray, &ray_data);
+}
 
-    for (int ray = 0; ray < NUM_RAYS; ray++)
-    {
-        // Ray Initialization
-        float ray_angle, ray_dir_x, ray_dir_y;
-        init_ray_angle(game, ray, fov_rad, &ray_angle);
-        init_ray_direction(ray_angle, &ray_dir_x, &ray_dir_y);
+void	correct_perp_wall_dist(t_game *game, t_ray_data *ray_data)
+{
+	float	angle_diff;
 
-        // Player position in grid coordinates
-        int mapX = (int)(playerXInTiles);
-        int mapY = (int)(playerYInTiles);
+	angle_diff = ray_data->ray_angle - game->player.angle;
+	if (angle_diff < -M_PI)
+		angle_diff += 2 * M_PI;
+	if (angle_diff > M_PI)
+		angle_diff -= 2 * M_PI;
+	ray_data->corrected_perp_wall_dist = ray_data->perp_wall_dist * cos(angle_diff);
+}
 
-        // Perform DDA algorithm to detect walls
-        int side;
-        float perpWallDist;
-        int hit = perform_dda(game, ray_dir_x, ray_dir_y, &mapX, &mapY, &side, &perpWallDist);
+void	calculate_line_height(t_ray_data *ray_data)
+{
+	ray_data->line_height = (int)(HEIGHT / ray_data->corrected_perp_wall_dist);
+	ray_data->draw_start = -ray_data->line_height / 2 + HEIGHT / 2;
+	if (ray_data->draw_start < 0)
+		ray_data->draw_start = 0;
+	ray_data->draw_end = ray_data->line_height / 2 + HEIGHT / 2;
+	if (ray_data->draw_end >= HEIGHT)
+		ray_data->draw_end = HEIGHT - 1;
+}
 
-        // Correct for the fish-eye effect and calculate line height
-        float angleDiff = ray_angle - game->player.angle;
-        if (angleDiff < -M_PI)
-            angleDiff += 2 * M_PI;
-        if (angleDiff > M_PI)
-            angleDiff -= 2 * M_PI;
 
-        // Correct the perpendicular wall distance
-        float correctedPerpWallDist = perpWallDist * cos(angleDiff);
+void	choose_wall_texture(t_game *game, t_ray_data *ray_data)
+{
+	if (ray_data->side == 0)
+	{
+		if (ray_data->ray_dir_x < 0)
+			ray_data->texture = game->assets.textures.WE;
+		else
+			ray_data->texture = game->assets.textures.EA;
+	}
+	else
+	{
+		if (ray_data->ray_dir_y < 0)
+			ray_data->texture = game->assets.textures.SO;
+		else
+			ray_data->texture = game->assets.textures.NO;
+	}
+}
 
-        // Calculate line height for rendering
-        int lineHeight = (int)(HEIGHT / correctedPerpWallDist);
-        if (lineHeight > HEIGHT)
-            lineHeight = HEIGHT;
+void	calculate_texture_coordinates(t_game *game, t_ray_data *ray_data)
+{
+	float	player_x_in_tiles;
+	float	player_y_in_tiles;
 
-        // Calculate draw positions
-        int drawStart = -lineHeight / 2 + HEIGHT / 2;
-        if (drawStart < 0) drawStart = 0;
-        int drawEnd = lineHeight / 2 + HEIGHT / 2;
-        if (drawEnd >= HEIGHT) drawEnd = HEIGHT - 1;
+	player_x_in_tiles = game->player.x / TILE_SIZE;
+	player_y_in_tiles = game->player.y / TILE_SIZE;
+	if (ray_data->side == 0)
+		ray_data->wall_x = player_y_in_tiles + ray_data->perp_wall_dist * ray_data->ray_dir_y;
+	else
+		ray_data->wall_x = player_x_in_tiles + ray_data->perp_wall_dist * ray_data->ray_dir_x;
+	ray_data->wall_x -= floor(ray_data->wall_x);
+	ray_data->tex_x = (int)(ray_data->wall_x * ray_data->texture->width);
+	if (ray_data->tex_x < 0)
+		ray_data->tex_x = 0;
+	if (ray_data->tex_x >= ray_data->texture->width)
+		ray_data->tex_x = ray_data->texture->width - 1;
+	if (ray_data->side == 0 && ray_data->ray_dir_x > 0)
+		ray_data->tex_x = ray_data->texture->width - ray_data->tex_x - 1;
+	if (ray_data->side == 1 && ray_data->ray_dir_y < 0)
+		ray_data->tex_x = ray_data->texture->width - ray_data->tex_x - 1;
+	ray_data->step = 1.0f * ray_data->texture->height / ray_data->line_height;
+	ray_data->tex_pos = 0.0f;
+	if (ray_data->draw_start > 0)
+		ray_data->tex_pos = (ray_data->draw_start - HEIGHT / 2 + ray_data->line_height / 2) * ray_data->step;
+	else
+		ray_data->tex_pos = (0 - HEIGHT / 2 + ray_data->line_height / 2) * ray_data->step;
+}
 
-        // Choose wall texture based on the side of the hit
-        mlx_texture_t *texture;
-        if (side == 0) // North/South wall
-        {
-            texture = (ray_dir_x < 0) ? game->assets.textures.WE : game->assets.textures.EA;
-        }
-        else // East/West wall
-        {
-            texture = (ray_dir_y < 0) ? game->assets.textures.SO : game->assets.textures.NO;
-        }
 
-        // Calculate the texture coordinate based on where the ray hit the wall
-        float wallX; // where the wall was hit
-        if (side == 0) // North/South wall
-            wallX = playerYInTiles + perpWallDist * ray_dir_y;
-        else // East/West wall
-            wallX = playerXInTiles + perpWallDist * ray_dir_x;
+void	draw_wall_slice(t_game *game, int ray, t_ray_data *ray_data)
+{
+	int				y;
+	int				tex_y;
+	uint32_t		color;
+	t_texture_data	texture_data;
 
-        wallX -= floor(wallX); // get the fractional part (texture coord)
+	texture_data.pixels = (uint32_t *)ray_data->texture->pixels;
+	texture_data.width = ray_data->texture->width;
+	texture_data.height = ray_data->texture->height;
 
-        // Calculate texture X coordinate
-        int texX = (int)(wallX * (float)texture->width);
-        if (side == 0 && ray_dir_x > 0) // correct for direction of the ray
-            texX = texture->width - texX - 1;
-        if (side == 1 && ray_dir_y < 0) // correct for direction of the ray
-            texX = texture->width - texX - 1;
-
-        // Calculate step and initial texture position
-        float step = 1.0f * texture->height / lineHeight;
-        float texPos = (drawStart - HEIGHT / 2 + lineHeight / 2) * step;
-
-        // Draw the texture on the wall slice
-        for (int y = drawStart; y < drawEnd; y++)
-        {
-            int texY = (int)texPos;
-            if (texY < 0) texY = 0;
-            if (texY >= texture->height) texY = texture->height - 1;
-            texPos += step;
-
-            // Fetch the pixel color from the texture using texX and texY
-            uint32_t color = retrieve_color_at_coordinates(texX, texY, (uint32_t *)texture->pixels, texture->width, texture->height);
-
-            // Handle endianness if necessary
-            color = (color << 24) | (((color >> 16) << 24) >> 16) | (((color << 16) >> 24) << 16) | (color >> 24);
-
-            // Draw the pixel on the screen
-            mlx_put_pixel(game->image, ray, y, color);
-        }
-    }
+	y = ray_data->draw_start;
+	while (y < ray_data->draw_end)
+	{
+		tex_y = (int)ray_data->tex_pos;
+		if (tex_y < 0)
+			tex_y = 0;
+		if (tex_y >= texture_data.height)
+			tex_y = texture_data.height - 1;
+		ray_data->tex_pos += ray_data->step;
+		color = retrieve_color_at_coordinates(ray_data->tex_x, tex_y, \
+		&texture_data);
+		color = (color << 24) | (((color >> 16) << 24) >> 16) |
+				(((color << 16) >> 24) << 16) | (color >> 24);
+		mlx_put_pixel(game->image, ray, y, color);
+		y++;
+	}
 }
 
 
 
+void	initialize_ray(t_game *game, int ray, t_ray_data *ray_data)
+{
+	float	fov_rad;
+	float	playerXInTiles;
+	float	playerYInTiles;
 
+	fov_rad = FOV * M_PI / 180.0f;
+	init_ray_angle(game, ray, fov_rad, &(ray_data->ray_angle));
+	init_ray_direction(ray_data->ray_angle, &(ray_data->ray_dir_x), &(ray_data->ray_dir_y));
+	playerXInTiles = game->player.x / TILE_SIZE;
+	playerYInTiles = game->player.y / TILE_SIZE;
+	ray_data->map_x = (int)(playerXInTiles);
+	ray_data->map_y = (int)(playerYInTiles);
+}
 
+void	castRays(t_game *game)
+{
+	int	ray;
 
-void drawMap(t_game *game)
+	ray = 0;
+	while (ray < NUM_RAYS)
+	{
+		process_ray(game, ray);
+		ray++;
+	}
+}
+
+void	drawMap(t_game *game)
 {
 	// for (int y = 0; y < MAP_HEIGHT; y++)
 	for (int y = 0; y < game->mapGrid->capacity; y++)
@@ -740,18 +808,18 @@ void drawMinimap(t_game *game)
 			totalDistance += stepSize;
 
 			// Calculate map coordinates
-			int mapX = (int)(rayX / TILE_SIZE);
-			int mapY = (int)(rayY / TILE_SIZE);
+			int map_x = (int)(rayX / TILE_SIZE);
+			int map_y = (int)(rayY / TILE_SIZE);
 
 			// Check if ray is out of bounds
-			if (mapX < 0 || mapX >= map_width || mapY < 0 || mapY >= map_height)
+			if (map_x < 0 || map_x >= map_width || map_y < 0 || map_y >= map_height)
 			{
 				hit = 1;
 				break;
 			}
 
 			// Check if the ray has hit a wall
-			if ((game->mapGrid->symbols[mapY][mapX]) == '1')
+			if ((game->mapGrid->symbols[map_y][map_x]) == '1')
 			{
 				hit = 1;
 				break;
@@ -855,7 +923,7 @@ void	update(void *param)
 	uint32_t ceilingColor = rgb_to_uint32(game->assets.colors.rgb_C); // Ceiling color
 	uint32_t floorColor = rgb_to_uint32(game->assets.colors.rgb_F); // Floor color
 
-	drawCeilingAndFloor(game->image, ceilingColor, floorColor);
+	draw_ceiling_and_floor(game->image, ceilingColor, floorColor);
 	// Cast rays and render the 3D view
 	castRays(game);
 
