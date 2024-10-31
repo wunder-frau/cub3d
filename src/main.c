@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:21:14 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:21:44 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/10/31 23:49:35 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,12 @@ int	main(int argc, char **argv)
 		return (EXIT_FAILURE);
 	}
 	map = read_map(argv);
+	if (map == NULL)
+	{
+		// VALGRIND!!!!!!!! change error message
+		ft_putstr_fd("Error: Map is NULL.\n", 2);
+		return (EXIT_FAILURE);
+	}
 	validate_map_file_structure(map);
 	if (!map)
 		return (EXIT_FAILURE);
