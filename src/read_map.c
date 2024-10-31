@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:12:14 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:17:08 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/10/31 16:26:47 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,13 @@ static bool	load_map_lines(int map_fd, t_vector *map)
 		map_line = get_next_line(map_fd);
 		if (map_line == NULL)
 			break ;
+		if (map->length >= 500)
+		{
+			ft_printf("cap:%d\n", map->length);
+			//free(map_line);
+			log_error_message("Map is to large.");
+			return false; 
+		}
 		if (vector_push_back(map, map_line) == 1)
 		{
 			log_error_message("Malloc failure during map loading");
