@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:21:14 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/01 11:01:12 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/01 16:43:45 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,13 @@ bool	check_map_dimensions(t_vector *map)
 	size_t j;
 
 	printf("Starting check_map_dimensions\n");
-	// Check the number of lines in the map (map height)
 	printf("Map capacity (number of lines): %zu\n", map->capacity);
 	if (map->capacity > MAX_MAP_LINES)
 	{
 		printf("Map too large - too many lines: %zu (Max allowed: %d)\n", map->capacity, MAX_MAP_LINES);  // Debug
-		return (error_msg("Map too large - too many lines"));
+		log_error_message("Map too large - too many lines");
+		return (false);
 	}
-	// Check the length of each line in the map (map width)
 	for (j = 0; j < map->capacity; j++)
 	{
 			i = 0;
@@ -60,8 +59,9 @@ bool	check_map_dimensions(t_vector *map)
 				i++;
 				if (i > MAX_LINE_LENGTH)
 				{
-					printf("Line %zu too long: %zu characters (Max allowed: %d)\n", j, i, MAX_LINE_LENGTH);  // Debug
-					return (error_msg("Map too large - line(s) too long"));
+					printf("Line %zu too long: %zu characters (Max allowed: %d)\n", j, i, MAX_LINE_LENGTH);
+					log_error_message("Map too large - line(s) too long");
+					return (false);
 				}
 			}
 			printf("Line %zu length: %zu\n", j, i);
