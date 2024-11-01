@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:12:14 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/01 10:05:14 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/01 11:05:07 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,34 +57,21 @@ static t_vector	*initialize_map_vector(int map_fd)
 	return (map);
 }
 
-// static bool check_file_height(t_vector *map, char *map_line)
-// {
-//     if (map->length >= 500)
-//     {
-//         free(map_line);
-//         log_error_message("Map is too large.");
-//         return false;  // Indicate failure to the caller
-//     }
-//     return true;
-// }
-
-
 static void check_file_height(t_vector *map, char *map_line, int fd)
 {
-    printf("Checking file height: current number of lines read: %zu\n", map->capacity);
+	printf("Checking file height: current number of lines read: %zu\n", map->capacity);
 
-    if (map->capacity >= MAX_FILE_NODES)
-    {
-        printf("File too large: %zu lines read (maximum allowed is %d)\n", map->capacity, MAX_FILE_NODES);
-        free(map_line);
-        vector_free(map);
-        close(fd);
-				ft_putendl_fd("Error", 2);
-				ft_putendl_fd("Config file too large", 2);
-				exit(1);
-    }
+	if (map->capacity >= MAX_FILE_NODES)
+	{
+		printf("File too large: %zu lines read (maximum allowed is %d)\n", map->capacity, MAX_FILE_NODES);
+		free(map_line);
+		vector_free(map);
+		close(fd);
+		ft_putendl_fd("Error", 2);
+		ft_putendl_fd("Config file too large", 2);
+		exit(1);
+	}
 }
-
 
 static bool	load_map_lines(int map_fd, t_vector *map)
 {
