@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   allocate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:36:26 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/01 16:15:51 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static t_game	*allocate_game_structure(t_vector *map, t_player player,
 	}
 	game->mlx = NULL;
 	game->image = NULL;
-	game->mapGrid = map;
+	game->map_grid = map;
 	game->assets = *assets;
 	game->player.x = player.x;
 	game->player.y = player.y;
@@ -106,7 +106,7 @@ t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets)
 		cleanup(game);
 		return (NULL);
 	}
-	if (load_textures_into_assets(game->mapGrid, &game->assets) != 0)
+	if (load_textures_into_assets(game->map_grid, &game->assets) != 0)
 	{
 		mlx_delete_image(game->mlx, game->image);
 		mlx_terminate(game->mlx);

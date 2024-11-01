@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:09 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:44:12 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/01 16:13:29 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,23 +34,23 @@ static void	cleanup_map_and_game(t_game *game)
 
 	if (!game)
 		return ;
-	if (game->mapGrid && game->mapGrid->symbols)
+	if (game->map_grid && game->map_grid->symbols)
 	{
 		y = 0;
-		while (y < game->mapGrid->capacity)
+		while (y < game->map_grid->capacity)
 		{
-			if (game->mapGrid->symbols[y])
+			if (game->map_grid->symbols[y])
 			{
-				free(game->mapGrid->symbols[y]);
-				game->mapGrid->symbols[y] = NULL;
+				free(game->map_grid->symbols[y]);
+				game->map_grid->symbols[y] = NULL;
 			}
 			y++;
 		}
-		free(game->mapGrid->symbols);
-		game->mapGrid->symbols = NULL;
+		free(game->map_grid->symbols);
+		game->map_grid->symbols = NULL;
 	}
-	if (game->mapGrid)
-		free(game->mapGrid);
+	if (game->map_grid)
+		free(game->map_grid);
 	if (game->mlx)
 		mlx_terminate(game->mlx);
 	free(game);

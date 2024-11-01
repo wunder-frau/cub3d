@@ -203,9 +203,9 @@ int	check_out_of_bounds(t_game *game, t_ray *ray)
 {
 	int	map_width;
 
-	map_width = ft_strlen(game->mapGrid->symbols[0]);
+	map_width = ft_strlen(game->map_grid->symbols[0]);
 	if (ray->map_x < 0 || ray->map_x >= map_width || \
-	ray->map_y < 0 || ray->map_y >= game->mapGrid->capacity)
+	ray->map_y < 0 || ray->map_y >= game->map_grid->capacity)
 	{
 		ray->perp_wall_dist = MAX_VIEW_DISTANCE;
 		return (2);
@@ -217,7 +217,7 @@ int	check_wall_hit(t_game *game, t_ray *ray)
 {
 	char	symbol;
 
-	symbol = game->mapGrid->symbols[ray->map_y][ray->map_x];
+	symbol = game->map_grid->symbols[ray->map_y][ray->map_x];
 	if (symbol == '1')
 	{
 		if (ray->side == 0)
@@ -351,7 +351,8 @@ void	correct_perp_wall_dist(t_game *game, t_ray_data *ray_data)
 		angle_diff += 2 * M_PI;
 	if (angle_diff > M_PI)
 		angle_diff -= 2 * M_PI;
-	ray_data->corrected_perp_wall_dist = ray_data->perp_wall_dist * cos(angle_diff);
+	ray_data->corrected_perp_wall_dist = ray_data->perp_wall_dist * \
+	cos(angle_diff);
 }
 
 void	calculate_line_height(t_ray_data *ray_data)
@@ -364,7 +365,6 @@ void	calculate_line_height(t_ray_data *ray_data)
 	if (ray_data->draw_end >= HEIGHT)
 		ray_data->draw_end = HEIGHT - 1;
 }
-
 
 void	choose_wall_texture(t_game *game, t_ray_data *ray_data)
 {
@@ -384,6 +384,17 @@ void	choose_wall_texture(t_game *game, t_ray_data *ray_data)
 	}
 }
 
+void	calculate_texture_position(t_ray_data *ray_data)
+{
+	ray_data->step = 1.0f * ray_data->texture->height / ray_data->line_height;
+	if (ray_data->draw_start > 0)
+		ray_data->tex_pos = (ray_data->draw_start - HEIGHT / 2 + \
+	ray_data->line_height / 2) * ray_data->step;
+	else
+		ray_data->tex_pos = (0 - HEIGHT / 2 + ray_data->line_height / 2) * \
+	ray_data->step;
+}
+
 void	calculate_texture_coordinates(t_game *game, t_ray_data *ray_data)
 {
 	float	player_x_in_tiles;
@@ -392,9 +403,11 @@ void	calculate_texture_coordinates(t_game *game, t_ray_data *ray_data)
 	player_x_in_tiles = game->player.x / TILE_SIZE;
 	player_y_in_tiles = game->player.y / TILE_SIZE;
 	if (ray_data->side == 0)
-		ray_data->wall_x = player_y_in_tiles + ray_data->perp_wall_dist * ray_data->ray_dir_y;
+		ray_data->wall_x = player_y_in_tiles + ray_data->perp_wall_dist * \
+	ray_data->ray_dir_y;
 	else
-		ray_data->wall_x = player_x_in_tiles + ray_data->perp_wall_dist * ray_data->ray_dir_x;
+		ray_data->wall_x = player_x_in_tiles + ray_data->perp_wall_dist * \
+	ray_data->ray_dir_x;
 	ray_data->wall_x -= floor(ray_data->wall_x);
 	ray_data->tex_x = (int)(ray_data->wall_x * ray_data->texture->width);
 	if (ray_data->tex_x < 0)
@@ -405,14 +418,8 @@ void	calculate_texture_coordinates(t_game *game, t_ray_data *ray_data)
 		ray_data->tex_x = ray_data->texture->width - ray_data->tex_x - 1;
 	if (ray_data->side == 1 && ray_data->ray_dir_y < 0)
 		ray_data->tex_x = ray_data->texture->width - ray_data->tex_x - 1;
-	ray_data->step = 1.0f * ray_data->texture->height / ray_data->line_height;
-	ray_data->tex_pos = 0.0f;
-	if (ray_data->draw_start > 0)
-		ray_data->tex_pos = (ray_data->draw_start - HEIGHT / 2 + ray_data->line_height / 2) * ray_data->step;
-	else
-		ray_data->tex_pos = (0 - HEIGHT / 2 + ray_data->line_height / 2) * ray_data->step;
+	calculate_texture_position(ray_data);
 }
-
 
 void	draw_wall_slice(t_game *game, int ray, t_ray_data *ray_data)
 {
@@ -424,7 +431,6 @@ void	draw_wall_slice(t_game *game, int ray, t_ray_data *ray_data)
 	texture_data.pixels = (uint32_t *)ray_data->texture->pixels;
 	texture_data.width = ray_data->texture->width;
 	texture_data.height = ray_data->texture->height;
-
 	y = ray_data->draw_start;
 	while (y < ray_data->draw_end)
 	{
@@ -436,31 +442,30 @@ void	draw_wall_slice(t_game *game, int ray, t_ray_data *ray_data)
 		ray_data->tex_pos += ray_data->step;
 		color = retrieve_color_at_coordinates(ray_data->tex_x, tex_y, \
 		&texture_data);
-		color = (color << 24) | (((color >> 16) << 24) >> 16) |
+		color = (color << 24) | (((color >> 16) << 24) >> 16) | \
 				(((color << 16) >> 24) << 16) | (color >> 24);
 		mlx_put_pixel(game->image, ray, y, color);
 		y++;
 	}
 }
 
-
-
 void	initialize_ray(t_game *game, int ray, t_ray_data *ray_data)
 {
 	float	fov_rad;
-	float	playerXInTiles;
-	float	playerYInTiles;
+	float	player_x_in_tiles;
+	float	player_y_in_tiles;
 
 	fov_rad = FOV * M_PI / 180.0f;
 	init_ray_angle(game, ray, fov_rad, &(ray_data->ray_angle));
-	init_ray_direction(ray_data->ray_angle, &(ray_data->ray_dir_x), &(ray_data->ray_dir_y));
-	playerXInTiles = game->player.x / TILE_SIZE;
-	playerYInTiles = game->player.y / TILE_SIZE;
-	ray_data->map_x = (int)(playerXInTiles);
-	ray_data->map_y = (int)(playerYInTiles);
+	init_ray_direction(ray_data->ray_angle, &(ray_data->ray_dir_x), \
+	&(ray_data->ray_dir_y));
+	player_x_in_tiles = game->player.x / TILE_SIZE;
+	player_y_in_tiles = game->player.y / TILE_SIZE;
+	ray_data->map_x = (int)(player_x_in_tiles);
+	ray_data->map_y = (int)(player_y_in_tiles);
 }
 
-void	castRays(t_game *game)
+void	cast_rays(t_game *game)
 {
 	int	ray;
 
@@ -472,105 +477,143 @@ void	castRays(t_game *game)
 	}
 }
 
-void	drawMap(t_game *game)
+void	draw_tile(t_game *game, int tile_x, int tile_y, uint32_t color)
 {
-	// for (int y = 0; y < MAP_HEIGHT; y++)
-	for (int y = 0; y < game->mapGrid->capacity; y++)
+	int	i;
+	int	j;
+	int	px;
+	int	py;
+
+	i = 0;
+	while (i < TILE_SIZE)
 	{
-		// for (int x = 0; x < MAP_WIDTH; x++)
-		for (int x = 0; x < ft_strlen(game->mapGrid->symbols[0]); x++)
+		j = 0;
+		while (j < TILE_SIZE)
 		{
-			uint32_t color = (game->mapGrid->symbols[y][x] - '0' == 1) ? 0xFFFFFFFF : 0x000000FF; // White for walls, black for empty space
-			int tileX = x * TILE_SIZE;
-			int tileY = y * TILE_SIZE;
-
-			// Draw the tile
-			for (int i = 0; i < TILE_SIZE; i++)
-			{
-				for (int j = 0; j < TILE_SIZE; j++)
-				{
-					int px = tileX + i;
-					int py = tileY + j;
-
-					// Ensure we don't draw outside the image boundaries
-					if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
-					{
-						mlx_put_pixel(game->image, px, py, color);
-					}
-				}
-			}
+			px = tile_x + i;
+			py = tile_y + j;
+			if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
+				mlx_put_pixel(game->image, px, py, color);
+			j++;
 		}
+		i++;
 	}
 }
 
-void drawPlayer(t_game *game)
+void	draw_map(t_game *game)
 {
-	int playerX = (int)game->player.x;
-	int playerY = (int)game->player.y;
-	uint32_t color = 0xFF0000FF; // Red color
+	int			y;
+	int			x;
+	uint32_t	color;
+	int			tile_x;
+	int			tile_y;
 
-	// Draw a small square to represent the player
-	int size = 5; // Size of the player square
-	for (int y = -size; y <= size; y++)
+	y = 0;
+	while (y < game->map_grid->capacity)
 	{
-		for (int x = -size; x <= size; x++)
+		x = 0;
+		while (x < ft_strlen(game->map_grid->symbols[0]))
 		{
-			int px = playerX + x;
-			int py = playerY + y;
+			if (game->map_grid->symbols[y][x] == '1')
+				color = 0xFFFFFFFF;
+			else
+				color = 0x000000FF;
+			tile_x = x * TILE_SIZE;
+			tile_y = y * TILE_SIZE;
+			draw_tile(game, tile_x, tile_y, color);
+			x++;
+		}
+		y++;
+	}
+}
 
+void	draw_square(t_game *game, int center_x, int center_y, int size)
+{
+	int			x;
+	int			y;
+	int			px;
+	int			py;
+	uint32_t	color;
+
+	y = -size;
+	while (y <= size)
+	{
+		x = -size;
+		while (x <= size)
+		{
+			px = center_x + x;
+			py = center_y + y;
 			if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
 			{
 				mlx_put_pixel(game->image, px, py, color);
 			}
+			x++;
 		}
+		y++;
 	}
 }
 
-void key_press(mlx_key_data_t keydata, void *param)
+void	draw_player(t_game *game)
 {
-	t_game *game = (t_game *)param;
+	int	player_x;
+	int	player_y;
+	int	size;
 
-	if (keydata.action == MLX_PRESS)
-	{
-		if (keydata.key == MLX_KEY_W)
-			g_keys.w = true;
-		if (keydata.key == MLX_KEY_A)
-			g_keys.a = true;
-		if (keydata.key == MLX_KEY_S)
-			g_keys.s = true;
-		if (keydata.key == MLX_KEY_D)
-			g_keys.d = true;
-		if (keydata.key == MLX_KEY_LEFT)
-			g_keys.left = true;
-		if (keydata.key == MLX_KEY_RIGHT)
-			g_keys.right = true;
-		if (keydata.key == MLX_KEY_ESCAPE)
-		{
-			// Exit the game gracefully
-			cleanup(game);
-			exit(EXIT_SUCCESS);
-			// mlx_close_window(game->mlx);
-		}
-	}
-	else if (keydata.action == MLX_RELEASE)
-	{
-		if (keydata.key == MLX_KEY_W)
-			g_keys.w = false;
-		if (keydata.key == MLX_KEY_A)
-			g_keys.a = false;
-		if (keydata.key == MLX_KEY_S)
-			g_keys.s = false;
-		if (keydata.key == MLX_KEY_D)
-			g_keys.d = false;
-		if (keydata.key == MLX_KEY_LEFT)
-			g_keys.left = false;
-		if (keydata.key == MLX_KEY_RIGHT)
-			g_keys.right = false;
-	}
-	printf("W: %d, A: %d, S: %d, D: %d, Left: %d, Right: %d\n", g_keys.w, g_keys.a, g_keys.s, g_keys.d, g_keys.left, g_keys.right);
+	player_x = (int)game->player.x;
+	player_y = (int)game->player.y;
+	size = 5;
+	draw_square(game, player_x, player_y, size);
 }
 
-void draw_line(mlx_image_t *image, int x0, int y0, int x1, int y1, uint32_t color)
+void	handle_key_press(mlx_key_data_t keydata, t_game *game)
+{
+	if (keydata.key == MLX_KEY_W)
+		g_keys.w = true;
+	else if (keydata.key == MLX_KEY_A)
+		g_keys.a = true;
+	else if (keydata.key == MLX_KEY_S)
+		g_keys.s = true;
+	else if (keydata.key == MLX_KEY_D)
+		g_keys.d = true;
+	else if (keydata.key == MLX_KEY_LEFT)
+		g_keys.left = true;
+	else if (keydata.key == MLX_KEY_RIGHT)
+		g_keys.right = true;
+	else if (keydata.key == MLX_KEY_ESCAPE)
+	{
+		cleanup(game);
+		exit(EXIT_SUCCESS);
+	}
+}
+
+void	handle_key_release(mlx_key_data_t keydata)
+{
+	if (keydata.key == MLX_KEY_W)
+		g_keys.w = false;
+	else if (keydata.key == MLX_KEY_A)
+		g_keys.a = false;
+	else if (keydata.key == MLX_KEY_S)
+		g_keys.s = false;
+	else if (keydata.key == MLX_KEY_D)
+		g_keys.d = false;
+	else if (keydata.key == MLX_KEY_LEFT)
+		g_keys.left = false;
+	else if (keydata.key == MLX_KEY_RIGHT)
+		g_keys.right = false;
+}
+
+void	key_press(mlx_key_data_t keydata, void *param)
+{
+	t_game	*game;
+
+	game = (t_game *)param;
+	if (keydata.action == MLX_PRESS)
+		handle_key_press(keydata, game);
+	else if (keydata.action == MLX_RELEASE)
+		handle_key_release(keydata);
+}
+
+void	draw_line(mlx_image_t *image, int x0, int y0, int x1, int y1, uint32_t color)
 {
 	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
 	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
@@ -612,32 +655,6 @@ void clear_image(mlx_image_t *image, uint32_t color)
 	}
 }
 
-// bool can_move_to(float x, float y, t_game *game)
-// {
-// 	int map_height = game->mapGrid->capacity;
-// 	int map_width = ft_strlen(game->mapGrid->symbols[0]);
-// 	float radius = 2.0f; // Adjust the radius as needed
-// 	int mapX1 = (int)((x - radius) / TILE_SIZE);
-// 	int mapY1 = (int)((y - radius) / TILE_SIZE);
-// 	int mapX2 = (int)((x + radius) / TILE_SIZE);
-// 	int mapY2 = (int)((y + radius) / TILE_SIZE);
-
-// 	// Check for out-of-bounds
-// 	if (mapX1 < 0 || mapX2 >= map_width || mapY1 < 0 || mapY2 >= map_height)
-// 	{
-// 		return false;
-// 	}
-// 	// Check all corners of the player's bounding box
-// 	if (ft_char_to_int(game->mapGrid->symbols[mapY1][mapX1]) > 0 ||
-// 		ft_char_to_int(game->mapGrid->symbols[mapY1][mapX2]) > 0 ||
-// 		ft_char_to_int(game->mapGrid->symbols[mapY2][mapX1]) > 0 ||
-// 		ft_char_to_int(game->mapGrid->symbols[mapY2][mapX2]) > 0)
-// 	{
-// 		return false;
-// 	}
-// 	return true;
-// }
-
 static bool is_walkable(char c)
 {
 	return (c == '0' || is_player_symbol(c));
@@ -646,15 +663,15 @@ static bool is_walkable(char c)
 
 bool can_move_to(float x, float y, t_game *game)
 {
-		// int map_height = game->mapGrid->capacity; // Ensure this reflects the actual number of rows
-		// int map_width = ft_strlen(game->mapGrid->symbols[0]);
-		int map_height = game->mapGrid->capacity;
+		// int map_height = game->map_grid->capacity; // Ensure this reflects the actual number of rows
+		// int map_width = ft_strlen(game->map_grid->symbols[0]);
+		int map_height = game->map_grid->capacity;
 		int map_width = 0;
 
 		int i = 0;
 		while (i < map_height)
 		{
-			int line_length = ft_strlen(game->mapGrid->symbols[i]) - 1;
+			int line_length = ft_strlen(game->map_grid->symbols[i]) - 1;
 			if (line_length > map_width)
 					map_width = line_length;
 			i++;
@@ -678,10 +695,10 @@ bool can_move_to(float x, float y, t_game *game)
 		}
 
 		// Check all corners of the player's bounding box
-	if (!is_walkable(game->mapGrid->symbols[mapY1][mapX1]) ||
-		!is_walkable(game->mapGrid->symbols[mapY1][mapX2]) ||
-		!is_walkable(game->mapGrid->symbols[mapY2][mapX1]) ||
-		!is_walkable(game->mapGrid->symbols[mapY2][mapX2]))
+	if (!is_walkable(game->map_grid->symbols[mapY1][mapX1]) ||
+		!is_walkable(game->map_grid->symbols[mapY1][mapX2]) ||
+		!is_walkable(game->map_grid->symbols[mapY2][mapX1]) ||
+		!is_walkable(game->map_grid->symbols[mapY2][mapX2]))
 	{
 		printf("Movement blocked: Collision detected\n");
 		return false;
@@ -700,13 +717,13 @@ void drawMinimap(t_game *game)
 	int minimap_offset_x = 10; // Position from the left edge
 	int minimap_offset_y = 10; // Position from the top edge
 
- 		int map_height = game->mapGrid->capacity;
+ 		int map_height = game->map_grid->capacity;
 		int map_width = 0;
 
 		int i = 0;
 		while (i < map_height)
 		{
-			int line_length = ft_strlen(game->mapGrid->symbols[i]) - 1;
+			int line_length = ft_strlen(game->map_grid->symbols[i]) - 1;
 			if (line_length > map_width)
 					map_width = line_length;
 			i++;
@@ -719,10 +736,10 @@ void drawMinimap(t_game *game)
 	// Draw the map grid
 	for (int y = 0; y < map_height; y++)
 	{ 
-			int line_length = ft_strlen(game->mapGrid->symbols[y]) - 1;
+			int line_length = ft_strlen(game->map_grid->symbols[y]) - 1;
 		for (int x = 0; x < line_length; x++)
 		{
-			uint32_t color = (game->mapGrid->symbols[y][x] == '1') ? 0x888888FF : 0x222222FF;
+			uint32_t color = (game->map_grid->symbols[y][x] == '1') ? 0x888888FF : 0x222222FF;
 
 			// Calculate scaled positions
 			int tileX0 = minimap_offset_x + (int)(x * scale);
@@ -819,7 +836,7 @@ void drawMinimap(t_game *game)
 			}
 
 			// Check if the ray has hit a wall
-			if ((game->mapGrid->symbols[map_y][map_x]) == '1')
+			if ((game->map_grid->symbols[map_y][map_x]) == '1')
 			{
 				hit = 1;
 				break;
@@ -925,7 +942,7 @@ void	update(void *param)
 
 	draw_ceiling_and_floor(game->image, ceilingColor, floorColor);
 	// Cast rays and render the 3D view
-	castRays(game);
+	cast_rays(game);
 
 	// Draw the minimap
 	drawMinimap(game);
