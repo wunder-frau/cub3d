@@ -6,7 +6,7 @@
 /*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/01 16:15:51 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/01 17:31:09 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ static t_game	*allocate_game_structure(t_vector *map, t_player player,
 	game->player.x = player.x;
 	game->player.y = player.y;
 	game->player.angle = player.angle;
-	ft_memcpy(game->assets.colors.rgb_C, assets->colors.rgb_C,
-		sizeof(assets->colors.rgb_C));
-	ft_memcpy(game->assets.colors.rgb_F, assets->colors.rgb_F,
-		sizeof(assets->colors.rgb_F));
+	ft_memcpy(game->assets.colors.rgb_c, assets->colors.rgb_c,
+		sizeof(assets->colors.rgb_c));
+	ft_memcpy(game->assets.colors.rgb_f, assets->colors.rgb_f,
+		sizeof(assets->colors.rgb_f));
 	return (game);
 }
 

@@ -38,8 +38,8 @@ typedef struct s_textures
 
 typedef struct s_colors
 {
-	int	rgb_C[3];
-	int	rgb_F[3];
+	int	rgb_c[3];
+	int	rgb_f[3];
 }	t_colors;
 
 typedef struct s_assets

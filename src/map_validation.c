@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_validation.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:34 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:05:36 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/01 17:30:26 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,16 +35,16 @@ static bool	validate_colors(t_assets *assets)
 	i = 0;
 	while (i < 3)
 	{
-		if (assets->colors.rgb_C[i] < 0 || assets->colors.rgb_C[i] > 255)
+		if (assets->colors.rgb_c[i] < 0 || assets->colors.rgb_c[i] > 255)
 		{
 			log_error_message("Invalid ceiling color component");
-			ft_printf("at index %d: %d\n", i, assets->colors.rgb_C[i]);
+			ft_printf("at index %d: %d\n", i, assets->colors.rgb_c[i]);
 			return (false);
 		}
-		if (assets->colors.rgb_F[i] < 0 || assets->colors.rgb_F[i] > 255)
+		if (assets->colors.rgb_f[i] < 0 || assets->colors.rgb_f[i] > 255)
 		{
 			log_error_message("Invalid floor color component ");
-			ft_printf("at index %d: %d\n", i, assets->colors.rgb_F[i]);
+			ft_printf("at index %d: %d\n", i, assets->colors.rgb_f[i]);
 			return (false);
 		}
 		i++;

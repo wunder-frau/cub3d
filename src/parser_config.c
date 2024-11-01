@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_config.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:05:56 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/01 17:30:47 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,15 @@ static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
 		return (false);
 	if (id[0] == 'F')
 	{
-		assets->colors.rgb_F[0] = ft_atoi(rgb_arr[0]);
-		assets->colors.rgb_F[1] = ft_atoi(rgb_arr[1]);
-		assets->colors.rgb_F[2] = ft_atoi(rgb_arr[2]);
+		assets->colors.rgb_f[0] = ft_atoi(rgb_arr[0]);
+		assets->colors.rgb_f[1] = ft_atoi(rgb_arr[1]);
+		assets->colors.rgb_f[2] = ft_atoi(rgb_arr[2]);
 	}
 	else
 	{
-		assets->colors.rgb_C[0] = ft_atoi(rgb_arr[0]);
-		assets->colors.rgb_C[1] = ft_atoi(rgb_arr[1]);
-		assets->colors.rgb_C[2] = ft_atoi(rgb_arr[2]);
+		assets->colors.rgb_c[0] = ft_atoi(rgb_arr[0]);
+		assets->colors.rgb_c[1] = ft_atoi(rgb_arr[1]);
+		assets->colors.rgb_c[2] = ft_atoi(rgb_arr[2]);
 	}
 	free_split_rgb_array(rgb_arr);
 	return (true);

@@ -15,6 +15,50 @@ typedef struct s_keys
 	bool	right;
 }	t_keys;
 
+typedef struct s_map_coords
+{
+	int	map_x1;
+	int	map_y1;
+	int	map_x2;
+	int	map_y2;
+}	t_map_coords;
+
+typedef struct s_minimap
+{
+	int		map_height;
+	int		map_width;
+	float	scale;
+	int		offset_x;
+	int		offset_y;
+}	t_minimap;
+
+typedef struct s_tile
+{
+	int			x0;
+	int			y0;
+	int			x1;
+	int			y1;
+	uint32_t	color;
+}	t_tile;
+
+typedef struct s_point
+{
+	int	x;
+	int	y;
+}	t_point;
+
+typedef struct s_line_vars
+{
+	int	dx;
+	int	dy;
+	int	sx;
+	int	sy;
+	int	err;
+	int	e2;
+	int	x1;
+	int	y1;
+}	t_line_vars;
+
 typedef struct s_ray
 {
 	float	ray_dir_x;
@@ -49,7 +93,20 @@ typedef struct s_ray_data
 	int				tex_x;
 	float			step;
 	float			tex_pos;
-}t_ray_data;
+}	t_ray_data;
+
+typedef struct s_ray_info
+{
+	float	ray_x;
+	float	ray_y;
+	float	ray_dir_x;
+	float	ray_dir_y;
+	int		hit;
+	float	total_distance;
+	float	step_size;
+	int		map_x;
+	int		map_y;
+}	t_ray_info;
 
 typedef struct s_texture_data
 {
@@ -477,6 +534,31 @@ void	cast_rays(t_game *game)
 	}
 }
 
+int	get_map_width(t_game *game)
+{
+	int	i;
+	int	map_width;
+	int	line_length;
+	int	map_height;
+
+	i = 0;
+	map_width = 0;
+	map_height = game->map_grid->capacity;
+	while (i < map_height)
+	{
+		line_length = ft_strlen(game->map_grid->symbols[i]);
+		if (line_length > map_width)
+			map_width = line_length;
+		i++;
+	}
+	return (map_width);
+}
+
+bool	is_walkable(char c)
+{
+	return (c == '0' || is_player_symbol(c));
+}
+
 void	draw_tile(t_game *game, int tile_x, int tile_y, uint32_t color)
 {
 	int	i;
@@ -613,350 +695,460 @@ void	key_press(mlx_key_data_t keydata, void *param)
 		handle_key_release(keydata);
 }
 
-void	draw_line(mlx_image_t *image, int x0, int y0, int x1, int y1, uint32_t color)
+void	initialize_line_vars(t_line_vars *vars, t_point p0, t_point p1)
 {
-	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-	int err = dx + dy, e2;
+	vars->dx = abs(p1.x - p0.x);
+	vars->dy = -abs(p1.y - p0.y);
+	if (p0.x < p1.x)
+		vars->sx = 1;
+	else
+		vars->sx = -1;
+	if (p0.y < p1.y)
+		vars->sy = 1;
+	else
+		vars->sy = -1;
+	vars->err = vars->dx + vars->dy;
+	vars->x1 = p1.x;
+	vars->y1 = p1.y;
+}
 
-	while (1)
+void	update_line_vars(t_line_vars *vars, int *x, int *y)
+{
+	vars->e2 = 2 * vars->err;
+	if (vars->e2 >= vars->dy)
 	{
-			if (x0 >= 0 && x0 < image->width && y0 >= 0 && y0 < image->height)
-					mlx_put_pixel(image, x0, y0, color);
-
-			if (x0 == x1 && y0 == y1)
-					break;
-
-			e2 = 2 * err;
-			if (e2 >= dy)
-			{
-					err += dy;
-					x0 += sx;
-			}
-			if (e2 <= dx)
-			{
-					err += dx;
-					y0 += sy;
-			}
+		vars->err += vars->dy;
+		*x += vars->sx;
+	}
+	if (vars->e2 <= vars->dx)
+	{
+		vars->err += vars->dx;
+		*y += vars->sy;
 	}
 }
 
-void clear_image(mlx_image_t *image, uint32_t color)
+void	draw_line_loop(mlx_image_t *image, t_line_vars *vars, t_point p0, \
+uint32_t color)
 {
-	if (!image || !image->pixels)
-		return;
+	int	x;
+	int	y;
+	int	width;
+	int	height;
+	int	done;
 
-	uint32_t *pixels = (uint32_t *)image->pixels;
-	size_t total_pixels = WIDTH * HEIGHT;
-
-	for (size_t i = 0; i < total_pixels; i++)
+	x = p0.x;
+	y = p0.y;
+	width = image->width;
+	height = image->height;
+	done = 0;
+	while (!done)
 	{
-		pixels[i] = color;
+		if (x >= 0 && x < width && y >= 0 && y < height)
+			mlx_put_pixel(image, x, y, color);
+		if (x == vars->x1 && y == vars->y1)
+			done = 1;
+		else
+			update_line_vars(vars, &x, &y);
 	}
 }
 
-static bool is_walkable(char c)
+void	draw_line(mlx_image_t *image, t_point p0, t_point p1, uint32_t color)
 {
-	return (c == '0' || is_player_symbol(c));
+	t_line_vars	vars;
+
+	initialize_line_vars(&vars, p0, p1);
+	draw_line_loop(image, &vars, p0, color);
 }
 
-
-bool can_move_to(float x, float y, t_game *game)
+bool	can_move_to(float x, float y, t_game *game)
 {
-		// int map_height = game->map_grid->capacity; // Ensure this reflects the actual number of rows
-		// int map_width = ft_strlen(game->map_grid->symbols[0]);
-		int map_height = game->map_grid->capacity;
-		int map_width = 0;
+	int				map_height;
+	int				map_width;
+	float			radius;
+	t_map_coords	coords;
 
-		int i = 0;
-		while (i < map_height)
-		{
-			int line_length = ft_strlen(game->map_grid->symbols[i]) - 1;
-			if (line_length > map_width)
-					map_width = line_length;
-			i++;
-		}
-		float radius = 10.0f; // Adjust the radius based on TILE_SIZE
-
-		int mapX1 = (int)((x - radius) / TILE_SIZE);
-		int mapY1 = (int)((y - radius) / TILE_SIZE);
-		int mapX2 = (int)((x + radius) / TILE_SIZE);
-		int mapY2 = (int)((y + radius) / TILE_SIZE);
-
-		// Debugging: Print the map coordinates being checked
-		//printf("Checking movement to (%.2f, %.2f): mapX1=%d, mapY1=%d, mapX2=%d, mapY2=%d\n",
-					//	x, y, mapX1, mapY1, mapX2, mapY2);
-
-		// Check for out-of-bounds
-		if (mapX1 < 0 || mapX2 >= map_width || mapY1 < 0 || mapY2 >= map_height)
-		{
-				printf("Movement blocked: Out of bounds\n");
-				return false;
-		}
-
-		// Check all corners of the player's bounding box
-	if (!is_walkable(game->map_grid->symbols[mapY1][mapX1]) ||
-		!is_walkable(game->map_grid->symbols[mapY1][mapX2]) ||
-		!is_walkable(game->map_grid->symbols[mapY2][mapX1]) ||
-		!is_walkable(game->map_grid->symbols[mapY2][mapX2]))
-	{
-		printf("Movement blocked: Collision detected\n");
-		return false;
-	}
-
-		return true;
+	map_height = game->map_grid->capacity;
+	map_width = get_map_width(game);
+	radius = 10.0f;
+	coords.map_x1 = (int)((x - radius) / TILE_SIZE);
+	coords.map_y1 = (int)((y - radius) / TILE_SIZE);
+	coords.map_x2 = (int)((x + radius) / TILE_SIZE);
+	coords.map_y2 = (int)((y + radius) / TILE_SIZE);
+	if (coords.map_x1 < 0 || coords.map_x2 >= map_width || \
+		coords.map_y1 < 0 || coords.map_y2 >= map_height)
+		return (false);
+	if (!is_walkable(game->map_grid->symbols[coords.map_y1][coords.map_x1]) ||
+		!is_walkable(game->map_grid->symbols[coords.map_y1][coords.map_x2]) ||
+		!is_walkable(game->map_grid->symbols[coords.map_y2][coords.map_x1]) ||
+		!is_walkable(game->map_grid->symbols[coords.map_y2][coords.map_x2]))
+		return (false);
+	return (true);
 }
 
-void drawMinimap(t_game *game)
+void	draw_minimap_player_direction(t_game *game, int player_px, \
+int player_py, t_minimap *minimap)
 {
-	// Desired minimap dimensions (in pixels)
-	int minimap_width = 200; // Adjust as needed
-	int minimap_height = 200; // Adjust as needed
+	float		dir_x;
+	float		dir_y;
+	t_point		p0;
+	t_point		p1;
 
-	// Minimap position on the screen
-	int minimap_offset_x = 10; // Position from the left edge
-	int minimap_offset_y = 10; // Position from the top edge
+	dir_x = cos(game->player.angle) * 5 * minimap->scale;
+	dir_y = sin(game->player.angle) * 5 * minimap->scale;
+	p0.x = player_px;
+	p0.y = player_py;
+	p1.x = (int)(player_px + dir_x);
+	p1.y = (int)(player_py + dir_y);
+}
 
- 		int map_height = game->map_grid->capacity;
-		int map_width = 0;
+void	draw_minimap_player_square(t_game *game, int player_px, int player_py)
+{
+	int	i;
+	int	j;
+	int	px;
+	int	py;
 
-		int i = 0;
-		while (i < map_height)
-		{
-			int line_length = ft_strlen(game->map_grid->symbols[i]) - 1;
-			if (line_length > map_width)
-					map_width = line_length;
-			i++;
-		}
-	// Calculate scale factors
-	float scaleX = (float)minimap_width / (float)map_width;
-	float scaleY = (float)minimap_height / (float)map_height;
-	float scale = (scaleX < scaleY) ? scaleX : scaleY;
-
-	// Draw the map grid
-	for (int y = 0; y < map_height; y++)
-	{ 
-			int line_length = ft_strlen(game->map_grid->symbols[y]) - 1;
-		for (int x = 0; x < line_length; x++)
-		{
-			uint32_t color = (game->map_grid->symbols[y][x] == '1') ? 0x888888FF : 0x222222FF;
-
-			// Calculate scaled positions
-			int tileX0 = minimap_offset_x + (int)(x * scale);
-			int tileY0 = minimap_offset_y + (int)(y * scale);
-			int tileX1 = minimap_offset_x + (int)((x + 1) * scale);
-			int tileY1 = minimap_offset_y + (int)((y + 1) * scale);
-
-			// Draw the tile
-			for (int py = tileY0; py < tileY1; py++)
-			{
-				for (int px = tileX0; px < tileX1; px++)
-				{
-					if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
-					{
-						mlx_put_pixel(game->image, px, py, color);
-					}
-				}
-			}
-		}
-	}
-
-	// Draw the player on the minimap
-	float playerX = minimap_offset_x + (game->player.x / TILE_SIZE) * scale;
-	float playerY = minimap_offset_y + (game->player.y / TILE_SIZE) * scale;
-
-	// Draw the player as a small rectangle or point
-	for (int i = -2; i <= 2; i++)
+	i = -2;
+	while (i <= 2)
 	{
-		for (int j = -2; j <= 2; j++)
+		j = -2;
+		while (j <= 2)
 		{
-			int px = (int)(playerX + i);
-			int py = (int)(playerY + j);
+			px = player_px + i;
+			py = player_py + j;
+			if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
+				mlx_put_pixel(game->image, px, py, 0xFF0000FF);
+			j++;
+		}
+		i++;
+	}
+}
 
+void	draw_minimap_player(t_game *game, t_minimap *minimap)
+{
+	float	player_x;
+	float	player_y;
+	int		player_px;
+	int		player_py;
+
+	player_x = minimap->offset_x + (game->player.x / TILE_SIZE) * \
+	minimap->scale;
+	player_y = minimap->offset_y + (game->player.y / TILE_SIZE) * \
+	minimap->scale;
+	player_px = (int)player_x;
+	player_py = (int)player_y;
+	draw_minimap_player_square(game, player_px, player_py);
+	//draw_minimap_player_direction(game, player_px, player_py, minimap);
+}
+
+void	initialize_ray_info(t_game *game, float ray_angle, t_ray_info *ray_info)
+{
+	ray_info->ray_x = game->player.x;
+	ray_info->ray_y = game->player.y;
+	ray_info->ray_dir_x = cos(ray_angle);
+	ray_info->ray_dir_y = sin(ray_angle);
+	ray_info->hit = 0;
+	ray_info->total_distance = 0.0f;
+	ray_info->step_size = 1.0f;
+}
+
+void	perform_ray_casting(t_game *game, t_minimap *minimap, \
+t_ray_info *ray_info)
+{
+	while (!ray_info->hit)
+	{
+		ray_info->ray_x += ray_info->ray_dir_x * ray_info->step_size;
+		ray_info->ray_y += ray_info->ray_dir_y * ray_info->step_size;
+		ray_info->total_distance += ray_info->step_size;
+		ray_info->map_x = (int)(ray_info->ray_x / TILE_SIZE);
+		ray_info->map_y = (int)(ray_info->ray_y / TILE_SIZE);
+		if (ray_info->map_x < 0 || ray_info->map_x >= minimap->map_width || \
+			ray_info->map_y < 0 || ray_info->map_y >= minimap->map_height)
+			ray_info->hit = 1;
+		else if (game->map_grid->symbols[ray_info->map_y][ray_info->map_x] \
+		== '1')
+			ray_info->hit = 1;
+		else if (ray_info->total_distance >= MAX_VIEW_DISTANCE)
+			ray_info->hit = 1;
+	}
+}
+
+void	compute_end_coordinates(t_minimap *minimap, t_ray_info *ray_info, \
+t_point *end_point)
+{
+	end_point->x = minimap->offset_x + (ray_info->ray_x / \
+	TILE_SIZE) * minimap->scale;
+	end_point->y = minimap->offset_y + (ray_info->ray_y / \
+	TILE_SIZE) * minimap->scale;
+}
+
+void	calculate_ray_end(t_game *game, t_minimap *minimap, \
+float ray_angle, t_point *end_point)
+{
+	t_ray_info	ray_info;
+
+	initialize_ray_info(game, ray_angle, &ray_info);
+	perform_ray_casting(game, minimap, &ray_info);
+	compute_end_coordinates(minimap, &ray_info, end_point);
+}
+
+void	process_minimap_ray(t_game *game, t_minimap *minimap, \
+float ray_angle)
+{
+	t_point		end_point;
+	t_point		p0;
+	t_point		p1;
+
+	calculate_ray_end(game, minimap, ray_angle, &end_point);
+	p0.x = minimap->offset_x + (game->player.x / TILE_SIZE) * minimap->scale;
+	p0.y = minimap->offset_y + (game->player.y / TILE_SIZE) * minimap->scale;
+	p1.x = (int)end_point.x;
+	p1.y = (int)end_point.y;
+	draw_line(game->image, p0, p1, 0x0000FFFF);
+}
+
+void	draw_minimap_rays(t_game *game, t_minimap *minimap)
+{
+	float	fov_rad;
+	float	angle_increment;
+	float	start_angle;
+	int		ray;
+	float	ray_angle;
+
+	fov_rad = FOV * M_PI / 180.0f;
+	angle_increment = fov_rad / NUM_RAYS;
+	start_angle = game->player.angle - (fov_rad / 2.0f);
+	if (start_angle < 0)
+		start_angle += 2 * M_PI;
+	if (start_angle > 2 * M_PI)
+		start_angle -= 2 * M_PI;
+	ray = 0;
+	while (ray < NUM_RAYS)
+	{
+		if (ray % 10 == 0)
+		{
+			ray_angle = start_angle + ray * angle_increment;
+			if (ray_angle < 0)
+				ray_angle += 2 * M_PI;
+			if (ray_angle > 2 * M_PI)
+				ray_angle -= 2 * M_PI;
+			process_minimap_ray(game, minimap, ray_angle);
+		}
+		ray++;
+	}
+}
+
+void	draw_minimap_tile(t_game *game, t_tile *tile)
+{
+	int	px;
+	int	py;
+
+	py = tile->y0;
+	while (py < tile->y1)
+	{
+		px = tile->x0;
+		while (px < tile->x1)
+		{
 			if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
 			{
-				mlx_put_pixel(game->image, px, py, 0xFF0000FF); // Red color for the player
+				mlx_put_pixel(game->image, px, py, tile->color);
 			}
+			px++;
 		}
-	}
-
-	// Draw the player's viewing direction
-	float dirX = cos(game->player.angle) * 5 * scale;
-	float dirY = sin(game->player.angle) * 5 * scale;
-
-	int lineEndX = (int)(playerX + dirX);
-	int lineEndY = (int)(playerY + dirY);
-
-	// Draw the line representing the player's viewing direction
-	draw_line(game->image, (int)playerX, (int)playerY, lineEndX, lineEndY, 0xFFFF00FF); // Yellow color
-
-	// Visualize rays on the minimap with collision detection
-	float fov_rad = FOV * M_PI / 180.0f;
-	float angleIncrement = fov_rad / NUM_RAYS;
-	float startAngle = game->player.angle - (fov_rad / 2.0f);
-
-	for (int ray = 0; ray < NUM_RAYS; ray += 10) // Skip some rays for clarity
-	{
-		float ray_angle = startAngle + ray * angleIncrement;
-
-		// Normalize angle
-		if (ray_angle < 0)
-			ray_angle += 2 * M_PI;
-		if (ray_angle > 2 * M_PI)
-			ray_angle -= 2 * M_PI;
-
-		// Raycasting variables for minimap
-		float rayX = game->player.x;
-		float rayY = game->player.y;
-
-		float ray_dir_x = cos(ray_angle);
-		float ray_dir_y = sin(ray_angle);
-
-		// Perform simplified DDA
-		int hit = 0;
-		float totalDistance = 0.0f;
-		float stepSize = 1.0f; // Adjust the increment as needed
-
-		while (!hit)
-		{
-			// Increment ray position
-			rayX += ray_dir_x * stepSize;
-			rayY += ray_dir_y * stepSize;
-			totalDistance += stepSize;
-
-			// Calculate map coordinates
-			int map_x = (int)(rayX / TILE_SIZE);
-			int map_y = (int)(rayY / TILE_SIZE);
-
-			// Check if ray is out of bounds
-			if (map_x < 0 || map_x >= map_width || map_y < 0 || map_y >= map_height)
-			{
-				hit = 1;
-				break;
-			}
-
-			// Check if the ray has hit a wall
-			if ((game->map_grid->symbols[map_y][map_x]) == '1')
-			{
-				hit = 1;
-				break;
-			}
-
-			// Check if the ray has reached maximum view distance
-			if (totalDistance >= MAX_VIEW_DISTANCE)
-			{
-				hit = 1;
-				break;
-			}
-		}
-
-		// Scale to minimap
-		float endMinimapX = minimap_offset_x + (rayX / TILE_SIZE) * scale;
-		float endMinimapY = minimap_offset_y + (rayY / TILE_SIZE) * scale;
-
-		// Draw the ray on the minimap
-		draw_line(game->image, (int)playerX, (int)playerY, (int)endMinimapX, (int)endMinimapY, 0x0000FFFF); // Blue color
+		py++;
 	}
 }
 
-void	update(void *param)
+void	process_minimap_tile(t_game *game, t_minimap *minimap, int x, int y)
 {
-	t_game *game = (t_game *)param;
+	uint32_t	color;
+	t_tile		tile;
 
-	// Clear the image
-	clear_image(game->image, 0x000000FF); // Clear to black
+	if (game->map_grid->symbols[y][x] == '1')
+		color = 0x888888FF;
+	else
+		color = 0x222222FF;
+	tile.x0 = minimap->offset_x + (int)(x * minimap->scale);
+	tile.y0 = minimap->offset_y + (int)(y * minimap->scale);
+	tile.x1 = minimap->offset_x + (int)((x + 1) * minimap->scale);
+	tile.y1 = minimap->offset_y + (int)((y + 1) * minimap->scale);
+	tile.color = color;
+	draw_minimap_tile(game, &tile);
+}
 
-	// Movement variables
-	float moveSpeed = 1.0f; // Movement speed
-	float rotSpeed = 2.0f * M_PI / 180.0f; // Rotation speed
+void	draw_minimap_grid(t_game *game, t_minimap *minimap)
+{
+	int	y;
+	int	x;
+	int	line_length;
 
-	// Rotate the player
+	y = 0;
+	while (y < minimap->map_height)
+	{
+		line_length = ft_strlen(game->map_grid->symbols[y]);
+		x = 0;
+		while (x < line_length)
+		{
+			process_minimap_tile(game, minimap, x, y);
+			x++;
+		}
+		y++;
+	}
+}
+
+void	draw_minimap(t_game *game)
+{
+	t_minimap	minimap;
+	float		scale_x;
+	float		scale_y;
+
+	minimap.map_height = game->map_grid->capacity;
+	minimap.map_width = get_map_width(game);
+	minimap.offset_x = 10;
+	minimap.offset_y = 10;
+	scale_x = 200.0f / (float)minimap.map_width;
+	scale_y = 200.0f / (float)minimap.map_height;
+	if (scale_x < scale_y)
+		minimap.scale = scale_x;
+	else
+		minimap.scale = scale_y;
+	draw_minimap_grid(game, &minimap);
+	draw_minimap_player(game, &minimap);
+	draw_minimap_rays(game, &minimap);
+}
+
+void	handle_rotation(t_game *game, float rot_speed)
+{
 	if (g_keys.left)
 	{
-		game->player.angle -= rotSpeed;
+		game->player.angle -= rot_speed;
 		if (game->player.angle < 0)
 			game->player.angle += 2 * M_PI;
 	}
 	if (g_keys.right)
 	{
-		game->player.angle += rotSpeed;
+		game->player.angle += rot_speed;
 		if (game->player.angle >= 2 * M_PI)
 			game->player.angle -= 2 * M_PI;
 	}
+}
 
-	// Calculate movement direction
-	float moveX = 0.0f;
-	float moveY = 0.0f;
-
+void	calculate_movement(t_game *game, float move_speed, \
+float *move_x, float *move_y)
+{
+	*move_x = 0.0f;
+	*move_y = 0.0f;
 	if (g_keys.w)
 	{
-		moveX += cos(game->player.angle) * moveSpeed;
-		moveY += sin(game->player.angle) * moveSpeed;
+		*move_x += cos(game->player.angle) * move_speed;
+		*move_y += sin(game->player.angle) * move_speed;
 	}
 	if (g_keys.s)
 	{
-		moveX -= cos(game->player.angle) * moveSpeed;
-		moveY -= sin(game->player.angle) * moveSpeed;
+		*move_x -= cos(game->player.angle) * move_speed;
+		*move_y -= sin(game->player.angle) * move_speed;
 	}
-
 	if (g_keys.a)
 	{
-		moveX += cos(game->player.angle - M_PI / 2) * moveSpeed;
-		moveY += sin(game->player.angle - M_PI / 2) * moveSpeed;
+		*move_x += cos(game->player.angle - M_PI / 2) * move_speed;
+		*move_y += sin(game->player.angle - M_PI / 2) * move_speed;
 	}
 	if (g_keys.d)
 	{
-		moveX += cos(game->player.angle + M_PI / 2) * moveSpeed;
-		moveY += sin(game->player.angle + M_PI / 2) * moveSpeed;
+		*move_x += cos(game->player.angle + M_PI / 2) * move_speed;
+		*move_y += sin(game->player.angle + M_PI / 2) * move_speed;
 	}
-	// Normalize movement vector
-	float magnitude = sqrt(moveX * moveX + moveY * moveY);
+}
+
+void	update_position(t_game *game, float move_x, float move_y)
+{
+	float	magnitude;
+	float	new_x;
+	float	new_y;
+	bool	can_move_x;
+	bool	can_move_y;
+
+	magnitude = sqrt(move_x * move_x + move_y * move_y);
 	if (magnitude > 0)
 	{
-		moveX = (moveX / magnitude) * moveSpeed;
-		moveY = (moveY / magnitude) * moveSpeed;
+		move_x = (move_x / magnitude) * magnitude;
+		move_y = (move_y / magnitude) * magnitude;
 	}
+	new_x = game->player.x + move_x;
+	new_y = game->player.y + move_y;
+	can_move_x = can_move_to(new_x, game->player.y, game);
+	can_move_y = can_move_to(game->player.x, new_y, game);
+	if (can_move_x)
+		game->player.x = new_x;
+	if (can_move_y)
+		game->player.y = new_y;
+}
 
-	// New positions
-	float newX = game->player.x + moveX;
-	float newY = game->player.y + moveY;
+void	handle_movement(t_game *game, float move_speed)
+{
+	float	move_x;
+	float	move_y;
 
-	// Wall sliding collision detection with collision buffer
-	bool canMoveX = can_move_to(newX, game->player.y, game);
-	bool canMoveY = can_move_to(game->player.x, newY, game);
+	calculate_movement(game, move_speed, &move_x, &move_y);
+	update_position(game, move_x, move_y);
+}
 
-	// Update positions based on collision detection
-	if (canMoveX)
-	{
-		game->player.x = newX;
-	}
+void	render_frame(t_game *game)
+{
+	uint32_t	ceiling_color;
+	uint32_t	floor_color;
 
-	if (canMoveY)
-	{
-		game->player.y = newY;
-	}
-
-	// Draw ceiling and floor once per frame
-	uint32_t ceilingColor = rgb_to_uint32(game->assets.colors.rgb_C); // Ceiling color
-	uint32_t floorColor = rgb_to_uint32(game->assets.colors.rgb_F); // Floor color
-
-	draw_ceiling_and_floor(game->image, ceilingColor, floorColor);
-	// Cast rays and render the 3D view
+	ceiling_color = rgb_to_uint32(game->assets.colors.rgb_c);
+	floor_color = rgb_to_uint32(game->assets.colors.rgb_f);
+	draw_ceiling_and_floor(game->image, ceiling_color, floor_color);
 	cast_rays(game);
+	draw_minimap(game);
+}
 
-	// Draw the minimap
-	drawMinimap(game);
+void	clear_image(mlx_image_t *image, uint32_t color)
+{
+	uint32_t	*pixels;
+	size_t		total_pixels;
+	size_t		i;
+	size_t		width;
+	size_t		height;
+
+	if (!image || !image->pixels)
+		return ;
+	width = image->width;
+	height = image->height;
+	pixels = (uint32_t *)image->pixels;
+	total_pixels = width * height;
+	i = 0;
+	while (i < total_pixels)
+	{
+		pixels[i] = color;
+		i++;
+	}
+}
+
+void	update(void *param)
+{
+	t_game	*game;
+	float	move_speed;
+	float	rot_speed;
+
+	game = (t_game *)param;
+	clear_image(game->image, 0x000000FF);
+	move_speed = 1.0f;
+	rot_speed = 2.0f * M_PI / 180.0f;
+	handle_rotation(game, rot_speed);
+	handle_movement(game, move_speed);
+	render_frame(game);
 }
 
 int	raycast_engine(t_vector *map, t_player player, t_assets *assets)
 {
-	t_game *game;
+	t_game	*game;
 
 	game = initialize_game(map, player, assets);
 	if (!game)
-	{
 		return (EXIT_FAILURE);
-	}
 	mlx_loop_hook(game->mlx, &update, game);
 	mlx_key_hook(game->mlx, &key_press, game);
 	mlx_loop(game->mlx);
