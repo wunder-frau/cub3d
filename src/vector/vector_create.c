@@ -6,12 +6,16 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 01:31:16 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 01:32:03 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/01 10:33:38 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vector.h"
 
+/**
+ * `capacity` - total allocated size of the 'symbols' array
+ * `length` - number of elements currently stored in 'symbols'
+ */
 t_vector	*vector_create(size_t initial_capacity)
 {
 	t_vector	*new_vector;
