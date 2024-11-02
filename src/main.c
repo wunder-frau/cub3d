@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:21:14 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/01 17:08:07 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/02 11:47:15 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,6 @@ static int	handle_assets_and_player(t_vector *map, t_assets **assets,
 	}
 	return (EXIT_SUCCESS);
 }
-bool	error_msg(char *msg)
-{
-	ft_putendl_fd("Error", 2);
-	ft_putendl_fd(msg, 2);
-	return (false);
-}
 
 bool	check_map_dimensions(t_vector *map)
 {
@@ -50,7 +44,8 @@ bool	check_map_dimensions(t_vector *map)
 		log_error_message("Map too large - too many lines");
 		return (false);
 	}
-	for (j = 0; j < map->capacity; j++)
+	j = 0;
+	while (j < map->capacity)
 	{
 			i = 0;
 			printf("Checking line %zu: %s", j, map->symbols[j]);
@@ -65,6 +60,7 @@ bool	check_map_dimensions(t_vector *map)
 				}
 			}
 			printf("Line %zu length: %zu\n", j, i);
+			j++;
 	}
 	printf("Map dimensions are within acceptable limits.\n");
 	return (true);
