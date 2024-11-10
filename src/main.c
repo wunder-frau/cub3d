@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:21:14 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/02 11:47:15 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/10 14:18:36 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,69 +33,92 @@ static int	handle_assets_and_player(t_vector *map, t_assets **assets,
 
 bool	check_map_dimensions(t_vector *map)
 {
-	size_t i;
-	size_t j;
+	size_t	i;
+	size_t	j;
 
-	printf("Starting check_map_dimensions\n");
-	printf("Map capacity (number of lines): %zu\n", map->capacity);
 	if (map->capacity > MAX_MAP_LINES)
 	{
-		printf("Map too large - too many lines: %zu (Max allowed: %d)\n", map->capacity, MAX_MAP_LINES);  // Debug
 		log_error_message("Map too large - too many lines");
 		return (false);
 	}
 	j = 0;
 	while (j < map->capacity)
 	{
-			i = 0;
-			printf("Checking line %zu: %s", j, map->symbols[j]);
-			while (map->symbols[j][i] != '\0')
-			{
-				i++;
-				if (i > MAX_LINE_LENGTH)
-				{
-					printf("Line %zu too long: %zu characters (Max allowed: %d)\n", j, i, MAX_LINE_LENGTH);
-					log_error_message("Map too large - line(s) too long");
-					return (false);
-				}
-			}
-			printf("Line %zu length: %zu\n", j, i);
-			j++;
+	i = 0;
+	while (map->symbols[j][i] != '\0')
+	{
+		i++;
+		if (i > MAX_LINE_LENGTH)
+		{
+			log_error_message("Map too large - line(s) too long");
+			return (false);
+		}
 	}
-	printf("Map dimensions are within acceptable limits.\n");
+	j++;
+	}
 	return (true);
 }
 
-int	main(int argc, char **argv)
+// int	main(int argc, char **argv)
+// {
+// 	t_vector	*map;
+// 	t_assets	*assets;
+// 	t_player	player;
+
+// 	if (argc != 2)
+// 	{
+// 		log_error_message("Incorrect number of arguments");
+// 		return (EXIT_FAILURE);
+// 	}
+// 	map = read_map(argv);
+// 	if (map == NULL)
+// 	{
+// 		// VALGRIND!!!!!!!! change error message
+// 		ft_putstr_fd("Error: Map is NULL.\n", 2);
+// 		return (EXIT_FAILURE);
+// 	}
+// 	if (!check_map_dimensions(map))
+// 	{
+// 		vector_free(map);
+// 		return (EXIT_FAILURE);
+// 	}
+// 	validate_map_file_structure(map);
+// 	if (handle_assets_and_player(map, &assets, &player) != EXIT_SUCCESS)
+// 		return (EXIT_FAILURE);
+// 	if (raycast_engine(map, player, assets) != EXIT_SUCCESS)
+// 		return (EXIT_FAILURE);
+// 	vector_free(map);
+// 	return (EXIT_SUCCESS);
+// }
+
+int main(int argc, char **argv)
 {
 	t_vector	*map;
-	t_assets	*assets;
+	t_assets	*assets = NULL;
 	t_player	player;
-
 	if (argc != 2)
-	{
-		log_error_message("Incorrect number of arguments");
-		return (EXIT_FAILURE);
-	}
+		return (log_error_message("Incorrect number of arguments"), EXIT_FAILURE);
+
 	map = read_map(argv);
-	if (map == NULL)
+	if (!map || !check_map_dimensions(map))
+		return (ft_putstr_fd("Error: Map is invalid.\n", 2), vector_free(map), EXIT_FAILURE);
+	validate_map_file_structure(map);
+	if (handle_assets_and_player(map, &assets, &player) != EXIT_SUCCESS)
 	{
-		// VALGRIND!!!!!!!! change error message
-		ft_putstr_fd("Error: Map is NULL.\n", 2);
+		vector_free(map);
+		if (assets)
+			free_assets_struct(assets); // Cleanup assets if allocated
 		return (EXIT_FAILURE);
 	}
-	if (!check_map_dimensions(map))
-{
-    vector_free(map);
-    return (EXIT_FAILURE);
-}
-	validate_map_file_structure(map);
-	if (!map)
-		return (EXIT_FAILURE);
-	if (handle_assets_and_player(map, &assets, &player) != EXIT_SUCCESS)
-		return (EXIT_FAILURE);
 	if (raycast_engine(map, player, assets) != EXIT_SUCCESS)
+	{
+		vector_free(map);
+		if (assets)
+			free_assets_struct(assets);
 		return (EXIT_FAILURE);
+	}
 	vector_free(map);
+	if (assets)
+		free_assets_struct(assets);
 	return (EXIT_SUCCESS);
 }
