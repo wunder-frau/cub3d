@@ -1,4 +1,4 @@
-NAME = cub3d
+NAME = cub3D
 MLX42_PATH = MLX42
 LIBFT_PATH = libft
 LIBFT = $(LIBFT_PATH)/libft.a
@@ -12,7 +12,7 @@ UNAME_S := $(shell uname -s)
 # LDFLAGS = -fsanitize=address
 
 # TO DELETE: wihout -fsanitize=address
-CFLAGS = -g -I $(MLX42_PATH)/include -I $(LIBFT_PATH)
+CFLAGS = -g -Wall -Wextra -Werror -I $(MLX42_PATH)/include -I $(LIBFT_PATH)
 #LDFLAGS = -fsanitize=address
 
 # Adjust CFLAGS and LDFLAGS based on OS

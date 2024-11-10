@@ -6,7 +6,7 @@
 /*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:34 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/01 17:30:26 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:03:04 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ bool	is_cub(const char *str)
 
 void	space_to_wall(t_vector *map)
 {
-	int	row;
-	int	col;
+	size_t	row;
+	size_t	col;
 
 	if (map == NULL || map->symbols == NULL)
 	{

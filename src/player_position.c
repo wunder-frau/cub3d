@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player_position.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:06:31 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:48:34 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:07:11 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	find_player(t_vector *map)
 			if (is_player_symbol(current_symbol))
 				player_count++;
 			else
-				if (!is_valid_map_symbol(current_symbol, map))
+				if (!is_valid_map_symbol(current_symbol))
 					error_exit_cleanup("Invalid symbol.", map, NULL);
 			col++;
 		}
@@ -55,7 +55,7 @@ static bool	assign_player_coordinates(size_t row,
 		printf("player_pos:__%.2f, %.2f\n", player->x, player->y);
 		return (true);
 	}
-	else if (!is_valid_map_symbol(current_symbol, map))
+	else if (!is_valid_map_symbol(current_symbol))
 	{
 		error_exit_cleanup("Invalid symbol", map, NULL);
 	}

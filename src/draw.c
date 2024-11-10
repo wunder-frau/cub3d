@@ -6,7 +6,7 @@
 /*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:37:32 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/10 14:37:33 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:11:25 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ void	draw_square(t_game *game, int center_x, int center_y, int size)
 			py = center_y + y;
 			if (px >= 0 && px < WIDTH && py >= 0 && py < HEIGHT)
 			{
+				if (!color)
+					color = 0;
 				mlx_put_pixel(game->image, px, py, color);
 			}
 			x++;
@@ -121,8 +123,8 @@ void	draw_tile(t_game *game, int tile_x, int tile_y, uint32_t color)
 
 void	draw_map(t_game *game)
 {
-	int			y;
-	int			x;
+	size_t		y;
+	size_t		x;
 	uint32_t	color;
 	int			tile_x;
 	int			tile_y;

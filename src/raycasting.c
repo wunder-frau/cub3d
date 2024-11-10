@@ -6,7 +6,7 @@
 /*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:38:17 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/10 14:38:18 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:15:04 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,13 @@ void	initialize_ray(t_game *game, int ray, t_ray_data *ray_data)
 void	perform_dda(t_game *game, t_ray_data *ray_data)
 {
 	t_ray	ray;
-	int		hit;
 
 	ray.ray_dir_x = ray_data->ray_dir_x;
 	ray.ray_dir_y = ray_data->ray_dir_y;
 	ray.map_x = ray_data->map_x;
 	ray.map_y = ray_data->map_y;
 	calculate_step_and_side_dist(game, &ray);
-	hit = perform_dda_loop(game, &ray);
+	perform_dda_loop(game, &ray);
 	ray_data->map_x = ray.map_x;
 	ray_data->map_y = ray.map_y;
 	ray_data->side = ray.side;

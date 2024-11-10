@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   config_order_validation.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:03:53 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:07:59 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ static bool	is_config_line(char *str)
 	return (false);
 }
 
-static bool	is_map_line(const char *str, t_vector *map)
+static bool	is_map_line(const char *str)
 {
 	while (*str)
 	{
-		if (!is_valid_map_symbol(*str, map))
+		if (!is_valid_map_symbol(*str))
 			return (false);
 		str++;
 	}
@@ -49,7 +49,7 @@ static void	check_no_config_after_map(t_vector *map, size_t i)
 			error_exit_cleanup("Texture configuration found"
 				" after map data", map, NULL);
 		if (!is_blank_line(map->symbols[i])
-			&& !is_map_line(map->symbols[i], map))
+			&& !is_map_line(map->symbols[i]))
 			error_exit_cleanup("Invalid line found in the map data", map, NULL);
 		i++;
 	}
@@ -70,7 +70,7 @@ static int	count_config_lines(t_vector *map, size_t *i)
 		}
 		else if (!is_blank_line(map->symbols[*i]))
 		{
-			if (!is_map_line(map->symbols[*i], map))
+			if (!is_map_line(map->symbols[*i]))
 				error_exit_cleanup("Invalid configuration identifier. "
 					"Expected one of: NO, SO, EA, WE, F, C.", map, NULL);
 			break ;

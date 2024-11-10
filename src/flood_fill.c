@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   flood_fill.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:04:49 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:42:44 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:05:33 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
 
 static bool	find_symbol_position(t_vector *map, const char *symbols,
-	int *row_out, int *col_out)
+	size_t *row_out, size_t *col_out)
 {
-	int	row;
-	int	col;
+	size_t	row;
+	size_t	col;
 
 	row = 0;
 	while (row < map->length)
@@ -40,10 +40,9 @@ static bool	find_symbol_position(t_vector *map, const char *symbols,
 	return (false);
 }
 
-static void	flood_fill(t_vector *map, int row, int col)
+static void	flood_fill(t_vector *map, size_t row, size_t col)
 {
-	if (row < 0 || row >= map->length || col < 0
-		|| col >= ft_strlen(map->symbols[row]))
+	if (row >= map->length || col >= ft_strlen(map->symbols[row]))
 		return ;
 	if (is_player_symbol(map->symbols[row][col]) ||
 			map->symbols[row][col] == ' ' || map->symbols[row][col] == '0')
@@ -109,8 +108,8 @@ static bool	is_valid(t_vector *map, size_t row, size_t col)
 void	validate_map_with_flood_fill(t_vector *map)
 {
 	t_vector	*dup;
-	int			row;
-	int			col;
+	size_t			row;
+	size_t			col;
 
 	dup = vector_copy(map);
 	if (!dup->symbols)

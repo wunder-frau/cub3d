@@ -237,7 +237,7 @@ bool		is_blank_line(const char *str);
 /* utils_symbol.c */
 float		assign_player_angle(char symbol);
 bool		is_player_symbol(char c);
-bool		is_valid_map_symbol(char c, t_vector *map);
+bool		is_valid_map_symbol(char c);
 
 void		initialize_ray(t_game *game, int ray, t_ray_data *ray_data);
 void		perform_dda(t_game *game, t_ray_data *ray_data);
@@ -270,7 +270,7 @@ bool		can_move_to(float x, float y, t_game *game);
 void		draw_minimap(t_game *game);
 void		draw_minimap_grid(t_game *game, t_minimap *minimap);
 void		draw_minimap_player(t_game *game, t_minimap *minimap);
-void		draw_minimap_rays(t_game *game, t_minimap *minimap);
+void		draw_minimap_rays(t_game *game, t_minimap *minimap, int ray);
 void		process_minimap_ray(t_game *game, t_minimap *minimap, float ray_angle);
 
 // dda.c

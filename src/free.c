@@ -6,7 +6,7 @@
 /*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:09 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/01 16:13:29 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:02:41 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	cleanup_textures_and_images(t_game *game)
 
 static void	cleanup_map_and_game(t_game *game)
 {
-	int	y;
+	size_t	y;
 
 	if (!game)
 		return ;

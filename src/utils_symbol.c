@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_symbol.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:06:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:06:54 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:06:28 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ bool	is_player_symbol(char c)
 		|| c == 'W' || c == 'w');
 }
 
-bool	is_valid_map_symbol(char c, t_vector *map)
+bool	is_valid_map_symbol(char c)
 {
 	char	*valid_symbols;
 

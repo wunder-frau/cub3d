@@ -6,7 +6,7 @@
 /*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:37:19 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/10 14:39:41 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:15:41 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	calculate_texture_coordinates(t_game *game, t_ray_data *ray_data)
 	ray_data->tex_x = (int)(ray_data->wall_x * ray_data->texture->width);
 	if (ray_data->tex_x < 0)
 		ray_data->tex_x = 0;
-	if (ray_data->tex_x >= ray_data->texture->width)
+	if ((uint32_t)ray_data->tex_x >= ray_data->texture->width)
 		ray_data->tex_x = ray_data->texture->width - 1;
 	if (ray_data->side == 0 && ray_data->ray_dir_x > 0)
 		ray_data->tex_x = ray_data->texture->width - ray_data->tex_x - 1;

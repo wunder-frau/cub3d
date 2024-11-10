@@ -6,7 +6,7 @@
 /*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:37:29 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/10 14:37:30 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:08:54 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	check_out_of_bounds(t_game *game, t_ray *ray)
 
 	map_width = ft_strlen(game->map_grid->symbols[0]);
 	if (ray->map_x < 0 || ray->map_x >= map_width || \
-	ray->map_y < 0 || ray->map_y >= game->map_grid->capacity)
+	ray->map_y < 0 || (size_t)ray->map_y >= game->map_grid->capacity)
 	{
 		ray->perp_wall_dist = MAX_VIEW_DISTANCE;
 		return (2);

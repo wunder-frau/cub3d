@@ -3,41 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   boundary_lines_validation.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:40 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:38:37 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/10 15:06:04 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
-
-static bool	is_valid_boundary_line(const char *line)
-{
-	size_t	len;
-	size_t	i;
-	char	c;
-
-	len = ft_strlen(line);
-	if (len < 2 || line[len - 1] != '\n')
-	{
-		log_error_message("Invalid line format: "
-			"line too small or missing '\\n'");
-		return (false);
-	}
-	i = 0;
-	while (i < len - 1)
-	{
-		c = line[i];
-		if (c != '1' && c != ' ')
-		{
-			log_error_message("Invalid character found in the line of the map");
-			return (false);
-		}
-		i++;
-	}
-	return (true);
-}
 
 static bool	starts_with_wall(const char *line)
 {
