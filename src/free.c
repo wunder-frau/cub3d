@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:09 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/10 15:02:41 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/13 16:15:41 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ static void	cleanup_map_and_game(t_game *game)
 	if (!game)
 		return ;
 	if (game->map_grid && game->map_grid->symbols)
+	free_assets_struct(&game->assets);
+	if (game->mapGrid && game->mapGrid->symbols)
 	{
 		y = 0;
 		while (y < game->map_grid->capacity)
@@ -68,11 +70,22 @@ void	free_assets_struct(t_assets *assets)
 		free(assets->textures.path_WE);
 }
 
-void	cleanup(t_game *game)
+void cleanup(t_game *game)
 {
+	if (!game)
+		return;
+
 	cleanup_textures_and_images(game);
 	cleanup_map_and_game(game);
+
+	free(game);  // Finally, free the main game struct
 }
+
+//void	cleanup(t_game *game)
+// {
+// 	cleanup_textures_and_images(game);
+// 	cleanup_map_and_game(game);
+// }
 
 void	free_split_rgb_array(char **rgb_arr)
 {

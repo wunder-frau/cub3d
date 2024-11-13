@@ -25,6 +25,10 @@
 
 # define TILE_SIZE 32 // Size of each tile in pixels
 
+#define MAX_MAP_LINES 64        // Maximum number of lines in the map
+#define MAX_LINE_LENGTH 64      // Maximum number of characters in a line
+#define MAX_FILE_NODES 500
+
 typedef struct s_textures
 {
 	char	*path_NO;

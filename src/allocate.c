@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   allocate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/01 17:31:09 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/13 16:17:01 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,10 @@ int	load_textures_into_assets(t_vector *map, t_assets *assets)
 		|| !assets->textures.EA || !assets->textures.WE)
 	{
 		ft_putstr_fd("Failed to load all required textures\n", 2);
+		if (assets->textures.NO) mlx_delete_texture(assets->textures.NO);
+		if (assets->textures.SO) mlx_delete_texture(assets->textures.SO);
+		if (assets->textures.EA) mlx_delete_texture(assets->textures.EA);
+		if (assets->textures.WE) mlx_delete_texture(assets->textures.WE);
 		error_exit_cleanup("Map validation failed", map, assets);
 		return (-1);
 	}
@@ -101,15 +105,13 @@ t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets)
 	game = allocate_game_structure(map, player, assets);
 	if (!game)
 		return (NULL);
-	if (setup_mlx_and_image(game) != 0)
+	if (load_textures_into_assets(game->mapGrid, &game->assets) != 0)
 	{
 		cleanup(game);
 		return (NULL);
 	}
-	if (load_textures_into_assets(game->map_grid, &game->assets) != 0)
+	if (setup_mlx_and_image(game) != 0)
 	{
-		mlx_delete_image(game->mlx, game->image);
-		mlx_terminate(game->mlx);
 		cleanup(game);
 		return (NULL);
 	}
