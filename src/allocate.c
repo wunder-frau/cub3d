@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/13 16:17:01 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/13 16:37:29 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets)
 	game = allocate_game_structure(map, player, assets);
 	if (!game)
 		return (NULL);
-	if (load_textures_into_assets(game->mapGrid, &game->assets) != 0)
+	if (load_textures_into_assets(game->map_grid, &game->assets) != 0)
 	{
 		cleanup(game);
 		return (NULL);

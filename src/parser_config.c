@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/13 16:23:21 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/13 16:36:29 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,13 @@ static bool store_rgb(char *rgb_trimmed, t_assets *assets, const char *id) {
     }
 
     if (id[0] == 'F') {
-        assets->colors.rgb_F[0] = r;
-        assets->colors.rgb_F[1] = g;
-        assets->colors.rgb_F[2] = b;
+        assets->colors.rgb_f[0] = r;
+        assets->colors.rgb_f[1] = g;
+        assets->colors.rgb_f[2] = b;
     } else {
-        assets->colors.rgb_C[0] = r;
-        assets->colors.rgb_C[1] = g;
-        assets->colors.rgb_C[2] = b;
+        assets->colors.rgb_c[0] = r;
+        assets->colors.rgb_c[1] = g;
+        assets->colors.rgb_c[2] = b;
     }
 
     free_split_rgb_array(rgb_arr);

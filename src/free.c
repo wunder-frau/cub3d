@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:09 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/13 16:15:41 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/13 16:37:31 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	cleanup_map_and_game(t_game *game)
 		return ;
 	if (game->map_grid && game->map_grid->symbols)
 	free_assets_struct(&game->assets);
-	if (game->mapGrid && game->mapGrid->symbols)
+	if (game->map_grid && game->map_grid->symbols)
 	{
 		y = 0;
 		while (y < game->map_grid->capacity)
