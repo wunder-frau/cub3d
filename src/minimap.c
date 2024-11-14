@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:37:48 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/10 14:42:17 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/14 17:08:21 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,10 @@ void	draw_minimap_grid(t_game *game, t_minimap *minimap)
 	while (y < minimap->map_height)
 	{
 		line_length = ft_strlen(game->map_grid->symbols[y]);
+		if (game->map_grid->symbols[y][line_length - 1] == '\n')
+		{
+			line_length -= 1;
+		}
 		x = 0;
 		while (x < line_length)
 		{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:37:35 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/10 14:37:36 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:12:10 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	raycast_engine(t_vector *map, t_player player, t_assets *assets)
 	game = initialize_game(map, player, assets);
 	if (!game)
 		return (EXIT_FAILURE);
+	mlx_set_setting(MLX_STRETCH_IMAGE, true);
 	mlx_loop_hook(game->mlx, &update, game);
 	mlx_key_hook(game->mlx, &key_press, game);
 	mlx_loop(game->mlx);

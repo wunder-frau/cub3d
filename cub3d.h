@@ -210,8 +210,10 @@ void		validate_map_with_flood_fill(t_vector *map);
 /* free.c */
 void		free_assets_struct(t_assets *assets);
 void		free_split_rgb_array(char **rgb_arr);
-void		cleanup(t_game *game);
 void		free_split_rgb_array(char **rgb_arr);
+
+/* cleanup.c */
+void		cleanup(t_game *game);
 
 /* main.c */
 int			main(int argc, char **argv);
