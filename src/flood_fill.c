@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   flood_fill.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:04:49 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/10 15:05:33 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/15 14:18:34 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void	validate_map_with_flood_fill(t_vector *map)
 	dup = vector_copy(map);
 	if (!dup->symbols)
 		error_exit_cleanup("Memory allocation failed for map dupl", dup, NULL);
-	if (!find_symbol_position(dup, "NWSE", &row, &col))
+	if (!find_symbol_position(dup, "NWSEnwse", &row, &col))
 		error_exit_cleanup("Initial position not found in the map", dup, NULL);
 	if (!is_valid(dup, row, col))
 		error_exit_cleanup("Flood fill reached a boundary."

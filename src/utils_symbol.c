@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:06:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/14 14:02:05 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/15 14:15:14 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ bool	is_valid_map_symbol(char c)
 {
 	char	*valid_symbols;
 
-	valid_symbols = "01NSEW";
+	valid_symbols = "01NSEWnsew";
 	return (ft_strchr(valid_symbols, c) != NULL
 		|| c == '\n' || c == '\0' || c == ' ');
 }

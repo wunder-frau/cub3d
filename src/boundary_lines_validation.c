@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   boundary_lines_validation.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:40 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/10 15:06:04 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/15 14:17:43 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ bool	is_valid_boundaries(t_vector *map)
 	i = 1;
 	while (i < (map->capacity - 1))
 	{
-		if (!validate_line(map->symbols[i], "NESW10 ", LINE_MIDDLE))
+		if (!validate_line(map->symbols[i], "NESWnesw10 ", LINE_MIDDLE))
 			return (false);
 		i++;
 	}
