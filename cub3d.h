@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 15:15:45 by nkarpilo          #+#    #+#             */
+/*   Updated: 2024/11/20 15:16:25 by nkarpilo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CUB3D_H
 # define CUB3D_H
 
@@ -16,18 +28,18 @@
 
 # define WIDTH 1200
 # define HEIGHT 800
-# define MAX_DEPTH 16 // Increase from 16 to 64
-# define MAX_RENDER_DISTANCE 1000.0f // Adjust as needed
+# define MAX_DEPTH 16
+# define MAX_RENDER_DISTANCE 1000.0f
 # define MAX_VIEW_DISTANCE 600.0f 
 
-# define FOV 75 // Field of View in degrees
-# define NUM_RAYS WIDTH // One ray per screen column
+# define FOV 75
+# define NUM_RAYS WIDTH
 
-# define TILE_SIZE 32 // Size of each tile in pixels
+# define TILE_SIZE 32
 
-#define MAX_MAP_LINES 64        // Maximum number of lines in the map
-#define MAX_LINE_LENGTH 64      // Maximum number of characters in a line
-#define MAX_FILE_NODES 500
+# define MAX_MAP_LINES 64
+# define MAX_LINE_LENGTH 64
+# define MAX_FILE_NODES 500
 
 typedef struct s_textures
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_symbol.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:06:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/15 14:15:14 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/20 15:14:06 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,16 @@
 
 float	assign_player_angle(char symbol)
 {
-	if (symbol == 'N' || symbol == 'n')
-		return (30.0f);
-	else if (symbol == 'E' || symbol == 'e')
+	if (symbol == 'N')
+		return ((3 * M_PI) / 2);
+	else if (symbol == 'S')
+		return (M_PI / 2);
+	else if (symbol == 'E')
 		return (0.0f);
-	else if (symbol == 'S' || symbol == 's')
-		return (70.5f);
-	else if (symbol == 'W' || symbol == 'w')
-		return (160.0f);
-	return (0.0f);
+	else if (symbol == 'W')
+		return (M_PI);
+	else
+		return (0.0f);
 }
 
 bool	is_player_symbol(char c)
