@@ -36,7 +36,7 @@ SRC_FILES = main.c parser_config.c error_handling.c free.c map_validation.c play
 						allocate.c config_order_validation.c flood_fill.c boundary_lines_validation.c \
 						utils.c utils_symbol.c read_map.c dda.c draw.c game.c input.c line.c \
 						minimap.c movement.c ray_info.c ray_utils.c raycasting.c rendering.c \
-						aux_funcs.c aux_funcs_2.c cleanup.c
+						aux_funcs.c aux_funcs_2.c cleanup.c utils_split.c
 VEC_FILES = ft_realloc.c vector_create.c vector_free.c vector_methods.c vector_push_back.c vector_copy.c vector_print.c
 
 CUB3D_SRC = $(addprefix $(SRC_PATH), $(SRC_FILES)) \
