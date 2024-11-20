@@ -8,7 +8,7 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <math.h>
-#include <stdbool.h>
+# include <stdbool.h>
 
 # ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -321,12 +321,14 @@ bool		is_walkable(char c);
 void		calculate_texture_coordinates(t_game *game, t_ray_data *ray_data);
 void		calculate_texture_position(t_ray_data *ray_data);
 
-
 // aux_funcs_2.c
 void		calculate_step_x(t_game *game, t_ray *ray);
 void		calculate_step_y(t_game *game, t_ray *ray);
 uint32_t	rgb_to_uint32(int rgb[3]);
 void		process_ray(t_game *game, int ray);
 void		draw_minimap_player_square(t_game *game, int player_px, int player_py);
+
+// utils_split.c
+bool	validate_comma_count(const char *str, size_t expected_count);
 
 #endif

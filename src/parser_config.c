@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/13 16:36:29 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/20 11:26:44 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,43 +44,47 @@ static char	*extract_texture_path(const char *id, t_vector *map,
 	return (NULL);
 }
 
-static bool store_rgb(char *rgb_trimmed, t_assets *assets, const char *id) {
-    char **rgb_arr;
+static bool store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
+{
+	char **rgb_arr;
 
-    rgb_arr = ft_split(rgb_trimmed, ',');
-    free(rgb_trimmed);
+	if (!validate_comma_count(rgb_trimmed, 2)) {
+		free(rgb_trimmed);
+		return (false);
+	}
+	rgb_arr = ft_split(rgb_trimmed, ',');
+	free(rgb_trimmed);
 
-    if (!rgb_arr) {
-        return false;
-    }
-    
-    if (!rgb_arr[0] || !rgb_arr[1] || !rgb_arr[2]) {
-        free_split_rgb_array(rgb_arr);
-        return false;
-    }
+	if (!rgb_arr) {
+		return false;
+	}
 
-    int r = ft_atoi(rgb_arr[0]);
-    int g = ft_atoi(rgb_arr[1]);
-    int b = ft_atoi(rgb_arr[2]);
+	if (!rgb_arr[0] || !rgb_arr[1] || !rgb_arr[2]) {
+		free_split_rgb_array(rgb_arr);
+		return false;
+	}
 
-    if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
-        free_split_rgb_array(rgb_arr);
-        return false;
-    }
+	int r = ft_atoi(rgb_arr[0]);
+	int g = ft_atoi(rgb_arr[1]);
+	int b = ft_atoi(rgb_arr[2]);
 
-    if (id[0] == 'F') {
-        assets->colors.rgb_f[0] = r;
-        assets->colors.rgb_f[1] = g;
-        assets->colors.rgb_f[2] = b;
-    } else {
-        assets->colors.rgb_c[0] = r;
-        assets->colors.rgb_c[1] = g;
-        assets->colors.rgb_c[2] = b;
-    }
-
-    free_split_rgb_array(rgb_arr);
-    return true;
+	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+		free_split_rgb_array(rgb_arr);
+		return false;
+	}
+	if (id[0] == 'F') {
+		assets->colors.rgb_f[0] = r;
+		assets->colors.rgb_f[1] = g;
+		assets->colors.rgb_f[2] = b;
+	} else {
+		assets->colors.rgb_c[0] = r;
+		assets->colors.rgb_c[1] = g;
+		assets->colors.rgb_c[2] = b;
+	}
+	free_split_rgb_array(rgb_arr);
+	return true;
 }
+
 
 // static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
 // {
