@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_symbol.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:06:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/20 15:14:06 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/23 14:37:41 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,15 @@ float	assign_player_angle(char symbol)
 
 bool	is_player_symbol(char c)
 {
-	return (c == 'N' || c == 'n'
-		|| c == 'S' || c == 's'
-		|| c == 'E' || c == 'e'
-		|| c == 'W' || c == 'w');
+	return (c == 'N' || c == 'S'
+		|| c == 'E' || c == 'W');
 }
 
 bool	is_valid_map_symbol(char c)
 {
 	char	*valid_symbols;
 
-	valid_symbols = "01NSEWnsew";
+	valid_symbols = "01NSEW";
 	return (ft_strchr(valid_symbols, c) != NULL
 		|| c == '\n' || c == '\0' || c == ' ');
 }

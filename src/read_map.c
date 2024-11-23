@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:12:14 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/02 11:42:46 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/23 14:42:09 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ static int	safe_open(const char *file)
 	if (fd == -1)
 	{
 		ft_putstr_fd("Error opening the file\n", 2);
-		//close(fd);
 		exit(1);
 	}
 	return (fd);
