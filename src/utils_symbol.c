@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:06:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/23 14:37:41 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/23 15:57:14 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,15 @@ bool	is_valid_map_symbol(char c)
 	valid_symbols = "01NSEW";
 	return (ft_strchr(valid_symbols, c) != NULL
 		|| c == '\n' || c == '\0' || c == ' ');
+}
+
+bool	check_file_height(t_vector *map)
+{
+	if (map->capacity >= MAX_FILE_NODES)
+	{
+		ft_putendl_fd("Error", 2);
+		ft_putendl_fd("Config file too large", 2);
+		return (false);
+	}
+	return (true);
 }
