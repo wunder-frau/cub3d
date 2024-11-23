@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/13 16:37:29 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/23 15:09:16 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,14 @@ int	load_textures_into_assets(t_vector *map, t_assets *assets)
 		|| !assets->textures.EA || !assets->textures.WE)
 	{
 		ft_putstr_fd("Failed to load all required textures\n", 2);
-		if (assets->textures.NO) mlx_delete_texture(assets->textures.NO);
-		if (assets->textures.SO) mlx_delete_texture(assets->textures.SO);
-		if (assets->textures.EA) mlx_delete_texture(assets->textures.EA);
-		if (assets->textures.WE) mlx_delete_texture(assets->textures.WE);
+		if (assets->textures.NO)
+			mlx_delete_texture(assets->textures.NO);
+		if (assets->textures.SO)
+			mlx_delete_texture(assets->textures.SO);
+		if (assets->textures.EA)
+			mlx_delete_texture(assets->textures.EA);
+		if (assets->textures.WE)
+			mlx_delete_texture(assets->textures.WE);
 		error_exit_cleanup("Map validation failed", map, assets);
 		return (-1);
 	}
