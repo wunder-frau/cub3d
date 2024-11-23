@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:04:49 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/23 14:47:22 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/23 16:01:03 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,8 +108,8 @@ static bool	is_valid(t_vector *map, size_t row, size_t col)
 void	validate_map_with_flood_fill(t_vector *map)
 {
 	t_vector	*dup;
-	size_t			row;
-	size_t			col;
+	size_t		row;
+	size_t		col;
 
 	dup = vector_copy(map);
 	if (!dup->symbols)

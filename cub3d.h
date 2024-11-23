@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:15:45 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/20 15:16:25 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/23 15:56:44 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,6 +256,7 @@ bool		is_blank_line(const char *str);
 float		assign_player_angle(char symbol);
 bool		is_player_symbol(char c);
 bool		is_valid_map_symbol(char c);
+bool		check_file_height(t_vector *map);
 
 void		initialize_ray(t_game *game, int ray, t_ray_data *ray_data);
 void		perform_dda(t_game *game, t_ray_data *ray_data);
