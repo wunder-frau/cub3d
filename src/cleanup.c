@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 14:49:37 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/14 14:53:41 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/24 19:55:18 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,14 @@ static void	cleanup_textures_and_images(t_game *game)
 {
 	if (!game)
 		return ;
-	if (game->assets.textures.NO)
-		mlx_delete_texture(game->assets.textures.NO);
-	if (game->assets.textures.SO)
-		mlx_delete_texture(game->assets.textures.SO);
-	if (game->assets.textures.EA)
-		mlx_delete_texture(game->assets.textures.EA);
-	if (game->assets.textures.WE)
-		mlx_delete_texture(game->assets.textures.WE);
+	if (game->assets.textures.no)
+		mlx_delete_texture(game->assets.textures.no);
+	if (game->assets.textures.so)
+		mlx_delete_texture(game->assets.textures.so);
+	if (game->assets.textures.ea)
+		mlx_delete_texture(game->assets.textures.ea);
+	if (game->assets.textures.we)
+		mlx_delete_texture(game->assets.textures.we);
 	if (game->image)
 		mlx_delete_image(game->mlx, game->image);
 }

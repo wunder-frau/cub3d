@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:34 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/15 18:26:01 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/24 19:45:38 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,16 @@
 
 static bool	validate_texture_paths(t_assets *assets)
 {
-	if (!assets->textures.path_NO)
+	if (!assets->textures.path_no)
 		log_error_message("Missing texture path for North (NO).");
-	if (!assets->textures.path_SO)
+	if (!assets->textures.path_so)
 		log_error_message("Missing texture path for South (SO).");
-	if (!assets->textures.path_EA)
+	if (!assets->textures.path_ea)
 		log_error_message("Missing texture path for East (EA).");
-	if (!assets->textures.path_WE)
+	if (!assets->textures.path_we)
 		log_error_message("Missing texture path for West (WE).");
-	if (!assets->textures.path_NO || !assets->textures.path_SO
-		|| !assets->textures.path_EA || !assets->textures.path_WE)
+	if (!assets->textures.path_no || !assets->textures.path_so
+		|| !assets->textures.path_ea || !assets->textures.path_we)
 		return (false);
 	return (true);
 }
