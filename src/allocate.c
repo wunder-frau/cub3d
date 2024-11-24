@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/23 15:09:16 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/24 19:49:41 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,16 +55,16 @@ static mlx_texture_t	*load_texture_from_path(const char *path)
 
 int	load_textures_into_assets(t_vector *map, t_assets *assets)
 {
-	assets->textures.NO = load_texture_from_path(assets->textures.path_NO);
-	assets->textures.SO = load_texture_from_path(assets->textures.path_SO);
-	assets->textures.EA = load_texture_from_path(assets->textures.path_EA);
-	assets->textures.WE = load_texture_from_path(assets->textures.path_WE);
-	if (!assets->textures.NO || !assets->textures.SO
+	assets->textures.no = load_texture_from_path(assets->textures.path_no);
+	assets->textures.SO = load_texture_from_path(assets->textures.path_so);
+	assets->textures.EA = load_texture_from_path(assets->textures.path_ea);
+	assets->textures.WE = load_texture_from_path(assets->textures.path_we);
+	if (!assets->textures.no || !assets->textures.SO
 		|| !assets->textures.EA || !assets->textures.WE)
 	{
 		ft_putstr_fd("Failed to load all required textures\n", 2);
-		if (assets->textures.NO)
-			mlx_delete_texture(assets->textures.NO);
+		if (assets->textures.no)
+			mlx_delete_texture(assets->textures.no);
 		if (assets->textures.SO)
 			mlx_delete_texture(assets->textures.SO);
 		if (assets->textures.EA)

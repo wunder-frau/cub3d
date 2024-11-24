@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/20 11:26:44 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/24 19:48:02 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,10 +142,10 @@ static char	*get_rgb(const char *id, t_vector *map, t_assets *assets)
  */
 static void	load_config_path_and_rgb(t_vector *map, t_assets *assets)
 {
-	assets->textures.path_NO = extract_texture_path("NO ", map, assets);
-	assets->textures.path_SO = extract_texture_path("SO ", map, assets);
-	assets->textures.path_EA = extract_texture_path("EA ", map, assets);
-	assets->textures.path_WE = extract_texture_path("WE ", map, assets);
+	assets->textures.path_no = extract_texture_path("NO ", map, assets);
+	assets->textures.path_so = extract_texture_path("SO ", map, assets);
+	assets->textures.path_ea = extract_texture_path("EA ", map, assets);
+	assets->textures.path_we = extract_texture_path("WE ", map, assets);
 	get_rgb("C ", map, assets);
 	get_rgb("F ", map, assets);
 }
@@ -160,11 +160,11 @@ t_assets	*initialize_assets(t_vector *map)
 	assets = (t_assets *)malloc(sizeof(t_assets));
 	if (!assets)
 		error_exit_cleanup("Failed to allocate assets", map, NULL);
-	assets->textures.path_NO = NULL;
-	assets->textures.path_SO = NULL;
-	assets->textures.path_EA = NULL;
-	assets->textures.path_WE = NULL;
-	assets->textures.NO = NULL;
+	assets->textures.path_no = NULL;
+	assets->textures.path_so = NULL;
+	assets->textures.path_ea = NULL;
+	assets->textures.path_we = NULL;
+	assets->textures.no = NULL;
 	assets->textures.SO = NULL;
 	assets->textures.EA = NULL;
 	assets->textures.WE = NULL;
