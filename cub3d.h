@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:15:45 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/24 19:55:08 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/24 20:04:52 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,14 @@
 
 typedef struct s_textures
 {
-	char	*path_no;
-	char	*path_so;
-	char	*path_ea;
-	char	*path_we;
-	mlx_texture_t	*no;
-	mlx_texture_t	*so;
-	mlx_texture_t	*ea;
-	mlx_texture_t	*we;
+	char				*path_no;
+	char				*path_so;
+	char				*path_ea;
+	char				*path_we;
+	mlx_texture_t		*no;
+	mlx_texture_t		*so;
+	mlx_texture_t		*ea;
+	mlx_texture_t		*we;
 }	t_textures;
 
 typedef struct s_colors
@@ -61,31 +61,31 @@ typedef struct s_colors
 
 typedef struct s_assets
 {
-	t_textures	textures;
-	t_colors		colors;
+	t_textures			textures;
+	t_colors			colors;
 	char				view_direction;
 }	t_assets;
 
 typedef struct s_player {
-	float x;
-	float y;
-	float angle;
-} t_player;
+	float	x;
+	float	y;
+	float	angle;
+}	t_player;
 
 typedef struct s_game {
-	mlx_t *mlx;
-	mlx_image_t *image;
-	t_player player;
-	t_vector *map_grid;
-		t_assets assets;
-} t_game;
+	mlx_t		*mlx;
+	mlx_image_t	*image;
+	t_player	player;
+	t_vector	*map_grid;
+	t_assets	assets;
+}	t_game;
 
 typedef enum e_line_type
 {
 	LINE_TOP,
 	LINE_BOTTOM,
 	LINE_MIDDLE
-} t_line_type;
+}	t_line_type;
 
 typedef struct s_keys
 {
@@ -97,7 +97,7 @@ typedef struct s_keys
 	bool	right;
 }	t_keys;
 
-extern t_keys g_keys;
+extern t_keys	g_keys;
 
 typedef struct s_map_coords
 {
@@ -213,8 +213,8 @@ void		log_error_message(char *msg);
 void		error_exit_cleanup(char *msg, t_vector *map, t_assets *assets);
 t_player	set_player_not_found(char *error_message);
 bool		is_valid_line_len_and_nl(const char *line, t_line_type line_type);
-bool		is_valid_line_characters(const char *line, const char *valid_chars,
-	t_line_type line_type);
+bool		is_valid_line_characters(const char *line,
+				const char *valid_chars, t_line_type line_type);
 
 /* flood_fill.c */
 void		validate_map_with_flood_fill(t_vector *map);
@@ -265,14 +265,18 @@ void		calculate_line_height(t_ray_data *ray_data);
 void		choose_wall_texture(t_game *game, t_ray_data *ray_data);
 
 // ray_utils.c
-void		init_ray_angle(t_game *game, int ray, float fov_rad, float *ray_angle);
-void		init_ray_direction(float ray_angle, float *ray_dir_x, float *ray_dir_y);
+void		init_ray_angle(t_game *game, int ray, float fov_rad,
+				float *ray_angle);
+void		init_ray_direction(float ray_angle, float *ray_dir_x,
+				float *ray_dir_y);
 void		calculate_delta_distances(t_ray *ray);
 void		calculate_step_and_side_dist(t_game *game, t_ray *ray);
-void		correct_and_compute_wall(float *perp_wall_dist, float ray_angle, t_game *game, int *line_height);
+void		correct_and_compute_wall(float *perp_wall_dist, float ray_angle,
+				t_game *game, int *line_height);
 
 // draw.c
-void		draw_ceiling_and_floor(mlx_image_t *image, uint32_t ceilingColor, uint32_t floorColor);
+void		draw_ceiling_and_floor(mlx_image_t *image, uint32_t ceilingColor,
+				uint32_t floorColor);
 void		draw_square(t_game *game, int center_x, int center_y, int size);
 void		draw_wall_slice(t_game *game, int ray, t_ray_data *ray_data);
 void		draw_tile(t_game *game, int tile_x, int tile_y, uint32_t color);
@@ -280,7 +284,8 @@ void		draw_map(t_game *game);
 
 // movement.c
 void		handle_rotation(t_game *game, float rot_speed);
-void		calculate_movement(t_game *game, float move_speed, float *move_x, float *move_y);
+void		calculate_movement(t_game *game, float move_speed, float *move_x,
+				float *move_y);
 void		update_position(t_game *game, float move_x, float move_y);
 void		handle_movement(t_game *game, float move_speed);
 bool		can_move_to(float x, float y, t_game *game);
@@ -290,14 +295,16 @@ void		draw_minimap(t_game *game);
 void		draw_minimap_grid(t_game *game, t_minimap *minimap);
 void		draw_minimap_player(t_game *game, t_minimap *minimap);
 void		draw_minimap_rays(t_game *game, t_minimap *minimap, int ray);
-void		process_minimap_ray(t_game *game, t_minimap *minimap, float ray_angle);
+void		process_minimap_ray(t_game *game, t_minimap *minimap,
+				float ray_angle);
 
 // dda.c
 int			perform_dda_loop(t_game *game, t_ray *ray);
 int			check_out_of_bounds(t_game *game, t_ray *ray);
 int			check_wall_hit(t_game *game, t_ray *ray);
 void		update_ray_position(t_ray *ray);
-void		initialize_ray_info(t_game *game, float ray_angle, t_ray_info *ray_info);
+void		initialize_ray_info(t_game *game, float ray_angle,
+				t_ray_info *ray_info);
 
 // input.c
 void		handle_key_press(mlx_key_data_t keydata, t_game *game);
@@ -307,9 +314,12 @@ void		key_press(mlx_key_data_t keydata, void *param);
 // line.c
 void		initialize_line_vars(t_line_vars *vars, t_point p0, t_point p1);
 void		update_line_vars(t_line_vars *vars, int *x, int *y);
-void		draw_line_loop(mlx_image_t *image, t_line_vars *vars, t_point p0, uint32_t color);
-void		draw_line(mlx_image_t *image, t_point p0, t_point p1, uint32_t color);
-void		process_minimap_tile(t_game *game, t_minimap *minimap, int x, int y);
+void		draw_line_loop(mlx_image_t *image, t_line_vars *vars, t_point p0,
+				uint32_t color);
+void		draw_line(mlx_image_t *image, t_point p0, t_point p1,
+				uint32_t color);
+void		process_minimap_tile(t_game *game, t_minimap *minimap, int x,
+				int y);
 
 // rendering.c
 void		render_frame(t_game *game);
@@ -318,15 +328,20 @@ void		cast_rays(t_game *game);
 void		draw_minimap_tile(t_game *game, t_tile *tile);
 
 // ray_info.c
-void		initialize_ray_info(t_game *game, float ray_angle, t_ray_info *ray_info);
-void		perform_ray_casting(t_game *game, t_minimap *minimap, t_ray_info *ray_info);
-void		compute_end_coordinates(t_minimap *minimap, t_ray_info *ray_info, t_point *end_point);
-void		calculate_ray_end(t_game *game, t_minimap *minimap, float ray_angle, t_point *end_point);
+void		initialize_ray_info(t_game *game, float ray_angle,
+				t_ray_info *ray_info);
+void		perform_ray_casting(t_game *game, t_minimap *minimap,
+				t_ray_info *ray_info);
+void		compute_end_coordinates(t_minimap *minimap, t_ray_info *ray_info,
+				t_point *end_point);
+void		calculate_ray_end(t_game *game, t_minimap *minimap, float ray_angle,
+				t_point *end_point);
 
 // game.c
 int			raycast_engine(t_vector *map, t_player player, t_assets *assets);
 void		update(void *param);
-uint32_t	retrieve_color_at_coordinates(int x, int y, t_texture_data *texture);
+uint32_t	retrieve_color_at_coordinates(int x, int y,
+				t_texture_data *texture);
 
 // aux_funcs.c
 int			get_map_width(t_game *game);
@@ -339,9 +354,10 @@ void		calculate_step_x(t_game *game, t_ray *ray);
 void		calculate_step_y(t_game *game, t_ray *ray);
 uint32_t	rgb_to_uint32(int rgb[3]);
 void		process_ray(t_game *game, int ray);
-void		draw_minimap_player_square(t_game *game, int player_px, int player_py);
+void		draw_minimap_player_square(t_game *game, int player_px,
+				int player_py);
 
 // utils_split.c
-bool	validate_comma_count(const char *str, size_t expected_count);
+bool		validate_comma_count(const char *str, size_t expected_count);
 
 #endif
