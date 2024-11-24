@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:15:45 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/24 19:53:23 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/24 19:55:08 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ typedef struct s_textures
 	mlx_texture_t	*no;
 	mlx_texture_t	*so;
 	mlx_texture_t	*ea;
-	mlx_texture_t	*WE;
+	mlx_texture_t	*we;
 }	t_textures;
 
 typedef struct s_colors
