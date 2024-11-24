@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/24 19:51:26 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/24 19:53:30 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,18 +57,18 @@ int	load_textures_into_assets(t_vector *map, t_assets *assets)
 {
 	assets->textures.no = load_texture_from_path(assets->textures.path_no);
 	assets->textures.so = load_texture_from_path(assets->textures.path_so);
-	assets->textures.EA = load_texture_from_path(assets->textures.path_ea);
+	assets->textures.ea = load_texture_from_path(assets->textures.path_ea);
 	assets->textures.WE = load_texture_from_path(assets->textures.path_we);
 	if (!assets->textures.no || !assets->textures.so
-		|| !assets->textures.EA || !assets->textures.WE)
+		|| !assets->textures.ea || !assets->textures.WE)
 	{
 		ft_putstr_fd("Failed to load all required textures\n", 2);
 		if (assets->textures.no)
 			mlx_delete_texture(assets->textures.no);
 		if (assets->textures.so)
 			mlx_delete_texture(assets->textures.so);
-		if (assets->textures.EA)
-			mlx_delete_texture(assets->textures.EA);
+		if (assets->textures.ea)
+			mlx_delete_texture(assets->textures.ea);
 		if (assets->textures.WE)
 			mlx_delete_texture(assets->textures.WE);
 		error_exit_cleanup("Map validation failed", map, assets);

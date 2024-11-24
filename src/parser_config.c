@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/24 19:51:41 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/24 19:53:43 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ t_assets	*initialize_assets(t_vector *map)
 	assets->textures.path_we = NULL;
 	assets->textures.no = NULL;
 	assets->textures.so = NULL;
-	assets->textures.EA = NULL;
+	assets->textures.ea = NULL;
 	assets->textures.WE = NULL;
 	if (remove_empty_line(map) == -1)
 		error_exit_cleanup("Failed to remove empty lines", map, assets);
