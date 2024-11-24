@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 01:34:21 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 01:35:28 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/24 16:24:13 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,20 @@
 void	vector_print(t_vector *vector)
 {
 	size_t	i;
-		// printf("helppppppp %zu: %s\n", i + 1, vector->symbols[i]);
-		// printf("len: %zu\n", vector->length);
+
+	if (!vector || !vector->symbols)
+	{
+		ft_printf("Error: Invalid vector or symbols.\n");
+		return ;
+	}
 	i = 0;
 	while (i < vector->capacity)
 	{
-		printf("Line %zu: %s  line_len: %zu    ", i, vector->symbols[i],
-			ft_strlen(vector->symbols[i]));
-		//printf("Total lines: %zu\n", vector->capacity + 1);
-		//printf("len: %zu\n", vector->length);
-		//printf("line_len: %zu    ", ft_strlen(vector->symbols[i]));
+		if (vector->symbols[i])
+			printf("Line %zu: %s  line_len: %zu\n", i, vector->symbols[i],
+				ft_strlen(vector->symbols[i]));
+		else
+			printf("Line %zu: (null)\n", i);
 		i++;
 	}
 }
