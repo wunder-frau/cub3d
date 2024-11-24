@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:12:14 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/23 15:56:13 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/24 15:04:05 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ static bool	load_map_lines(int map_fd, t_vector *map)
 		}
 		if (!check_file_height(map))
 			return (false);
+		map_line = get_next_line(map_fd);
 	}
 	return (true);
 }
