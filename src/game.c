@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:37:35 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/14 13:12:10 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 13:21:48 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,15 @@ void	update(void *param)
 	render_frame(game);
 }
 
+void	handle_close(void *param)
+{
+	t_game	*game;
+
+	game = (t_game *)param;
+	cleanup(game);
+	exit(0);
+}
+
 int	raycast_engine(t_vector *map, t_player player, t_assets *assets)
 {
 	t_game	*game;
@@ -47,6 +56,7 @@ int	raycast_engine(t_vector *map, t_player player, t_assets *assets)
 	mlx_set_setting(MLX_STRETCH_IMAGE, true);
 	mlx_loop_hook(game->mlx, &update, game);
 	mlx_key_hook(game->mlx, &key_press, game);
+	mlx_close_hook(game->mlx, &handle_close, game);
 	mlx_loop(game->mlx);
 	cleanup(game);
 	return (EXIT_SUCCESS);
