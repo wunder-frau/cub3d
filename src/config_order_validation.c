@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   config_order_validation.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/10 15:07:59 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/25 10:25:43 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ void	validate_map_file_structure(t_vector *map)
 
 	i = 0;
 	texture_info_count = count_config_lines(map, &i);
-	printf("texture_lines_count:[%d]\n", texture_info_count);
 	if (texture_info_count != 6)
 	{
 		error_exit_cleanup("Invalid number of texture config lines", map, NULL);

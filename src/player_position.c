@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player_position.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:06:31 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/10 15:07:11 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/25 10:25:26 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ static bool	assign_player_coordinates(size_t row,
 		player->x = (float)col * TILE_SIZE + (TILE_SIZE / 2.0f);
 		player->y = (float)row * TILE_SIZE + (TILE_SIZE / 2.0f);
 		player->angle = assign_player_angle(current_symbol);
-		printf("player_pos:__%.2f, %.2f\n", player->x, player->y);
 		return (true);
 	}
 	else if (!is_valid_map_symbol(current_symbol))

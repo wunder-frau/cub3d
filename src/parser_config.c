@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/24 19:55:27 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 10:29:22 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ static char	*extract_texture_path(const char *id, t_vector *map,
 		if (ft_strncmp(id, map->symbols[i], 3) == 0)
 		{
 			map_line = vector_get_at(map, i);
-			printf("map_line:%s", map_line);
 			if (!map_line)
 				error_exit_cleanup("Failed to allocate map line", map, assets);
 			path = trim_and_extract(map_line, 3);
@@ -41,99 +40,6 @@ static char	*extract_texture_path(const char *id, t_vector *map,
 		i++;
 	}
 	error_exit_cleanup("Missing texture information", map, assets);
-	return (NULL);
-}
-
-static bool store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
-{
-	char **rgb_arr;
-
-	if (!validate_comma_count(rgb_trimmed, 2)) {
-		free(rgb_trimmed);
-		return (false);
-	}
-	rgb_arr = ft_split(rgb_trimmed, ',');
-	free(rgb_trimmed);
-
-	if (!rgb_arr) {
-		return false;
-	}
-
-	if (!rgb_arr[0] || !rgb_arr[1] || !rgb_arr[2]) {
-		free_split_rgb_array(rgb_arr);
-		return false;
-	}
-
-	int r = ft_atoi(rgb_arr[0]);
-	int g = ft_atoi(rgb_arr[1]);
-	int b = ft_atoi(rgb_arr[2]);
-
-	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
-		free_split_rgb_array(rgb_arr);
-		return false;
-	}
-	if (id[0] == 'F') {
-		assets->colors.rgb_f[0] = r;
-		assets->colors.rgb_f[1] = g;
-		assets->colors.rgb_f[2] = b;
-	} else {
-		assets->colors.rgb_c[0] = r;
-		assets->colors.rgb_c[1] = g;
-		assets->colors.rgb_c[2] = b;
-	}
-	free_split_rgb_array(rgb_arr);
-	return true;
-}
-
-
-// static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
-// {
-// 	char	**rgb_arr;
-
-// 	rgb_arr = ft_split(rgb_trimmed, ',');
-// 	free(rgb_trimmed);
-// 	if (!rgb_arr || !rgb_arr[0] || !rgb_arr[1] || !rgb_arr[2])
-// 		return (false);
-// 	if (id[0] == 'F')
-// 	{
-// 		assets->colors.rgb_F[0] = ft_atoi(rgb_arr[0]);
-// 		assets->colors.rgb_F[1] = ft_atoi(rgb_arr[1]);
-// 		assets->colors.rgb_F[2] = ft_atoi(rgb_arr[2]);
-// 	}
-// 	else
-// 	{
-// 		assets->colors.rgb_C[0] = ft_atoi(rgb_arr[0]);
-// 		assets->colors.rgb_C[1] = ft_atoi(rgb_arr[1]);
-// 		assets->colors.rgb_C[2] = ft_atoi(rgb_arr[2]);
-// 	}
-// 	free_split_rgb_array(rgb_arr);
-// 	return (true);
-// }
-
-static char	*get_rgb(const char *id, t_vector *map, t_assets *assets)
-{
-	size_t	i;
-	char	*rgb;
-	char	*rgb_trimmed;
-
-	i = 0;
-	while (i < map->length)
-	{
-		if (ft_strncmp(id, map->symbols[i], 2) == 0)
-		{
-			rgb = vector_get_at(map, i);
-			if (!rgb)
-				error_exit_cleanup("Failed to retrieve RGB line", map, assets);
-			rgb_trimmed = trim_and_extract(rgb, 2);
-			if (!rgb_trimmed)
-				error_exit_cleanup("Failed to extract RGB line", map, assets);
-			if (!store_rgb(rgb_trimmed, assets, id))
-				error_exit_cleanup("Failed to copy RGB values", map, assets);
-			return (rgb_trimmed);
-		}
-		i++;
-	}
-	error_exit_cleanup("Missing RGB information", map, assets);
 	return (NULL);
 }
 

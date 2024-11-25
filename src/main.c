@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:21:14 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/13 15:51:12 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 10:21:02 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,27 @@ bool	check_map_dimensions(t_vector *map)
 	j = 0;
 	while (j < map->capacity)
 	{
-	i = 0;
-	while (map->symbols[j][i] != '\0')
-	{
-		i++;
-		if (i > MAX_LINE_LENGTH)
+		i = 0;
+		while (map->symbols[j][i] != '\0')
 		{
-			log_error_message("Map too large - line(s) too long");
-			return (false);
+			i++;
+			if (i > MAX_LINE_LENGTH)
+			{
+				log_error_message("Map too large - line(s) too long");
+				return (false);
+			}
 		}
+		j++;
 	}
-	j++;
+	return (true);
+}
+
+static bool	validate_args(int argc)
+{
+	if (argc != 2)
+	{
+		log_error_message("Incorrect number of arguments");
+		return (false);
 	}
 	return (true);
 }
@@ -65,15 +75,11 @@ int	main(int argc, char **argv)
 	t_assets	*assets;
 	t_player	player;
 
-	if (argc != 2)
-	{
-		log_error_message("Incorrect number of arguments");
+	if (!validate_args(argc))
 		return (EXIT_FAILURE);
-	}
 	map = read_map(argv);
 	if (map == NULL)
 	{
-		// VALGRIND!!!!!!!! change error message
 		ft_putstr_fd("Error: Map is NULL.\n", 2);
 		return (EXIT_FAILURE);
 	}

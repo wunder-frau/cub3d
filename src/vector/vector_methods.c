@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 01:33:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 01:34:02 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 10:25:20 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ char	*vector_get_at(t_vector *vector, size_t index)
 	if (remaining_symbs == NULL)
 		return (NULL);
 	removed_symb = vector->symbols[index];
-	printf("extracted:%s\n", removed_symb);
 	vector_erase_at(vector, index, remaining_symbs);
 	return (removed_symb);
 }

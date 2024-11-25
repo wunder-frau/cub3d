@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/24 19:55:17 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 10:25:50 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ static mlx_texture_t	*load_texture_from_path(const char *path)
 	mlx_texture_t	*texture;
 
 	texture = mlx_load_png(path);
-	printf("Loading texture from path: %s\n", path);
 	if (!texture)
 	{
 		ft_putstr_fd("Error\n", 2);
