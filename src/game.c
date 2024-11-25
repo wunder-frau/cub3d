@@ -6,7 +6,7 @@
 /*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:37:35 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/25 13:21:48 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/25 13:30:45 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	update(void *param)
 	render_frame(game);
 }
 
-void	handle_close(void *param)
+static void	handle_close(void *param)
 {
 	t_game	*game;
 
