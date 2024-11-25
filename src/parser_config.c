@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/25 10:26:00 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 10:29:22 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static char	*extract_texture_path(const char *id, t_vector *map,
 	{
 		if (ft_strncmp(id, map->symbols[i], 3) == 0)
 		{
-			map_line = vector_get_at(map, i);;
+			map_line = vector_get_at(map, i);
 			if (!map_line)
 				error_exit_cleanup("Failed to allocate map line", map, assets);
 			path = trim_and_extract(map_line, 3);
