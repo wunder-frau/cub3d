@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:34 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/24 19:45:38 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 10:25:31 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ bool	validate_map(t_vector *map, t_assets *assets)
 		error_exit_cleanup("Invalid map boundaries.", map, assets);
 	count_players(map);
 	validate_map_with_flood_fill(map);
-	printf("DEBUG: Map successfully passed flood fill validation.\n");
 	space_to_wall(map);
 	if (!validate_texture_paths(assets))
 		return (false);

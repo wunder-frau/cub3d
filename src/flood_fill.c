@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:04:49 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/23 16:01:03 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 10:27:04 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,5 @@ void	validate_map_with_flood_fill(t_vector *map)
 	if (!is_valid(dup, row, col))
 		error_exit_cleanup("Flood fill reached a boundary."
 			" Map is not enclosed properly.", dup, NULL);
-	printf("HERE IS DUP____\n");
-	vector_print(dup);
 	vector_free(dup);
 }
