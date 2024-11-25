@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:15:45 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/24 20:04:52 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 10:10:57 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,6 +237,9 @@ bool		validate_map(t_vector *map, t_assets *assets);
 
 /* parser_config.c */
 t_assets	*initialize_assets(t_vector *map);
+
+/* parser_config_rgb.c */
+char		*get_rgb(const char *id, t_vector *map, t_assets *assets);
 
 /* player_position.c */
 int			count_players(t_vector *map);
