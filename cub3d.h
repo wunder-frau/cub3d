@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:15:45 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/25 10:10:57 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 15:04:38 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 
 # define TILE_SIZE 32
 
-# define MAX_MAP_LINES 64
+# define MAX_MAP_LINES 100
 # define MAX_LINE_LENGTH 64
 # define MAX_FILE_NODES 500
 
@@ -72,14 +72,6 @@ typedef struct s_player {
 	float	angle;
 }	t_player;
 
-typedef struct s_game {
-	mlx_t		*mlx;
-	mlx_image_t	*image;
-	t_player	player;
-	t_vector	*map_grid;
-	t_assets	assets;
-}	t_game;
-
 typedef enum e_line_type
 {
 	LINE_TOP,
@@ -97,7 +89,14 @@ typedef struct s_keys
 	bool	right;
 }	t_keys;
 
-extern t_keys	g_keys;
+typedef struct s_game {
+	mlx_t		*mlx;
+	mlx_image_t	*image;
+	t_player	player;
+	t_vector	*map_grid;
+	t_assets	assets;
+	t_keys		keys;
+}	t_game;
 
 typedef struct s_map_coords
 {
@@ -260,7 +259,9 @@ float		assign_player_angle(char symbol);
 bool		is_player_symbol(char c);
 bool		is_valid_map_symbol(char c);
 bool		check_file_height(t_vector *map);
+void		initialize_keys(t_keys *keys);
 
+// raycasting.c
 void		initialize_ray(t_game *game, int ray, t_ray_data *ray_data);
 void		perform_dda(t_game *game, t_ray_data *ray_data);
 void		correct_perp_wall_dist(t_game *game, t_ray_data *ray_data);
@@ -306,12 +307,10 @@ int			perform_dda_loop(t_game *game, t_ray *ray);
 int			check_out_of_bounds(t_game *game, t_ray *ray);
 int			check_wall_hit(t_game *game, t_ray *ray);
 void		update_ray_position(t_ray *ray);
-void		initialize_ray_info(t_game *game, float ray_angle,
-				t_ray_info *ray_info);
 
 // input.c
 void		handle_key_press(mlx_key_data_t keydata, t_game *game);
-void		handle_key_release(mlx_key_data_t keydata);
+void		handle_key_release(mlx_key_data_t keydata, t_game *game);
 void		key_press(mlx_key_data_t keydata, void *param);
 
 // line.c

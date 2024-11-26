@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_symbol.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:06:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/23 15:57:14 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 15:01:49 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,14 @@ bool	check_file_height(t_vector *map)
 		return (false);
 	}
 	return (true);
+}
+
+void	initialize_keys(t_keys *keys)
+{
+	keys->w = false;
+	keys->a = false;
+	keys->s = false;
+	keys->d = false;
+	keys->left = false;
+	keys->right = false;
 }

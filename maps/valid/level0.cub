@@ -1,9 +1,9 @@
 NO ./textures/42_N.png
 SO ./textures/42_S.png
-ea ./textures/42_E.png
+EA ./textures/42_E.png
 WE ./textures/42_W.png
 
-C  128,0    ,128
+C  128, 0, 128
 F  255, 192, 203
 
 111111111111111111111111111111111111111111111111111111111111111

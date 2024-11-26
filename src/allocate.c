@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   allocate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/25 10:25:50 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/25 15:01:31 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets)
 	game = allocate_game_structure(map, player, assets);
 	if (!game)
 		return (NULL);
+	initialize_keys(&game->keys);
 	if (load_textures_into_assets(game->map_grid, &game->assets) != 0)
 	{
 		cleanup(game);

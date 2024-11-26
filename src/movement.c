@@ -6,7 +6,7 @@
 /*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:38:08 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/10 14:38:09 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/25 14:57:14 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 void	handle_rotation(t_game *game, float rot_speed)
 {
-	if (g_keys.left)
+	if (game->keys.left)
 	{
 		game->player.angle -= rot_speed;
 		if (game->player.angle < 0)
 			game->player.angle += 2 * M_PI;
 	}
-	if (g_keys.right)
+	if (game->keys.right)
 	{
 		game->player.angle += rot_speed;
 		if (game->player.angle >= 2 * M_PI)
@@ -42,22 +42,22 @@ float *move_x, float *move_y)
 {
 	*move_x = 0.0f;
 	*move_y = 0.0f;
-	if (g_keys.w)
+	if (game->keys.w)
 	{
 		*move_x += cos(game->player.angle) * move_speed;
 		*move_y += sin(game->player.angle) * move_speed;
 	}
-	if (g_keys.s)
+	if (game->keys.s)
 	{
 		*move_x -= cos(game->player.angle) * move_speed;
 		*move_y -= sin(game->player.angle) * move_speed;
 	}
-	if (g_keys.a)
+	if (game->keys.a)
 	{
 		*move_x += cos(game->player.angle - M_PI / 2) * move_speed;
 		*move_y += sin(game->player.angle - M_PI / 2) * move_speed;
 	}
-	if (g_keys.d)
+	if (game->keys.d)
 	{
 		*move_x += cos(game->player.angle + M_PI / 2) * move_speed;
 		*move_y += sin(game->player.angle + M_PI / 2) * move_speed;

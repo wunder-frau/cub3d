@@ -6,28 +6,26 @@
 /*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:37:38 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/10 14:39:33 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/25 14:56:20 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
 
-t_keys	g_keys = {false, false, false, false, false, false};
-
 void	handle_key_press(mlx_key_data_t keydata, t_game *game)
 {
 	if (keydata.key == MLX_KEY_W)
-		g_keys.w = true;
+		game->keys.w = true;
 	else if (keydata.key == MLX_KEY_A)
-		g_keys.a = true;
+		game->keys.a = true;
 	else if (keydata.key == MLX_KEY_S)
-		g_keys.s = true;
+		game->keys.s = true;
 	else if (keydata.key == MLX_KEY_D)
-		g_keys.d = true;
+		game->keys.d = true;
 	else if (keydata.key == MLX_KEY_LEFT)
-		g_keys.left = true;
+		game->keys.left = true;
 	else if (keydata.key == MLX_KEY_RIGHT)
-		g_keys.right = true;
+		game->keys.right = true;
 	else if (keydata.key == MLX_KEY_ESCAPE)
 	{
 		cleanup(game);
@@ -35,20 +33,20 @@ void	handle_key_press(mlx_key_data_t keydata, t_game *game)
 	}
 }
 
-void	handle_key_release(mlx_key_data_t keydata)
+void	handle_key_release(mlx_key_data_t keydata, t_game *game)
 {
 	if (keydata.key == MLX_KEY_W)
-		g_keys.w = false;
+		game->keys.w = false;
 	else if (keydata.key == MLX_KEY_A)
-		g_keys.a = false;
+		game->keys.a = false;
 	else if (keydata.key == MLX_KEY_S)
-		g_keys.s = false;
+		game->keys.s = false;
 	else if (keydata.key == MLX_KEY_D)
-		g_keys.d = false;
+		game->keys.d = false;
 	else if (keydata.key == MLX_KEY_LEFT)
-		g_keys.left = false;
+		game->keys.left = false;
 	else if (keydata.key == MLX_KEY_RIGHT)
-		g_keys.right = false;
+		game->keys.right = false;
 }
 
 void	key_press(mlx_key_data_t keydata, void *param)
@@ -59,5 +57,5 @@ void	key_press(mlx_key_data_t keydata, void *param)
 	if (keydata.action == MLX_PRESS)
 		handle_key_press(keydata, game);
 	else if (keydata.action == MLX_RELEASE)
-		handle_key_release(keydata);
+		handle_key_release(keydata, game);
 }
