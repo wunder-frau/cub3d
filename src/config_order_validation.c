@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/27 14:51:33 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/27 14:56:32 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ static bool	is_config_line(char *str)
 		str++;
 	if (*str == '\0' || *str == '\n')
 		return (false);
-	if ((*str == 'N' && *(str + 1) == 'O' && ft_is_space(*(str + 1)))
-		|| (*str == 'S' && *(str + 1) == 'O' && ft_is_space(*(str + 1)))
-		|| (*str == 'E' && *(str + 1) == 'A' && ft_is_space(*(str + 1)))
-		|| (*str == 'W' && *(str + 1) == 'E' && ft_is_space(*(str + 1)))
+	if ((*str == 'N' && *(str + 1) == 'O' && ft_is_space(*(str + 2)))
+		|| (*str == 'S' && *(str + 1) == 'O' && ft_is_space(*(str + 2)))
+		|| (*str == 'E' && *(str + 1) == 'A' && ft_is_space(*(str + 2)))
+		|| (*str == 'W' && *(str + 1) == 'E' && ft_is_space(*(str + 2)))
 		|| (*str == 'F' && ft_is_space(*(str + 1)))
 		|| (*str == 'C' && ft_is_space(*(str + 1))))
 	{
