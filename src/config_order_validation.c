@@ -6,27 +6,65 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/27 14:56:32 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/27 16:20:14 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
 
-static bool	is_config_line(char *str)
+// static bool	is_config_line(char *str)
+// {
+// 	while (ft_is_space(*str))
+// 		str++;
+// 	if (*str == '\0' || *str == '\n')
+// 		return (false);
+// 	if ((*str == 'N' && *(str + 1) == 'O' && ft_is_space(*(str + 2)))
+// 		|| (*str == 'S' && *(str + 1) == 'O' && ft_is_space(*(str + 2)))
+// 		|| (*str == 'E' && *(str + 1) == 'A' && ft_is_space(*(str + 2)))
+// 		|| (*str == 'W' && *(str + 1) == 'E' && ft_is_space(*(str + 2)))
+// 		|| (*str == 'F' && ft_is_space(*(str + 1)))
+// 		|| (*str == 'C' && ft_is_space(*(str + 1))))
+// 	{
+// 		return (true);
+// 	}
+// 	return (false);
+// }
+static bool	has_valid_prefix(char *str)
+{
+	char *valid_prefixes[] = {"NO", "SO", "EA", "WE", "F", "C"};
+	size_t i;
+	size_t prefix_len;
+
+	while (ft_is_space(*str))
+		str++;
+	i = 0;
+	while (i < 6)
+	{
+		prefix_len = ft_strlen(valid_prefixes[i]);
+		if (ft_strncmp(str, valid_prefixes[i], prefix_len) == 0)
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+static bool is_config_line(char *str)
 {
 	while (ft_is_space(*str))
 		str++;
 	if (*str == '\0' || *str == '\n')
 		return (false);
-	if ((*str == 'N' && *(str + 1) == 'O' && ft_is_space(*(str + 2)))
-		|| (*str == 'S' && *(str + 1) == 'O' && ft_is_space(*(str + 2)))
-		|| (*str == 'E' && *(str + 1) == 'A' && ft_is_space(*(str + 2)))
-		|| (*str == 'W' && *(str + 1) == 'E' && ft_is_space(*(str + 2)))
-		|| (*str == 'F' && ft_is_space(*(str + 1)))
-		|| (*str == 'C' && ft_is_space(*(str + 1))))
+	if (!has_valid_prefix(str))
+		return (false);
+	if (*str == 'F' || *str == 'C')
 	{
-		return (true);
+		while (ft_is_space(*str))
+			str++;
+		if (ft_isdigit(*str))
+			return (true);
 	}
+	if (*str == ' ' || *str == '\t')
+		return (true);
 	return (false);
 }
 
