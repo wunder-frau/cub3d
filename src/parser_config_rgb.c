@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 10:07:16 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/28 18:15:01 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/28 19:18:31 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,11 @@ static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
 	if (!rgb_arr)
 		return (false);
 	if (!convert_and_store_rgb(rgb_arr, assets, id))
+	{
+		free_split_rgb_array(rgb_arr);
+		//free_assets_struct(assets);
 		return (false);
+	}
 	return (true);
 }
 
