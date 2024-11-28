@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/28 18:13:47 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/28 22:18:22 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,7 @@ static int	count_config_lines(t_vector *map, size_t *i)
 		else if (!is_blank_line(map->symbols[*i]))
 		{
 			if (!is_map_line(map->symbols[*i]))
-				error_exit_cleanup("Invalid configuration identifier. "
-					"Expected one of: NO, SO, EA, WE, F, C.", map, NULL);
+				error_exit_cleanup("Expected one of: '1' or space", map, NULL);
 			break ;
 		}
 		(*i)++;
