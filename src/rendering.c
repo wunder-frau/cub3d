@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rendering.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:38:21 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/10 14:38:22 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/29 16:40:19 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ void	render_frame(t_game *game)
 	uint32_t	ceiling_color;
 	uint32_t	floor_color;
 
-	ceiling_color = rgb_to_uint32(game->assets.colors.rgb_c);
-	floor_color = rgb_to_uint32(game->assets.colors.rgb_f);
+	ceiling_color = rgb_to_uint32(game->assets->colors.rgb_c);
+	floor_color = rgb_to_uint32(game->assets->colors.rgb_f);
 	draw_ceiling_and_floor(game->image, ceiling_color, floor_color);
 	cast_rays(game);
 	draw_minimap(game);

@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 14:49:37 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/29 14:26:27 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/29 16:41:05 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,25 @@ static void cleanup_textures_and_images(t_game *game)
     if (!game)
         return;
 
-    if (game->assets.textures.no)
+    if (game->assets->textures.no)
     {
-        mlx_delete_texture(game->assets.textures.no);
-        game->assets.textures.no = NULL;
+        mlx_delete_texture(game->assets->textures.no);
+        game->assets->textures.no = NULL;
     }
-    if (game->assets.textures.so)
+    if (game->assets->textures.so)
     {
-        mlx_delete_texture(game->assets.textures.so);
-        game->assets.textures.so = NULL;
+        mlx_delete_texture(game->assets->textures.so);
+        game->assets->textures.so = NULL;
     }
-    if (game->assets.textures.ea)
+    if (game->assets->textures.ea)
     {
-        mlx_delete_texture(game->assets.textures.ea);
-        game->assets.textures.ea = NULL;
+        mlx_delete_texture(game->assets->textures.ea);
+        game->assets->textures.ea = NULL;
     }
-    if (game->assets.textures.we)
+    if (game->assets->textures.we)
     {
-        mlx_delete_texture(game->assets.textures.we);
-        game->assets.textures.we = NULL;
+        mlx_delete_texture(game->assets->textures.we);
+        game->assets->textures.we = NULL;
     }
 
     if (game->image)
@@ -85,7 +85,7 @@ static void	cleanup_game(t_game *game)
 void	cleanup(t_game *game)
 {
 	if (!game)
-	return ;
+	    return ;
 	cleanup_textures_and_images(game);
 	cleanup_map(game);
 	cleanup_game(game);

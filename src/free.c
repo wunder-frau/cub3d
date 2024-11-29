@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:09 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/29 14:25:43 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/29 16:45:51 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 void free_assets_struct(t_assets *assets)
 {
     if (!assets)
-        return;
-
+        return ;
     if (assets->textures.path_ea)
     {
         free(assets->textures.path_ea);
@@ -39,6 +38,7 @@ void free_assets_struct(t_assets *assets)
     }
 
     free(assets);
+	assets = NULL;
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 14:38:17 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/24 19:55:29 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/29 16:39:56 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,15 +73,15 @@ void	choose_wall_texture(t_game *game, t_ray_data *ray_data)
 	if (ray_data->side == 0)
 	{
 		if (ray_data->ray_dir_x < 0)
-			ray_data->texture = game->assets.textures.we;
+			ray_data->texture = game->assets->textures.we;
 		else
-			ray_data->texture = game->assets.textures.ea;
+			ray_data->texture = game->assets->textures.ea;
 	}
 	else
 	{
 		if (ray_data->ray_dir_y < 0)
-			ray_data->texture = game->assets.textures.so;
+			ray_data->texture = game->assets->textures.so;
 		else
-			ray_data->texture = game->assets.textures.no;
+			ray_data->texture = game->assets->textures.no;
 	}
 }
