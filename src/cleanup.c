@@ -6,26 +6,48 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 14:49:37 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/24 19:55:18 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/01 14:35:45 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
 
+static void	cleanup_textures(t_game *game)
+{
+	if (!game || !game->assets)
+		return ;
+	if (game->assets->textures.no)
+	{
+		mlx_delete_texture(game->assets->textures.no);
+		game->assets->textures.no = NULL;
+	}
+	if (game->assets->textures.so)
+	{
+		mlx_delete_texture(game->assets->textures.so);
+		game->assets->textures.so = NULL;
+	}
+	if (game->assets->textures.ea)
+	{
+		mlx_delete_texture(game->assets->textures.ea);
+		game->assets->textures.ea = NULL;
+	}
+	if (game->assets->textures.we)
+	{
+		mlx_delete_texture(game->assets->textures.we);
+		game->assets->textures.we = NULL;
+	}
+}
+
 static void	cleanup_textures_and_images(t_game *game)
 {
 	if (!game)
 		return ;
-	if (game->assets.textures.no)
-		mlx_delete_texture(game->assets.textures.no);
-	if (game->assets.textures.so)
-		mlx_delete_texture(game->assets.textures.so);
-	if (game->assets.textures.ea)
-		mlx_delete_texture(game->assets.textures.ea);
-	if (game->assets.textures.we)
-		mlx_delete_texture(game->assets.textures.we);
-	if (game->image)
+	cleanup_textures(game);
+	if (game->mlx && game->image)
+	{
 		mlx_delete_image(game->mlx, game->image);
+		game->image = NULL;
+	}
 }
 
 static void	cleanup_map(t_game *game)
@@ -34,8 +56,6 @@ static void	cleanup_map(t_game *game)
 
 	if (!game || !game->map_grid)
 		return ;
-	if (game->map_grid->symbols)
-		free_assets_struct(&game->assets);
 	if (game->map_grid->symbols)
 	{
 		y = 0;
@@ -66,6 +86,8 @@ static void	cleanup_game(t_game *game)
 
 void	cleanup(t_game *game)
 {
+	if (!game)
+		return ;
 	cleanup_textures_and_images(game);
 	cleanup_map(game);
 	cleanup_game(game);

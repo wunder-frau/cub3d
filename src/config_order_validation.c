@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/27 14:56:32 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/28 22:18:22 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,44 @@ static bool	is_config_line(char *str)
 	}
 	return (false);
 }
+// static bool	has_valid_prefix(char *str)
+// {
+// 	char *valid_prefixes[] = {"NO", "SO", "EA", "WE", "F", "C"};
+// 	size_t i;
+// 	size_t prefix_len;
+
+// 	while (ft_is_space(*str))
+// 		str++;
+// 	i = 0;
+// 	while (i < 6)
+// 	{
+// 		prefix_len = ft_strlen(valid_prefixes[i]);
+// 		if (ft_strncmp(str, valid_prefixes[i], prefix_len) == 0)
+// 			return (true);
+// 		i++;
+// 	}
+// 	return (false);
+// }
+
+// static bool is_config_line(char *str)
+// {
+// 	while (ft_is_space(*str))
+// 		str++;
+// 	if (*str == '\0' || *str == '\n')
+// 		return (false);
+// 	if (!has_valid_prefix(str))
+// 		return (false);
+// 	if (*str == 'F' || *str == 'C')
+// 	{
+// 		while (ft_is_space(*str))
+// 			str++;
+// 		if (ft_isdigit(*str))
+// 			return (true);
+// 	}
+// 	if (*str == ' ' || *str == '\t')
+// 		return (true);
+// 	return (false);
+// }
 
 static bool	is_map_line(const char *str)
 {
@@ -71,8 +109,7 @@ static int	count_config_lines(t_vector *map, size_t *i)
 		else if (!is_blank_line(map->symbols[*i]))
 		{
 			if (!is_map_line(map->symbols[*i]))
-				error_exit_cleanup("Invalid configuration identifier. "
-					"Expected one of: NO, SO, EA, WE, F, C.", map, NULL);
+				error_exit_cleanup("Expected one of: '1' or space", map, NULL);
 			break ;
 		}
 		(*i)++;

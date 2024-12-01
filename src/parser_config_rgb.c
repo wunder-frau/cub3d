@@ -6,11 +6,22 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 10:07:16 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/25 10:14:11 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/28 21:42:35 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3d.h"
+
+static bool	is_all_digits(const char *str)
+{
+	while (*str)
+	{
+		if (!ft_isdigit(*str) && !ft_is_space(*str))
+			return (false);
+		str++;
+	}
+	return (true);
+}
 
 static char	**parse_and_validate_rgb(char *rgb_trimmed)
 {
@@ -23,7 +34,9 @@ static char	**parse_and_validate_rgb(char *rgb_trimmed)
 	}
 	rgb_arr = ft_split(rgb_trimmed, ',');
 	free(rgb_trimmed);
-	if (!rgb_arr || !rgb_arr[0] || !rgb_arr[1] || !rgb_arr[2])
+	if (!rgb_arr || !rgb_arr[0] || !rgb_arr[1] || !rgb_arr[2]
+		|| !is_all_digits(rgb_arr[0]) || !is_all_digits(rgb_arr[1])
+		|| !is_all_digits(rgb_arr[2]))
 	{
 		if (rgb_arr)
 			free_split_rgb_array(rgb_arr);
@@ -66,7 +79,10 @@ static bool	store_rgb(char *rgb_trimmed, t_assets *assets, const char *id)
 	if (!rgb_arr)
 		return (false);
 	if (!convert_and_store_rgb(rgb_arr, assets, id))
+	{
+		free_split_rgb_array(rgb_arr);
 		return (false);
+	}
 	return (true);
 }
 

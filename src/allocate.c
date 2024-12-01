@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   allocate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/25 15:01:31 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/11/29 16:43:38 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,14 @@ static t_game	*allocate_game_structure(t_vector *map, t_player player,
 	game->mlx = NULL;
 	game->image = NULL;
 	game->map_grid = map;
-	game->assets = *assets;
+	game->assets = assets;
+	assets->game = game;
 	game->player.x = player.x;
 	game->player.y = player.y;
 	game->player.angle = player.angle;
-	ft_memcpy(game->assets.colors.rgb_c, assets->colors.rgb_c,
+	ft_memcpy(assets->colors.rgb_c, assets->colors.rgb_c,
 		sizeof(assets->colors.rgb_c));
-	ft_memcpy(game->assets.colors.rgb_f, assets->colors.rgb_f,
+	ft_memcpy(assets->colors.rgb_f, assets->colors.rgb_f,
 		sizeof(assets->colors.rgb_f));
 	return (game);
 }
@@ -109,7 +110,7 @@ t_game	*initialize_game(t_vector *map, t_player player, t_assets *assets)
 	if (!game)
 		return (NULL);
 	initialize_keys(&game->keys);
-	if (load_textures_into_assets(game->map_grid, &game->assets) != 0)
+	if (load_textures_into_assets(game->map_grid, game->assets) != 0)
 	{
 		cleanup(game);
 		return (NULL);

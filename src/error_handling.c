@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:04:22 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 10:04:24 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/11/29 16:43:28 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ void	error_exit_cleanup(char *msg, t_vector *map, t_assets *assets)
 		vector_free(map);
 	if (msg)
 		log_error_message(msg);
+	if (assets->game)
+	{
+		free(assets->game);
+	}
 	exit(1);
 }
 

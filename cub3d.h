@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:15:45 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/11/25 15:04:38 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/12/01 14:37:23 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ typedef struct s_assets
 	t_textures			textures;
 	t_colors			colors;
 	char				view_direction;
+	struct s_game		*game; 
 }	t_assets;
 
 typedef struct s_player {
@@ -94,7 +95,7 @@ typedef struct s_game {
 	mlx_image_t	*image;
 	t_player	player;
 	t_vector	*map_grid;
-	t_assets	assets;
+	t_assets	*assets;
 	t_keys		keys;
 }	t_game;
 
@@ -244,7 +245,7 @@ char		*get_rgb(const char *id, t_vector *map, t_assets *assets);
 int			count_players(t_vector *map);
 t_player	find_player_pos(t_vector *map);
 
-/*read_map.c */
+/* read_map.c */
 t_vector	*read_map(char **argv);
 
 /* utils.c */
