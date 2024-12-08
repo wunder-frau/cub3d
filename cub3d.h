@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:15:45 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/12/01 14:37:23 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/08 16:12:16 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ typedef struct s_assets
 	t_textures			textures;
 	t_colors			colors;
 	char				view_direction;
-	struct s_game		*game; 
+	struct s_game		*game;
 }	t_assets;
 
 typedef struct s_player {
