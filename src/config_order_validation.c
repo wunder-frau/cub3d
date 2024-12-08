@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   config_order_validation.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/28 22:18:22 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/08 16:08:18 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,8 @@ static int	count_config_lines(t_vector *map, size_t *i)
 		else if (!is_blank_line(map->symbols[*i]))
 		{
 			if (!is_map_line(map->symbols[*i]))
-				error_exit_cleanup("Expected one of: '1' or space", map, NULL);
+				error_exit_cleanup \
+			("Invalid map: top line symbol or texture specifier", map, NULL);
 			break ;
 		}
 		(*i)++;

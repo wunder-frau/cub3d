@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:04:22 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/29 16:43:28 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/08 15:48:59 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,18 @@ void	log_error_message(char *msg)
 
 void	error_exit_cleanup(char *msg, t_vector *map, t_assets *assets)
 {
-	if (assets)
-		free_assets_struct(assets);
-	if (map)
-		vector_free(map);
 	if (msg)
 		log_error_message(msg);
-	if (assets->game)
+	if (map)
+		vector_free(map);
+	if (assets)
 	{
-		free(assets->game);
+		if (assets->game)
+		{
+			free(assets->game);
+			assets->game = NULL;
+		}
+		free_assets_struct(assets);
 	}
 	exit(1);
 }

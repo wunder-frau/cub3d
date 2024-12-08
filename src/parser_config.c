@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_config.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/25 10:29:22 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/08 15:56:13 by nkarpilo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ t_assets	*initialize_assets(t_vector *map)
 	assets = (t_assets *)malloc(sizeof(t_assets));
 	if (!assets)
 		error_exit_cleanup("Failed to allocate assets", map, NULL);
+	ft_bzero(assets, sizeof(t_assets));
 	assets->textures.path_no = NULL;
 	assets->textures.path_so = NULL;
 	assets->textures.path_ea = NULL;
