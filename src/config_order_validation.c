@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   config_order_validation.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:52 by istasheu          #+#    #+#             */
-/*   Updated: 2024/12/08 16:08:18 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/12/09 12:32:10 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,44 +29,6 @@ static bool	is_config_line(char *str)
 	}
 	return (false);
 }
-// static bool	has_valid_prefix(char *str)
-// {
-// 	char *valid_prefixes[] = {"NO", "SO", "EA", "WE", "F", "C"};
-// 	size_t i;
-// 	size_t prefix_len;
-
-// 	while (ft_is_space(*str))
-// 		str++;
-// 	i = 0;
-// 	while (i < 6)
-// 	{
-// 		prefix_len = ft_strlen(valid_prefixes[i]);
-// 		if (ft_strncmp(str, valid_prefixes[i], prefix_len) == 0)
-// 			return (true);
-// 		i++;
-// 	}
-// 	return (false);
-// }
-
-// static bool is_config_line(char *str)
-// {
-// 	while (ft_is_space(*str))
-// 		str++;
-// 	if (*str == '\0' || *str == '\n')
-// 		return (false);
-// 	if (!has_valid_prefix(str))
-// 		return (false);
-// 	if (*str == 'F' || *str == 'C')
-// 	{
-// 		while (ft_is_space(*str))
-// 			str++;
-// 		if (ft_isdigit(*str))
-// 			return (true);
-// 	}
-// 	if (*str == ' ' || *str == '\t')
-// 		return (true);
-// 	return (false);
-// }
 
 static bool	is_map_line(const char *str)
 {

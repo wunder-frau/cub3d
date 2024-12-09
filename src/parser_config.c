@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_config.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/12/08 15:56:13 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/12/09 12:33:26 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,19 @@ static char	*extract_texture_path(const char *id, t_vector *map,
 	i = 0;
 	while (i < map->length)
 	{
+		if (!map->symbols[i] || ft_strlen(map->symbols[i]) < 3)
+			error_exit_cleanup("Invalid map line", map, assets);
 		if (ft_strncmp(id, map->symbols[i], 3) == 0)
 		{
 			map_line = vector_get_at(map, i);
 			if (!map_line)
 				error_exit_cleanup("Failed to allocate map line", map, assets);
 			path = trim_and_extract(map_line, 3);
-			if (!path)
-				error_exit_cleanup("Failed to allocate "
-					"texture path", map, assets);
+			if (!path || ft_strlen(path) == 0)
+			{
+				free(path);
+				error_exit_cleanup("Failed to allocate tx. p", map, assets);
+			}
 			return (path);
 		}
 		i++;
