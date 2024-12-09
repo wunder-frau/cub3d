@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 01:31:16 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/01 10:33:38 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/09 15:15:53 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ t_vector	*vector_create(size_t initial_capacity)
 {
 	t_vector	*new_vector;
 
-	new_vector = (t_vector *)malloc(sizeof(t_vector));
+	new_vector = (t_vector *)ft_calloc(sizeof(t_vector), 1);
 	if (new_vector == NULL)
 		return (NULL);
-	new_vector->symbols = (char **)malloc((initial_capacity + 1)
-			* sizeof(char *));
+	new_vector->symbols = (char **)ft_calloc(sizeof(char *), \
+			initial_capacity + 1);
 	if (new_vector->symbols == NULL)
 	{
 		free(new_vector);

@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:05:54 by istasheu          #+#    #+#             */
-/*   Updated: 2024/12/09 12:33:26 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/09 15:14:15 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,11 @@
  * based on the identifier (e.g., "NO ", "SO ").
  */
 static char	*extract_texture_path(const char *id, t_vector *map,
-		t_assets *assets)
+		t_assets *assets, size_t i)
 {
-	size_t	i;
 	char	*path;
 	char	*map_line;
 
-	i = 0;
 	while (i < map->length)
 	{
 		if (!map->symbols[i] || ft_strlen(map->symbols[i]) < 3)
@@ -52,10 +50,14 @@ static char	*extract_texture_path(const char *id, t_vector *map,
  */
 static void	load_config_path_and_rgb(t_vector *map, t_assets *assets)
 {
-	assets->textures.path_no = extract_texture_path("NO ", map, assets);
-	assets->textures.path_so = extract_texture_path("SO ", map, assets);
-	assets->textures.path_ea = extract_texture_path("EA ", map, assets);
-	assets->textures.path_we = extract_texture_path("WE ", map, assets);
+	assets->textures.path_no = extract_texture_path("NO ", map, assets, \
+	(size_t)0);
+	assets->textures.path_so = extract_texture_path("SO ", map, assets, \
+	(size_t)0);
+	assets->textures.path_ea = extract_texture_path("EA ", map, assets, \
+	(size_t)0);
+	assets->textures.path_we = extract_texture_path("WE ", map, assets, \
+	(size_t)0);
 	get_rgb("C ", map, assets);
 	get_rgb("F ", map, assets);
 }
@@ -67,7 +69,7 @@ t_assets	*initialize_assets(t_vector *map)
 {
 	t_assets	*assets;
 
-	assets = (t_assets *)malloc(sizeof(t_assets));
+	assets = (t_assets *)ft_calloc(sizeof(t_assets), 1);
 	if (!assets)
 		error_exit_cleanup("Failed to allocate assets", map, NULL);
 	ft_bzero(assets, sizeof(t_assets));

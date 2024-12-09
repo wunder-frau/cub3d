@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 10:03:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/29 16:43:38 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/09 14:59:46 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static t_game	*allocate_game_structure(t_vector *map, t_player player,
 {
 	t_game	*game;
 
-	game = malloc(sizeof(t_game));
+	game = ft_calloc(sizeof(t_game), 1);
 	if (!game)
 	{
 		ft_putstr_fd("Failed to allocate memory for game structure\n", 2);

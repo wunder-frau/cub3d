@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 10:07:16 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/28 21:42:35 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/09 15:04:09 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ char	*get_rgb(const char *id, t_vector *map, t_assets *assets)
 	i = 0;
 	while (i < map->length)
 	{
-		if (ft_strncmp(id, map->symbols[i], 2) == 0)
+		if (map->symbols[i] && ft_strncmp(id, map->symbols[i], 2) == 0)
 		{
 			rgb = vector_get_at(map, i);
 			if (!rgb)

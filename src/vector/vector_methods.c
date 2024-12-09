@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 01:33:11 by istasheu          #+#    #+#             */
-/*   Updated: 2024/11/25 10:25:20 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/09 15:01:24 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,7 @@ char	*vector_get_at(t_vector *vector, size_t index)
 
 	if (index >= vector->capacity)
 		return (NULL);
-	remaining_symbs = (char **)malloc(sizeof(char *)
-			* (vector->length - 1));
+	remaining_symbs = (char **)ft_calloc(sizeof(char *), vector->length - 1);
 	if (remaining_symbs == NULL)
 		return (NULL);
 	removed_symb = vector->symbols[index];

@@ -6,7 +6,7 @@
 /*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 01:30:00 by istasheu          #+#    #+#             */
-/*   Updated: 2024/10/22 01:30:10 by istasheu         ###   ########.fr       */
+/*   Updated: 2024/12/09 15:02:57 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	*ft_realloc(void *ptr, size_t current_size, size_t new_size)
 		return (NULL);
 	}
 	if (!ptr)
-		return (malloc(new_size));
-	new_ptr = malloc(new_size);
+		return (ft_calloc(sizeof(char), new_size));
+	new_ptr = ft_calloc(sizeof(char), new_size);
 	if (!new_ptr)
 		return (NULL);
 	i = 0;
