@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkarpilo <nkarpilo@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: istasheu <istasheu@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:15:45 by nkarpilo          #+#    #+#             */
-/*   Updated: 2024/12/08 16:12:16 by nkarpilo         ###   ########.fr       */
+/*   Updated: 2024/12/10 22:48:38 by istasheu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,7 +259,6 @@ bool		is_blank_line(const char *str);
 float		assign_player_angle(char symbol);
 bool		is_player_symbol(char c);
 bool		is_valid_map_symbol(char c);
-bool		check_file_height(t_vector *map);
 void		initialize_keys(t_keys *keys);
 
 // raycasting.c
